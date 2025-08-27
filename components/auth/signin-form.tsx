@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { cookies } from "next/headers"
 
 export function SignInForm() {
   const [email, setEmail] = useState("")
@@ -50,7 +51,7 @@ export function SignInForm() {
 
       // For demo purposes, accept any valid email/password
       if (email && password.length >= 6) {
-        router.push("/onboarding")
+        router.push("/dashboard")
       } else {
         setErrors({ general: "Invalid email or password" })
       }

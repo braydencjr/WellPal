@@ -51,7 +51,7 @@ export function OnboardingSummary() {
     try {
       // Simulate final setup completion
       await new Promise((resolve) => setTimeout(resolve, 1500))
-      router.push("/")
+      router.push("/dashboard")
     } catch (error) {
       console.error("Error completing onboarding:", error)
     } finally {

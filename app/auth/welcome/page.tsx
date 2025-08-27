@@ -1,23 +1,32 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import Link from "next/link"
+import Image from "next/image"
 
 export default function WelcomePage() {
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="max-w-sm w-full">
-        <Card className="border-0 shadow-lg">
-          <CardHeader className="text-center space-y-4 pb-8">
-            <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
-              <div className="w-8 h-8 bg-primary rounded-full"></div>
-            </div>
-            <div>
-              <CardTitle className="text-2xl font-semibold text-foreground">Welcome to HaventDecide</CardTitle>
-              <CardDescription className="text-muted-foreground mt-2">
-                Your personal mental wellness companion for university life
-              </CardDescription>
-            </div>
-          </CardHeader>
+      <Card className="border-0 shadow-lg">
+        <CardHeader className="text-center space-y-4 pb-8">
+          <div className="mx-auto w-16 h-16 flex items-center justify-center">
+            <Image
+              src="/assets/logo.JPG"
+              alt="WellPal Logo"
+              width={64}
+              height={64}
+              className="rounded-full"
+            />
+          </div>
+          <div>
+            <CardTitle className="text-2xl font-semibold text-foreground">
+              WellPal: click !
+            </CardTitle>
+            <CardDescription className="text-muted-foreground mt-2">
+              Your personal mental wellness companion for university life
+            </CardDescription>
+          </div>
+        </CardHeader>
 
           <CardContent className="space-y-4">
             <div className="space-y-3 text-center text-sm text-muted-foreground">
