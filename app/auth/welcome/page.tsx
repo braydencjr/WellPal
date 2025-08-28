@@ -8,14 +8,14 @@ export default function WelcomePage() {
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="max-w-sm w-full">
       <Card className="border-0 shadow-lg">
-        <CardHeader className="text-center space-y-4 pb-8">
+        <CardHeader className="text-center space-y-4 pb-8 rounded-none overflow-visible">
           <div className="mx-auto w-16 h-16 flex items-center justify-center">
             <Image
               src="/assets/logo.JPG"
               alt="WellPal Logo"
               width={64}
               height={64}
-              className="rounded-full"
+              className="rounded-lg"
             />
           </div>
           <div>
@@ -39,7 +39,7 @@ export default function WelcomePage() {
                 <span>Access stress relief tools and techniques</span>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-2 h-2 bg-accent rounded-full"></div>
+                <div className="w-2 h-2 bg-secondary rounded-full"></div>
                 <span>Connect with support when you need it</span>
               </div>
             </div>
