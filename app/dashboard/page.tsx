@@ -16,4 +16,6 @@ export default function DashboardPage() {
       <BottomNavigation activeTab="home" />
     </div>
   )
+
+  
 }

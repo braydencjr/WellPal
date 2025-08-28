@@ -5,8 +5,8 @@ interface BottomNavigationProps {
   activeTab: "home" | "track" | "relax" | "support" | "profile"
 }
 
-const tabs = [
-  { id: "home", icon: Home, label: "Home", href: "/" },
+const tabs = [ 
+  { id: "home", icon: Home, label: "Home", href: "/dashboard" },
   { id: "track", icon: BarChart3, label: "Track", href: "/track" },
   { id: "relax", icon: Heart, label: "Relax", href: "/relax" },
   { id: "support", icon: Phone, label: "Support", href: "/support" },
