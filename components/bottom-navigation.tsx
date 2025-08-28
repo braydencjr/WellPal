@@ -1,13 +1,13 @@
-import { Home, BarChart3, Heart, Phone, User } from "lucide-react"
+import { Home, Heart, Phone, User, Image } from "lucide-react"
 import Link from "next/link"
 
 interface BottomNavigationProps {
-  activeTab: "home" | "track" | "relax" | "support" | "profile"
+  activeTab: "home" | "memories" | "relax" | "support" | "profile"
 }
 
 const tabs = [ 
   { id: "home", icon: Home, label: "Home", href: "/dashboard" },
-  { id: "track", icon: BarChart3, label: "Track", href: "/track" },
+  { id: "memories", icon: Image, label: "Memories", href: "/memories" },
   { id: "relax", icon: Heart, label: "Relax", href: "/relax" },
   { id: "support", icon: Phone, label: "Support", href: "/support" },
   { id: "profile", icon: User, label: "Profile", href: "/profile" },
