@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from "next"
 import { Poppins } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
 import "./globals.css"
+import "./animations.css"
 
 const poppins = Poppins({ 
   subsets: ["latin"],
