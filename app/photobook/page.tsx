@@ -65,7 +65,7 @@ export default function PhotobookPage() {
           )}
         </AnimatePresence>
       </div>
-      <BottomNavigation activeTab="track" />
+      <BottomNavigation activeTab="memories" />
     </div>
   )
 }

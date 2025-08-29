@@ -2,7 +2,7 @@ import { Home, Heart, Phone, User, Image } from "lucide-react"
 import Link from "next/link"
 
 interface BottomNavigationProps {
-  activeTab: "home" | "memories" | "relax" | "support" | "profile"
+  activeTab: "home" | "memories" | "relax" | "support" | "settings"
 }
 
 const tabs = [ 
@@ -10,7 +10,7 @@ const tabs = [
   { id: "memories", icon: Image, label: "Memories", href: "/memories" },
   { id: "relax", icon: Heart, label: "Relax", href: "/relax" },
   { id: "support", icon: Phone, label: "Support", href: "/support" },
-  { id: "profile", icon: User, label: "Profile", href: "/profile" },
+  { id: "settings", icon: User, label: "Settings", href: "/settings" },
 ]
 
 export function BottomNavigation({ activeTab }: BottomNavigationProps) {
