@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Card } from "@/components/ui/card"
+import { Bell, Mail } from "lucide-react"
 
 export function MiniCalendar() {
   const today = new Date()
@@ -20,13 +21,21 @@ export function MiniCalendar() {
     setReminders(newReminders)
   }
 
-  const goToTodaysPhotos = () => {
+  const goToCalendar = () => {
+    router.push("/calendar") // Navigate to full calendar page
+  }
+
+  const goToTodaysPhotos = (e: React.MouseEvent) => {
+    e.stopPropagation() // Prevent card click
     const dateStr = today.toISOString().split("T")[0] // YYYY-MM-DD
     router.push(`/photos/${dateStr}`)
   }
 
   return (
-     <Card className="p-6 mb-6 shadow-sm">
+    <Card
+      className="p-6 mb-6 shadow-sm cursor-pointer hover:shadow-md transition"
+      onClick={goToCalendar}
+    >
       <div className="flex h-24">
         {/* Left: date + small button */}
         <div className="flex flex-col items-center justify-start pr-4 border-r border-gray-200 dark:border-gray-700">
@@ -54,7 +63,10 @@ export function MiniCalendar() {
               <input
                 type="checkbox"
                 checked={reminder.checked}
-                onChange={() => handleToggle(index)}
+                onChange={(e) => {
+                  e.stopPropagation() // Prevent card click
+                  handleToggle(index)
+                }}
                 className="mr-2"
               />
               <span className={reminder.checked ? "line-through text-gray-400" : ""}>

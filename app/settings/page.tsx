@@ -1,6 +1,6 @@
 import { ProfileHeader } from "@/components/profile-header"
 import { PersonalizationSettings } from "@/components/personalization-settings"
-import { AppSettings } from "@/components/app-settings"
+import { AppSettings } from "@/components/settings"
 import { BottomNavigation } from "@/components/bottom-navigation"
 
 export default function ProfilePage() {
@@ -15,7 +15,7 @@ export default function ProfilePage() {
         </div>
 
         {/* Bottom Navigation */}
-        <BottomNavigation activeTab="profile" />
+        <BottomNavigation activeTab="settings" />
       </div>
     </div>
   )
