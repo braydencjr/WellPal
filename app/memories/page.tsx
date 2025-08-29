@@ -260,5 +260,3 @@ function InsightsSection() {
     </div>
   )
 }
-
-

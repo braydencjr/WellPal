@@ -40,7 +40,7 @@ export function MiniCalendar() {
             onClick={goToTodaysPhotos}
             className="px-3 py-1 text-xs rounded bg-primary text-white hover:bg-primary/80 transition"
           >
-            View Photos
+            Today's Postcards
           </button>
         </div>
 

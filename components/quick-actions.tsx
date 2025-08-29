@@ -1,30 +1,30 @@
 "use client"
 
 import { Card } from "@/components/ui/card"
-import { Heart, Headphones, Calendar, MessageCircle } from "lucide-react"
+import { MailOpen, BarChart, Heart, MessageCircle } from "lucide-react"
 import Link from "next/link"
 
 const actions = [
   {
-    icon: Heart,
-    title: "Capture Moments",
+    icon: MailOpen,
+    title: "Memory Pocket",
     color: "text-primary",
     bgColor: "bg-primary/10",
-    href: "/relax",
+    href: "/photobook",
   },
   {
-    icon: Headphones,
+    icon: Heart,
     title: "Relax",
     color: "text-secondary",
     bgColor: "bg-secondary/10",
     href: "/relax",
   },
   {
-    icon: Calendar,
-    title: "Reminders",
+    icon: BarChart,
+    title: "Insights",
     color: "text-chart-3",
     bgColor: "bg-chart-3/10",
-    href: "/reminders",
+    href: "/memories",
   },
   {
     icon: MessageCircle,

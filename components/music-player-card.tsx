@@ -13,14 +13,13 @@ export function MusicPlayerCard() {
   const [isPlaying, setIsPlaying] = useState(false)
 
   return (
-    <div className="flex justify-center p-4">
-      <Card className="flex flex-row items-center justify-between p-3 w-72 h-14 shadow-md hover:shadow-lg transition-shadow duration-200">
+    <Card className="flex flex-row items-center justify-between p-3 w-72 h-14 shadow-md hover:shadow-lg transition-shadow duration-200">
       {/* Album / Music Icon */}
       <div className="w-10 h-10 bg-primary/10 text-primary rounded-md flex items-center justify-center flex-shrink-0">
         <Music className="w-5 h-5" />
       </div>
 
-      {/* Text: centered in available space */}
+      {/* Song Info */}
       <div className="flex-1 mx-3 flex flex-col justify-center min-w-0">
         <span className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
           {song.title}
@@ -30,12 +29,12 @@ export function MusicPlayerCard() {
         </span>
       </div>
 
-      {/* Controls: aligned to the right */}
+      {/* Controls */}
       <div className="flex items-center space-x-2 flex-shrink-0">
         <button className="hover:bg-gray-100 dark:hover:bg-gray-800 p-1 rounded transition-colors">
           <SkipBack className="w-4 h-4 text-gray-700 dark:text-gray-300" />
         </button>
-        <button 
+        <button
           onClick={() => setIsPlaying(!isPlaying)}
           className="hover:bg-gray-100 dark:hover:bg-gray-800 p-1 rounded transition-colors"
         >
@@ -49,7 +48,6 @@ export function MusicPlayerCard() {
           <SkipForward className="w-4 h-4 text-gray-700 dark:text-gray-300" />
         </button>
       </div>
-      </Card>
-    </div>
+    </Card>
   )
 }
