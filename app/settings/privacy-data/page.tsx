@@ -65,7 +65,7 @@ export default function PrivacyDataPage() {
         <div className="px-6 pt-8 pb-24">
           {/* Header */}
           <div className="flex items-center gap-4 mb-6">
-            <Link href="/profile">
+            <Link href="/settings">
               <Button variant="ghost" size="sm" className="p-2">
                 <ArrowLeft className="w-5 h-5" />
               </Button>

@@ -11,14 +11,14 @@ const settingsItems = [
     title: "Notifications",
     description: "Manage reminder and wellness check-ins",
     action: "Configure",
-    href: "/profile/notifications",
+    href: "/settings/notifications",
   },
   {
     icon: Shield,
     title: "Privacy & Data",
     description: "Control your data and privacy settings",
     action: "Manage",
-    href: "/profile/privacy-data",
+    href: "/settings/privacy-data",
   },
   {
     icon: HelpCircle,
