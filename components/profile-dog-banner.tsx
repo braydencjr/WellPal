@@ -6,12 +6,18 @@ import Image from "next/image"
 export function ProfileDogBanner() {
   const [imageError, setImageError] = useState(false)
 
+  const dogImages = [
+    "/assets/2d-profile-dog.png",
+    "/assets/2d-profile-dog-two.png", 
+  ]
+
   const speechBubbleMessages = [
     "Woof! This is your special place to make your profile pawsome! 🐾",
     "Tail-wagging time! Let's make your profile as amazing as you are! ✨",
     "Psst... this is where the magic happens! Edit away, buddy! 🌟"
   ]
 
+  const randomDogImage = dogImages[Math.floor(Math.random() * dogImages.length)]
   const randomMessage = speechBubbleMessages[Math.floor(Math.random() * speechBubbleMessages.length)]
 
   return (
@@ -38,7 +44,7 @@ export function ProfileDogBanner() {
         {!imageError ? (
           <div className="relative">
             <Image
-              src="/assets/2d-profile-dog.png"
+              src={randomDogImage}
               alt="Your WellPal Buddy"
               width={160}
               height={160}
