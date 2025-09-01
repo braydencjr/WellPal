@@ -42,7 +42,7 @@ def get_db() -> Generator[Session, None, None]:
 async def init_db() -> None:
     """Initialize database - create tables"""
     # Import all models here to ensure they are registered with SQLAlchemy
-    # from app.models import user, mood_entry  # TODO: Import your models
+    from app.models import User, ChatMessage  # Import your models
     
     Base.metadata.create_all(bind=engine)
     print("📊 Database initialized")

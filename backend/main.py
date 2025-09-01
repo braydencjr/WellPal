@@ -9,6 +9,7 @@ from contextlib import asynccontextmanager
 
 from app.api.v1.api import api_router
 from app.core.config import settings
+from app.core.database import init_db
 
 
 @asynccontextmanager
@@ -20,8 +21,7 @@ async def lifespan(app: FastAPI):
     """
     # Startup
     print("🚀 WellPal Backend starting up...")
-    # TODO: Initialize database connection
-    # TODO: Start background schedulers if needed
+    await init_db()
     
     yield
     
@@ -43,7 +43,12 @@ app = FastAPI(
 # Set up CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.ALLOWED_HOSTS,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:8000",
+        "http://127.0.0.1:8000"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

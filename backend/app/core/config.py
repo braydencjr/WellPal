@@ -33,9 +33,10 @@ class Settings(BaseSettings):
         "http://127.0.0.1:8000",
     ]
     
-    # External APIs (for future use)
+    # External APIs
     OPENAI_API_KEY: Optional[str] = None
     ANTHROPIC_API_KEY: Optional[str] = None
+    GOOGLE_API_KEY: Optional[str] = None
     
     # Email settings (for future use)
     SMTP_HOST: Optional[str] = None

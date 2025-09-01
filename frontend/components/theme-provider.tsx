@@ -25,8 +25,10 @@ export function useCalmingTheme() {
 
 export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
   const [calmingTheme, setCalmingTheme] = React.useState<CalmingTheme>('default')
+  const [mounted, setMounted] = React.useState(false)
 
   React.useEffect(() => {
+    setMounted(true)
     const savedTheme = localStorage.getItem('calming-theme') as CalmingTheme
     if (savedTheme) {
       setCalmingTheme(savedTheme)
@@ -34,9 +36,15 @@ export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
   }, [])
 
   React.useEffect(() => {
-    localStorage.setItem('calming-theme', calmingTheme)
-    document.documentElement.setAttribute('data-calming-theme', calmingTheme)
-  }, [calmingTheme])
+    if (mounted) {
+      localStorage.setItem('calming-theme', calmingTheme)
+      document.documentElement.setAttribute('data-calming-theme', calmingTheme)
+    }
+  }, [calmingTheme, mounted])
+
+  if (!mounted) {
+    return <NextThemesProvider {...props}>{children}</NextThemesProvider>
+  }
 
   return (
     <NextThemesProvider {...props}>
