@@ -12,11 +12,25 @@ export interface PostcardBackProps {
   onLocationChange: (value: string) => void
 }
 
-const moodOptions = ["🙂","😊","😌","🥲","😔","😤","😴","🤗","🤍"]
+// Make sure the src paths **do not include /public** because Next.js serves it from root
+const moodOptions = [
+  { name: "Happy", src: "/assets/happy.png" },
+  { name: "Sad", src: "/assets/sad.png" },
+  { name: "Lovely", src: "/assets/lovely.png" },
+  { name: "Shock", src: "/assets/shock.png" },
+  { name: "Cool", src: "/assets/cool.png" },
+  { name: "Angry", src: "/assets/angry.png" },
+  { name: "Boring", src: "/assets/boring.png" },
+  { name: "Tired", src: "/assets/tired.png" },
+  { name: "Scared", src: "/assets/scared.png" },
+]
 
 export function PostcardBack({ note, onNoteChange, mood, onMoodChange, location, onLocationChange }: PostcardBackProps) {
   const handleText = (e: ChangeEvent<HTMLTextAreaElement>) => onNoteChange(e.target.value)
   const handleLoc = (e: ChangeEvent<HTMLInputElement>) => onLocationChange(e.target.value)
+
+  // Get the mood object for the current selected mood
+  const selectedMood = moodOptions.find((m) => m.name === mood)
 
   return (
     <motion.div
@@ -26,9 +40,13 @@ export function PostcardBack({ note, onNoteChange, mood, onMoodChange, location,
       transition={{ duration: 0.4 }}
     >
       <div className="absolute inset-0 p-4 flex flex-col gap-3">
-        <div className="absolute top-4 right-4 stamp lines-animate flex items-center justify-center text-xl select-none">
-          {mood}
-        </div>
+        {/* Top-right mood image */}
+        {selectedMood && (
+          <div className="absolute top-4 right-4 stamp lines-animate flex items-center justify-center w-10 h-10">
+            <img src={selectedMood.src} alt={selectedMood.name} className="w-full h-full object-contain" />
+          </div>
+        )}
+
         <motion.textarea
           value={note}
           onChange={handleText}
@@ -40,17 +58,18 @@ export function PostcardBack({ note, onNoteChange, mood, onMoodChange, location,
         />
 
         <div className="flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2 overflow-x-auto">
-            {moodOptions.map((m) => (
-              <button
-                key={m}
-                onClick={() => onMoodChange(m)}
-                className={`text-xl px-2 py-1 rounded-md transition-colors ${mood === m ? "bg-secondary" : "hover:bg-muted"}`}
-                aria-label={`Select mood ${m}`}
-              >
-                {m}
-              </button>
-            ))}
+          <div className="flex gap-2 overflow-x-auto py-1">
+           {moodOptions.map((m) => (
+           <button
+            key={m.name}
+            onClick={() => onMoodChange(m.name)}
+            className={`flex-none w-16 h-16 rounded-md border transition-colors ${
+               mood === m.name ? "border-primary" : "border-transparent"
+            } hover:border-primary flex items-center justify-center`} // force img to center
+          >
+            <img src={m.src} alt={m.name} className="w-12 h-12 object-contain" />
+          </button>
+         ))}
           </div>
           <input
             type="text"
@@ -65,5 +84,3 @@ export function PostcardBack({ note, onNoteChange, mood, onMoodChange, location,
     </motion.div>
   )
 }
-
-

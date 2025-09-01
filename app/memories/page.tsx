@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from "next/navigation"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { BottomNavigation } from "@/components/bottom-navigation"
 import { PostcardFront } from "@/components/postcard/PostcardFront"
@@ -13,7 +14,7 @@ export default function MemoriesPage() {
   const [step, setStep] = useState<"choose" | "transform" | "edit">("choose")
   const [imageUrl, setImageUrl] = useState("")
   const [note, setNote] = useState("")
-  const [mood, setMood] = useState("🙂")
+  const [mood, setMood] = useState("Happy")
   const [location, setLocation] = useState("")
   const [isFlipped, setIsFlipped] = useState(false)
   const [detail, setDetail] = useState<PostcardEntry | null>(null)
@@ -22,7 +23,9 @@ export default function MemoriesPage() {
   const videoRef = useRef<HTMLVideoElement>(null)
   const [showCamera, setShowCamera] = useState(false)
   const [stream, setStream] = useState<MediaStream | null>(null)
+  const [showAll, setShowAll] = useState(false)
 
+  const router = useRouter()
   useEffect(() => { setEntries(loadPhotobook()) }, [])
   useEffect(() => {
     if (step === "transform") {
@@ -82,7 +85,7 @@ export default function MemoriesPage() {
     if (!imageUrl) return
     const saved = addPostcard({ imageDataUrl: imageUrl, note, mood, location })
     setEntries(prev => [saved, ...prev])
-    setStep("choose"); setImageUrl(""); setNote(""); setLocation(""); setMood("🙂"); setIsFlipped(false)
+    setStep("choose"); setImageUrl(""); setNote(""); setLocation(""); setMood("Happy"); setIsFlipped(false)
   }
 
   const grid = useMemo(() => entries, [entries])
@@ -130,14 +133,27 @@ export default function MemoriesPage() {
         </div>
 
         <div className="px-4 pt-4">
-          <h2 className="text-base font-semibold mb-2">Your Photobook</h2>
-          <button onClick={() => setDetail({ id: "__album__", dateISO: new Date().toISOString(), imageDataUrl: "", note: "", mood: "", location: "" })} className="block">
-            <div className="relative w-24 h-24 group">
-              <img src="/assets/closebook.PNG" alt="Album closed" className="absolute inset-0 w-full h-full object-contain transition-all duration-200 group-hover:opacity-0" />
-              <img src="/assets/openbook.PNG" alt="Album open" className="absolute inset-0 w-full h-full object-contain opacity-0 transition-all duration-200 group-hover:opacity-100 group-hover:scale-110" />
-            </div>
-          </button>
-        </div>
+  <h2 className="text-base font-semibold mb-2">Your Photobook</h2>
+
+  <div className="bg-card rounded-xl p-4 grid grid-cols-2 gap-3">
+    {(showAll ? entries : entries.slice(0, 4)).map((p) => (
+      <PostcardFront
+        key={p.id}
+        imageUrl={p.imageDataUrl}
+        mood={p.mood}
+        location={p.location}
+      />
+    ))}
+  </div>
+
+  <button
+  onClick={() => router.push("/photobook")}
+  className="mt-3 w-full py-2 rounded-lg bg-primary text-primary-foreground font-semibold hover:opacity-90 transition"
+>
+  Show All
+</button>
+</div>
+
 
         {/* Insights below album */}
         <div className="px-6 pt-6">

@@ -13,36 +13,11 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { ChevronLeft } from "lucide-react"
 import { useRouter } from "next/navigation"
 
-const timeZones = [
-  "UTC-12:00",
-  "UTC-11:00",
-  "UTC-10:00",
-  "UTC-09:00",
-  "UTC-08:00",
-  "UTC-07:00",
-  "UTC-06:00",
-  "UTC-05:00",
-  "UTC-04:00",
-  "UTC-03:00",
-  "UTC-02:00",
-  "UTC-01:00",
-  "UTC+00:00",
-  "UTC+01:00",
-  "UTC+02:00",
-  "UTC+03:00",
-  "UTC+04:00",
-  "UTC+05:00",
-  "UTC+06:00",
-  "UTC+07:00",
-  "UTC+08:00",
-  "UTC+09:00",
-  "UTC+10:00",
-  "UTC+11:00",
-  "UTC+12:00",
-]
 
 const languages = [
   "English",
+  "Malay",
+  "Chinese",
   "Spanish",
   "French",
   "German",
@@ -50,7 +25,6 @@ const languages = [
   "Portuguese",
   "Dutch",
   "Russian",
-  "Chinese",
   "Japanese",
   "Korean",
   "Arabic",
@@ -241,54 +215,6 @@ export function PersonalInfoForm() {
                   {errors.university && <p className="text-xs text-destructive">{errors.university}</p>}
                 </div>
 
-                {/* Faculty/Major */}
-                <div className="space-y-2">
-                  <Label htmlFor="faculty">Faculty/Major</Label>
-                  <Input
-                    id="faculty"
-                    placeholder="Computer Science"
-                    value={formData.faculty}
-                    onChange={(e) => updateFormData("faculty", e.target.value)}
-                    className={errors.faculty ? "border-destructive" : ""}
-                  />
-                  {errors.faculty && <p className="text-xs text-destructive">{errors.faculty}</p>}
-                </div>
-
-                {/* Year of Study */}
-                <div className="space-y-2">
-                  <Label htmlFor="studyYear">Year of Study</Label>
-                  <Select value={formData.studyYear} onValueChange={(value) => updateFormData("studyYear", value)}>
-                    <SelectTrigger className={errors.studyYear ? "border-destructive" : ""}>
-                      <SelectValue placeholder="Select your year" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {studyYears.map((year) => (
-                        <SelectItem key={year} value={year}>
-                          {year}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {errors.studyYear && <p className="text-xs text-destructive">{errors.studyYear}</p>}
-                </div>
-
-                {/* Time Zone */}
-                <div className="space-y-2">
-                  <Label htmlFor="timeZone">Time Zone</Label>
-                  <Select value={formData.timeZone} onValueChange={(value) => updateFormData("timeZone", value)}>
-                    <SelectTrigger className={errors.timeZone ? "border-destructive" : ""}>
-                      <SelectValue placeholder="Select your time zone" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {timeZones.map((tz) => (
-                        <SelectItem key={tz} value={tz}>
-                          {tz}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {errors.timeZone && <p className="text-xs text-destructive">{errors.timeZone}</p>}
-                </div>
 
                 {/* Preferred Language */}
                 <div className="space-y-2">

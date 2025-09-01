@@ -69,7 +69,7 @@ export function Calendar() {
       {days.map((day) => (
         <div
           key={day}
-          className={`p-1.5 rounded-full cursor-pointer text-sm transition ${
+          className={`p-1.5 mt-1 rounded-full cursor-pointer text-sm transition ${
             isToday(day)
               ? "bg-primary text-white font-bold"
               : "hover:bg-gray-200 dark:hover:bg-gray-700"
