@@ -15,12 +15,12 @@ export interface PostcardBackProps {
 
 // Replace emojis with dog images
 const moodOptions = [
-  { name: "Happy Dog", src: "/assets/dog-happy.png" },
-  { name: "Sleepy Dog", src: "/assets/dog-sleepy.png" },
-  { name: "Excited Dog", src: "/assets/dog-excited.png" },
-  { name: "Shy Dog", src: "/assets/dog-shy.png" },
-  { name: "Curious Dog", src: "/assets/dog-curious.png" },
-  { name: "Cool Dog", src: "/assets/dog-cool.png" },
+  { name: "Happy Dog", src: "/assets/happy.png" },
+  { name: "Sad Dog", src: "/assets/sad.png" },
+  { name: "Angry Dog", src: "/assets/angry.png" },
+  { name: "Lovely Dog", src: "/assets/lovely.png" },
+  { name: "Cool Dog", src: "/assets/cool.png" },
+  { name: "Shock Dog", src: "/assets/shock.png" },
 ]
 
 export function PostcardBack({
@@ -44,47 +44,34 @@ export function PostcardBack({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
     >
-      {/* Lined paper background */}
+      {/* paper background */}
       <div className="absolute inset-0 bg-white">
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `
-              repeating-linear-gradient(
-                0deg,
-                transparent,
-                transparent 23px,
-                rgba(0,0,0,0.1) 24px,
-                rgba(0,0,0,0.1) 25px
-              )
-            `,
-            backgroundSize: "100% 25px",
-          }}
-        />
         <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-transparent via-gray-100 to-transparent" />
       </div>
 
       <div className="absolute inset-0 p-4 flex flex-col gap-3">
-        {/* Top-right dog stamp */}
-        {selectedMood && (
-          <div className="absolute top-4 right-4 stamp lines-animate w-10 h-10 flex items-center justify-center">
-            <img src={selectedMood.src} alt={selectedMood.name} className="w-full h-full object-contain" />
-          </div>
-        )}
+       {/* Top-right dog stamp */}
+{selectedMood && (
+  <div className="absolute top-4 right-4 w-15 h-15 flex items-center justify-center bg-transparent z-10">
+    <img src={selectedMood.src} alt={selectedMood.name} className="w-full h-full object-contain" />
+  </div>
+)}
 
-        {/* Writing area */}
-        <motion.textarea
-          value={note}
-          onChange={handleText}
-          placeholder="Write your message here..."
-          className="flex-1 bg-transparent resize-none outline-none placeholder:text-muted-foreground/60 text-base leading-6 font-caveat"
-          style={{ lineHeight: "25px", paddingTop: "2px" }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.15 }}
-          readOnly={isReadOnly}
-          disabled={isReadOnly}
-        />
+{/* Writing area */}
+<div className="flex-1 flex flex-col justify-center">
+  <motion.textarea
+    value={note}
+    onChange={handleText}
+    placeholder="Write your message here..."
+    className="w-full bg-transparent resize-none outline-none placeholder:text-muted-foreground/60 text-base leading-6 font-caveat text-center"
+    style={{ lineHeight: "25px", padding: "0" }}
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    transition={{ duration: 0.6, delay: 0.15 }}
+    readOnly={isReadOnly}
+    disabled={isReadOnly}
+  />
+</div>
 
         {/* Bottom controls */}
         {!isReadOnly && (

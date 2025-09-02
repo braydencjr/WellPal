@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
+import { useRouter } from "next/navigation" 
 import { motion, AnimatePresence } from "framer-motion"
 import { ChevronDown, ChevronUp } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -8,6 +9,7 @@ import { PostcardEntry } from "@/lib/photobook-store"
 import { format, parseISO } from "date-fns"
 
 interface EnhancedPhotobookProps {
+
   entries: PostcardEntry[]
   onPostcardClick: (postcard: PostcardEntry) => void
 }
@@ -22,10 +24,17 @@ interface MonthGroup {
 export function EnhancedPhotobook({ entries, onPostcardClick }: EnhancedPhotobookProps) {
   const [expandedMonths, setExpandedMonths] = useState<Set<string>>(new Set())
   const [showAllMonths, setShowAllMonths] = useState(false)
+    const router = useRouter() 
+
+         const navigateToPhotobook = () => {
+    router.push("/photobook")
+  }
+
 
   const monthGroups = useMemo(() => {
     const groups: MonthGroup[] = []
     const monthMap = new Map<string, PostcardEntry[]>()
+
 
     // Group entries by month
     entries.forEach(entry => {
@@ -97,27 +106,19 @@ export function EnhancedPhotobook({ entries, onPostcardClick }: EnhancedPhotoboo
   }
 
   return (
-    <div className="space-y-6">
+      <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold text-foreground">Your Photobook</h2>
         {monthGroups.length > 1 && (
           <Button
             variant="ghost"
             size="sm"
-            onClick={toggleShowAll}
+            onClick={navigateToPhotobook}   // <-- navigate instead of toggle
             className="text-sm"
           >
-            {showAllMonths ? (
-              <>
-                <ChevronUp className="h-4 w-4 mr-1" />
-                Show Less
-              </>
-            ) : (
-              <>
-                <ChevronDown className="h-4 w-4 mr-1" />
-                Show More ({monthGroups.length - 1})
-              </>
-            )}
+            {/* You can keep your icon */}
+            <ChevronDown className="h-4 w-4 mr-1" />
+            Show All
           </Button>
         )}
       </div>
