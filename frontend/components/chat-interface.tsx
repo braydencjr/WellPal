@@ -5,6 +5,8 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Send, Sparkles, AlertCircle } from "lucide-react";
+import { useTheme } from "next-themes";
+import { useCalmingTheme } from "@/components/theme-provider";
 import { apiClient } from "@/lib/api-client";
 
 interface Message {
@@ -42,6 +44,62 @@ export function ChatInterface({ companionAvatar = "ai-companion-1.png" }: ChatIn
   const [isTyping, setIsTyping] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  
+  // Theme hooks
+  const { theme } = useTheme();
+  const { calmingTheme } = useCalmingTheme();
+
+  // Get theme-based colors with fallback
+  const getThemeColors = () => {
+    const isDark = theme === 'dark';
+    const currentTheme = calmingTheme || 'default';
+    
+    switch (currentTheme) {
+      case 'soft-green':
+        return {
+          gradient: isDark 
+            ? 'from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700'
+            : 'from-green-400 to-emerald-500 hover:from-green-500 hover:to-emerald-600',
+          userBg: isDark ? 'from-green-600 to-emerald-600' : 'from-green-400 to-emerald-500',
+          assistantBg: isDark ? 'bg-gray-700 text-gray-100' : 'bg-gray-100 text-gray-900',
+          border: isDark ? 'border-green-600' : 'border-green-200',
+          accent: isDark ? 'text-green-400' : 'text-green-600'
+        };
+      case 'calm-blue':
+        return {
+          gradient: isDark
+            ? 'from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700'
+            : 'from-blue-400 to-cyan-500 hover:from-blue-500 hover:to-cyan-600',
+          userBg: isDark ? 'from-blue-600 to-cyan-600' : 'from-blue-400 to-cyan-500',
+          assistantBg: isDark ? 'bg-gray-700 text-gray-100' : 'bg-gray-100 text-gray-900',
+          border: isDark ? 'border-blue-600' : 'border-blue-200',
+          accent: isDark ? 'text-blue-400' : 'text-blue-600'
+        };
+      case 'warm-beige':
+        return {
+          gradient: isDark
+            ? 'from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700'
+            : 'from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600',
+          userBg: isDark ? 'from-amber-600 to-orange-600' : 'from-amber-400 to-orange-500',
+          assistantBg: isDark ? 'bg-gray-700 text-gray-100' : 'bg-gray-100 text-gray-900',
+          border: isDark ? 'border-amber-600' : 'border-amber-200',
+          accent: isDark ? 'text-amber-400' : 'text-amber-600'
+        };
+      default:
+        // Use soft yellow/orange for default theme (matching the button)
+        return {
+          gradient: isDark
+            ? 'from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600'
+            : 'from-yellow-300 to-orange-400 hover:from-yellow-400 hover:to-orange-500',
+          userBg: isDark ? 'from-yellow-500 to-orange-500' : 'from-yellow-300 to-orange-400',
+          assistantBg: isDark ? 'bg-gray-700 text-gray-100' : 'bg-gray-100 text-gray-900',
+          border: isDark ? 'border-yellow-500' : 'border-orange-200',
+          accent: isDark ? 'text-yellow-400' : 'text-orange-600'
+        };
+    }
+  };
+
+  const colors = getThemeColors();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -119,7 +177,7 @@ export function ChatInterface({ companionAvatar = "ai-companion-1.png" }: ChatIn
               {/* Avatar for AI messages */}
               {message.sender === "assistant" && (
                 <div className="flex-shrink-0">
-                  <div className="w-8 h-8 rounded-full overflow-hidden border border-purple-200">
+                  <div className={`w-8 h-8 rounded-full overflow-hidden border ${colors.border}`}>
                     <Image
                       src={`/assets/${companionAvatar}`}
                       alt="AI Companion"
@@ -136,8 +194,8 @@ export function ChatInterface({ companionAvatar = "ai-companion-1.png" }: ChatIn
                 <div
                   className={`rounded-2xl px-4 py-3 ${
                     message.sender === "user" 
-                      ? "bg-gradient-to-r from-purple-500 to-blue-500 text-white" 
-                      : "bg-gray-100 text-gray-900"
+                      ? `bg-gradient-to-r ${colors.userBg} text-white`
+                      : colors.assistantBg
                   }`}
                 >
                   <p className="text-sm leading-relaxed">{message.content}</p>
@@ -160,7 +218,11 @@ export function ChatInterface({ companionAvatar = "ai-companion-1.png" }: ChatIn
                           key={index}
                           variant="outline"
                           size="sm"
-                          className="text-xs bg-white/80 hover:bg-white border-purple-200 text-purple-700 hover:text-purple-800"
+                          className={`text-xs ${
+                            theme === 'dark' 
+                              ? `bg-gray-800/80 hover:bg-gray-700 border-2 ${colors.border} ${colors.accent} hover:border-opacity-80`
+                              : `bg-white/80 hover:bg-white border ${colors.border} ${colors.accent} hover:bg-opacity-90`
+                          }`}
                           onClick={() => handleSuggestedPrompt(suggestion)}
                         >
                           {suggestion}
@@ -179,7 +241,7 @@ export function ChatInterface({ companionAvatar = "ai-companion-1.png" }: ChatIn
             <div className="flex gap-3 max-w-[85%]">
               {/* AI Avatar */}
               <div className="flex-shrink-0">
-                <div className="w-8 h-8 rounded-full overflow-hidden border border-purple-200">
+                <div className={`w-8 h-8 rounded-full overflow-hidden border ${colors.border}`}>
                   <Image
                     src={`/assets/${companionAvatar}`}
                     alt="AI Companion"
@@ -191,7 +253,7 @@ export function ChatInterface({ companionAvatar = "ai-companion-1.png" }: ChatIn
               </div>
               
               {/* Typing Animation */}
-              <div className="bg-gray-100 rounded-2xl px-4 py-3">
+              <div className={`rounded-2xl px-4 py-3 ${colors.assistantBg}`}>
                 <div className="flex items-center gap-1">
                   <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
                   <div
@@ -215,8 +277,8 @@ export function ChatInterface({ companionAvatar = "ai-companion-1.png" }: ChatIn
       {messages.length === 1 && (
         <div className="px-6 py-2">
           <div className="flex items-center gap-2 mb-3">
-            <Sparkles className="w-4 h-4 text-purple-500" />
-            <span className="text-sm font-medium text-gray-700">Try asking:</span>
+            <Sparkles className={`w-4 h-4 ${colors.accent}`} />
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Try asking:</span>
           </div>
           <div className="flex flex-wrap gap-2">
             {suggestedPrompts.map((prompt) => (
@@ -224,7 +286,11 @@ export function ChatInterface({ companionAvatar = "ai-companion-1.png" }: ChatIn
                 key={prompt}
                 variant="outline"
                 size="sm"
-                className="text-xs bg-white border-purple-200 text-purple-700 hover:bg-purple-50"
+                className={`text-xs ${
+                  theme === 'dark'
+                    ? `bg-gray-800 hover:bg-gray-700 border-2 ${colors.border} ${colors.accent}`
+                    : `bg-background hover:bg-accent/10 border-2 ${colors.border} ${colors.accent}`
+                }`}
                 onClick={() => handleSuggestedPrompt(prompt)}
               >
                 {prompt}
@@ -235,13 +301,13 @@ export function ChatInterface({ companionAvatar = "ai-companion-1.png" }: ChatIn
       )}
 
       {/* Input Area */}
-      <div className="px-6 py-4 border-t border-gray-200 bg-white">
+      <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-background">
         <div className="flex items-center gap-2">
           <Input
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             placeholder="Share what's on your mind..."
-            className="flex-1 border-gray-300 focus:border-purple-400 focus:ring-purple-400"
+            className={`flex-1 border-gray-300 dark:border-gray-600 focus:border-2 focus:${colors.border} focus:ring-0`}
             onKeyPress={(e) => {
               if (e.key === "Enter") {
                 handleSendMessage(inputValue);
@@ -253,12 +319,12 @@ export function ChatInterface({ companionAvatar = "ai-companion-1.png" }: ChatIn
             size="sm" 
             onClick={() => handleSendMessage(inputValue)} 
             disabled={!inputValue.trim() || isTyping}
-            className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
+            className={`bg-gradient-to-r ${colors.gradient} text-white border-0`}
           >
             <Send className="w-4 h-4" />
           </Button>
         </div>
-        <p className="text-xs text-gray-500 mt-2 text-center">
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
           This is a supportive AI companion. For emergencies, please contact crisis support.
         </p>
       </div>

@@ -18,7 +18,11 @@ const CalmingThemeContext = React.createContext<CalmingThemeContextType | undefi
 export function useCalmingTheme() {
   const context = React.useContext(CalmingThemeContext)
   if (context === undefined) {
-    throw new Error('useCalmingTheme must be used within a CalmingThemeProvider')
+    // Return default values instead of throwing an error
+    return {
+      calmingTheme: 'default' as CalmingTheme,
+      setCalmingTheme: () => {}
+    }
   }
   return context
 }
