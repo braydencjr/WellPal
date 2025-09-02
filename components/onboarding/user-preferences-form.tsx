@@ -75,21 +75,22 @@ export function UserPreferencesForm() {
   const [error, setError] = useState("")
   const router = useRouter()
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError("")
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault()
+  setIsLoading(true)
+  setError("")
 
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      router.push("/onboarding/summary")
-    } catch (error) {
-      setError("Something went wrong. Please try again.")
-    } finally {
-      setIsLoading(false)
-    }
+  try {
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+    router.push("/onboarding/summary")
+  } catch (error) {
+    setError("Something went wrong. Please try again.")
+  } finally {
+    setIsLoading(false)
   }
+}
+
 
   const updatePreference = (key: string, value: any) => {
     setPreferences((prev) => ({ ...prev, [key]: value }))
@@ -285,28 +286,6 @@ export function UserPreferencesForm() {
                 </div>
               </div>
 
-              {/* Background Style */}
-              <div className="space-y-4">
-                <Label className="text-sm font-medium">Background Style</Label>
-                <div className="grid gap-3">
-                  {backgroundStyles.map((style) => (
-                    <div
-                      key={style.id}
-                      className={`p-3 rounded-lg border cursor-pointer transition-colors ${
-                        preferences.backgroundStyle === style.id
-                          ? "border-primary bg-primary/5"
-                          : "border-border bg-card/50"
-                      }`}
-                      onClick={() => updatePreference("backgroundStyle", style.id)}
-                    >
-                      <div>
-                        <p className="text-sm font-medium">{style.name}</p>
-                        <p className="text-xs text-muted-foreground">{style.description}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
 
               {/* Experience Settings */}
               <div className="space-y-4">

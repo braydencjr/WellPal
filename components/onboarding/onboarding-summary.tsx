@@ -51,7 +51,7 @@ export function OnboardingSummary() {
     try {
       // Simulate final setup completion
       await new Promise((resolve) => setTimeout(resolve, 1500))
-      router.push("/dashboard")
+      router.push("/onboarding/understand-user-better")
     } catch (error) {
       console.error("Error completing onboarding:", error)
     } finally {
@@ -287,7 +287,7 @@ export function OnboardingSummary() {
       <div className="fixed bottom-0 left-0 right-0 p-6 bg-background border-t">
         <div className="max-w-sm mx-auto">
           <Button onClick={handleStartApp} className="w-full h-12" disabled={isLoading}>
-            {isLoading ? "Setting up your experience..." : "Start using HaventDecide"}
+            {isLoading ? "Setting up your experience..." : "Start Your Journey"}
           </Button>
           <p className="text-xs text-muted-foreground text-center mt-2">
             You can change these settings anytime in your profile

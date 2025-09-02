@@ -116,23 +116,20 @@ export function PersonalInfoForm() {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-
-    if (!validateForm()) return
-
     setIsLoading(true)
-    setErrors({})
+    setErrors({}) // clear errors if any
 
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      router.push("/onboarding/accessibility")
-    } catch (error) {
-      setErrors({ general: "Something went wrong. Please try again." })
-    } finally {
+    // here you could add validation logic
+    // e.g. if (!formData.firstName) { setErrors({ firstName: "Required" }); setIsLoading(false); return; }
+
+    // simulate "saving" delay
+    setTimeout(() => {
+      // ✅ navigate after "saving"
+      router.push("/onboarding/preferences")
       setIsLoading(false)
-    }
+    }, 1000)
   }
 
   const updateFormData = (field: string, value: string | boolean) => {
