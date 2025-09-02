@@ -2,6 +2,12 @@
 
 import React, { createContext, useContext, useState, ReactNode } from 'react'
 
+export interface EmergencyContact {
+  name: string
+  countryCode: string
+  phoneNumber: string
+}
+
 export interface UserProfile {
   id: string
   name: string
@@ -11,6 +17,7 @@ export interface UserProfile {
   username: string
   memberSince: string
   university?: string
+  emergencyContact?: EmergencyContact
   notifications: {
     reminders: boolean
     wellnessCheckins: boolean
@@ -27,6 +34,7 @@ export interface UserProfile {
 interface UserContextType {
   user: UserProfile
   updateUser: (updates: Partial<UserProfile>) => void
+  updateEmergencyContact: (contact: EmergencyContact) => void
   updateNotifications: (notifications: Partial<UserProfile['notifications']>) => void
   updatePrivacy: (privacy: Partial<UserProfile['privacy']>) => void
   resetPassword: (currentPassword: string, newPassword: string) => Promise<boolean>
@@ -62,6 +70,10 @@ export function UserProvider({ children }: { children: ReactNode }) {
     setUser(prev => ({ ...prev, ...updates }))
   }
 
+  const updateEmergencyContact = (contact: EmergencyContact) => {
+    setUser(prev => ({ ...prev, emergencyContact: contact }))
+  }
+
   const updateNotifications = (notifications: Partial<UserProfile['notifications']>) => {
     setUser(prev => ({
       ...prev,
@@ -90,6 +102,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     <UserContext.Provider value={{
       user,
       updateUser,
+      updateEmergencyContact,
       updateNotifications,
       updatePrivacy,
       resetPassword
