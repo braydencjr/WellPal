@@ -37,7 +37,8 @@ app = FastAPI(
     description="Mental wellness companion API for university students",
     version="1.0.0",
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
-    lifespan=lifespan
+    lifespan=lifespan,
+    debug=True  # 👈 add this
 )
 
 # Set up CORS middleware
