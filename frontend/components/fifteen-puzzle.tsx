@@ -308,7 +308,14 @@ export function FifteenPuzzle() {
         )}
       </Card>
       {/* hidden original image element bound to selectedImage */}
-      <img ref={originalImageRef} src={selectedImage || ""} alt="original" style={{ display: "none" }} />
+      {selectedImage && (
+        <img
+          ref={originalImageRef}
+          src={selectedImage}
+          alt="original"
+          style={{ display: "none" }}
+        />
+      )}
     </div>
   )
 }
