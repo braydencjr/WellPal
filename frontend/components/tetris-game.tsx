@@ -289,8 +289,8 @@ export function TetrisGame() {
         </div>
         {/* Left + Right */}
         <div className="col-span-3 flex justify-center space-x-10">
-          <Button onClick={() => triggerKey("ArrowLeft")} className="p-4">◀️</Button>
-          <Button onClick={() => triggerKey("ArrowRight")} className="p-4">▶️</Button>
+          <Button onClick={() => triggerKey("ArrowLeft")} className="p-4">◀</Button>
+          <Button onClick={() => triggerKey("ArrowRight")} className="p-4">▶</Button>
         </div>
         {/* Down = Drop */}
         <div className="col-span-3 flex justify-center">
