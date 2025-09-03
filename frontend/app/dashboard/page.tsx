@@ -26,13 +26,18 @@ export default function DashboardPage() {
           <MiniCalendar />
           <QuickActions />
         </div>
-
-        {/* 🐶 DogPal inside card */}
-        <div className="absolute bottom-16 right-4">
-          <DogPal />
-        </div>
       </div>
       <BottomNavigation activeTab="home" />
+      
+      {/* 🐶 DogPal fixed in bottom-right corner of app container */}
+      <div 
+        className="fixed bottom-16 z-50"
+        style={{
+          right: `max(1rem, calc(50vw - 192px + 1rem))`
+        }}
+      >
+        <DogPal />
+      </div>
     </div>
 
     {!hasTakenPhotoToday && (
