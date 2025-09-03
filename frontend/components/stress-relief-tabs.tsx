@@ -1,8 +1,8 @@
 "use client"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Gamepad2, Dumbbell, Headphones, Music, Play, Pause, Grid3x3, Zap, Box } from "lucide-react"
+import { Gamepad2, Dumbbell, Headphones, Music, Play, Pause, Grid3x3, Zap, Box, Volume2, SkipBack, SkipForward } from "lucide-react"
 import { FifteenPuzzle } from "@/components/fifteen-puzzle"
 import { SnakeGame } from "@/components/snake-game"
 import { TetrisGame } from "@/components/tetris-game"
@@ -96,9 +96,65 @@ export function StressReliefTabs() {
   const [playingAudio, setPlayingAudio] = useState<string | null>(null)
   const [currentExercise, setCurrentExercise] = useState<string | null>(null)
   const [currentGame, setCurrentGame] = useState<string | null>(null)
+  
+  // Music player state
+  const [masterVolume, setMasterVolume] = useState(0.7)
+  const [currentTime, setCurrentTime] = useState<{ [key: string]: number }>({})
+  
+  // Simulate audio playback progression
+  useEffect(() => {
+    if (!playingAudio) return
+
+    const interval = setInterval(() => {
+      setCurrentTime(prev => {
+        const current = prev[playingAudio] || 0
+        const music = musicSuggestions.find(m => m.title === playingAudio)
+        if (!music) return prev
+
+        const totalSeconds = getDurationInSeconds(music.duration)
+        const newTime = current + 1
+
+        if (newTime >= totalSeconds) {
+          setPlayingAudio(null) // Auto-stop when finished
+          return { ...prev, [playingAudio]: 0 }
+        }
+
+        return { ...prev, [playingAudio]: newTime }
+      })
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [playingAudio])
 
   const handleAudioToggle = (title: string) => {
     setPlayingAudio(playingAudio === title ? null : title)
+    if (playingAudio !== title) {
+      // Start playing from current position
+      setCurrentTime(prev => ({ ...prev, [title]: prev[title] || 0 }))
+    }
+  }
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60)
+    const secs = Math.floor(seconds % 60)
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
+  }
+
+  const getDurationInSeconds = (duration: string) => {
+    const [mins, secs] = duration.split(':').map(Number)
+    return mins * 60 + secs
+  }
+
+  const getProgressPercentage = (title: string, duration: string) => {
+    const currentSeconds = currentTime[title] || 0
+    const totalSeconds = getDurationInSeconds(duration)
+    return Math.min((currentSeconds / totalSeconds) * 100, 100)
+  }
+
+  const handleSeek = (title: string, duration: string, percentage: number) => {
+    const totalSeconds = getDurationInSeconds(duration)
+    const newTime = Math.floor(totalSeconds * percentage)
+    setCurrentTime(prev => ({ ...prev, [title]: newTime }))
   }
 
   const renderGameContent = () => {
@@ -290,9 +346,40 @@ export function StressReliefTabs() {
       case "music":
         return (
           <div className="space-y-4">
+            {/* Master Volume Control */}
+            <Card className="p-4">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <Volume2 className="w-5 h-5 text-primary" />
+                  <h3 className="font-medium text-foreground">Master Volume</h3>
+                </div>
+                <span className="text-sm text-muted-foreground font-medium">
+                  {Math.round(masterVolume * 100)}%
+                </span>
+              </div>
+              <div className="space-y-2">
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.01"
+                  value={masterVolume}
+                  onChange={(e) => setMasterVolume(parseFloat(e.target.value))}
+                  className="w-full h-2 bg-secondary rounded-lg appearance-none cursor-pointer"
+                  style={{
+                    background: `linear-gradient(to right, hsl(var(--primary)) 0%, hsl(var(--primary)) ${masterVolume * 100}%, hsl(var(--secondary)) ${masterVolume * 100}%, hsl(var(--secondary)) 100%)`
+                  }}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Adjust the overall volume for all music tracks
+                </p>
+              </div>
+            </Card>
+
+            {/* Music Tracks */}
             {musicSuggestions.map((music) => (
               <Card key={music.title} className="p-4">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between mb-4">
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-2">
                       <h3 className="font-medium text-foreground">{music.title}</h3>
@@ -322,20 +409,84 @@ export function StressReliefTabs() {
                     )}
                   </Button>
                 </div>
-                {playingAudio === music.title && (
-                  <div className="mt-4 p-3 bg-muted rounded-lg">
-                    <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
-                      <span>00:00</span>
-                      <span>{music.duration}</span>
-                    </div>
-                    <div className="w-full bg-secondary rounded-full h-2">
-                      <div className="bg-primary h-2 rounded-full w-0 transition-all duration-1000" />
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-2 text-center">
-                      🎵 Playing {music.title}...
-                    </p>
+
+                {/* Progress Bar and Controls */}
+                <div className="mt-4 p-3 bg-muted rounded-lg space-y-3">
+                  {/* Time Display */}
+                  <div className="flex items-center justify-between text-sm text-muted-foreground">
+                    <span>{formatTime(currentTime[music.title] || 0)}</span>
+                    <span>{music.duration}</span>
                   </div>
-                )}
+                  
+                  {/* Seekable Progress Bar */}
+                  <div 
+                    className="w-full bg-secondary rounded-full h-3 cursor-pointer relative group"
+                    onClick={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect()
+                      const clickX = e.clientX - rect.left
+                      const percentage = clickX / rect.width
+                      handleSeek(music.title, music.duration, percentage)
+                    }}
+                  >
+                    <div 
+                      className="bg-primary h-3 rounded-full transition-all duration-300 relative"
+                      style={{ width: `${getProgressPercentage(music.title, music.duration)}%` }}
+                    >
+                      {/* Playhead */}
+                      <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-primary-foreground rounded-full border-2 border-primary shadow-sm opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </div>
+                  </div>
+
+                  {/* Playback Controls */}
+                  <div className="flex items-center justify-center gap-3">
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => {
+                        const newTime = Math.max(0, (currentTime[music.title] || 0) - 10)
+                        setCurrentTime(prev => ({ ...prev, [music.title]: newTime }))
+                      }}
+                      className="h-8 w-8 p-0"
+                    >
+                      <SkipBack className="h-4 w-4" />
+                    </Button>
+                    
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => handleAudioToggle(music.title)}
+                      className="h-10 w-10 p-0"
+                    >
+                      {playingAudio === music.title ? (
+                        <Pause className="h-5 w-5" />
+                      ) : (
+                        <Play className="h-5 w-5" />
+                      )}
+                    </Button>
+                    
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => {
+                        const totalSeconds = getDurationInSeconds(music.duration)
+                        const newTime = Math.min(totalSeconds, (currentTime[music.title] || 0) + 10)
+                        setCurrentTime(prev => ({ ...prev, [music.title]: newTime }))
+                      }}
+                      className="h-8 w-8 p-0"
+                    >
+                      <SkipForward className="h-4 w-4" />
+                    </Button>
+                  </div>
+
+                  {/* Status */}
+                  {playingAudio === music.title && (
+                    <div className="text-center">
+                      <p className="text-xs text-muted-foreground">
+                        🎵 Playing at {Math.round(masterVolume * 100)}% volume
+                      </p>
+                    </div>
+                  )}
+                </div>
               </Card>
             ))}
           </div>

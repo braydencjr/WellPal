@@ -4,6 +4,16 @@
 import { useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 
 import {
   Phone,
@@ -14,10 +24,17 @@ import {
   Link as LinkIcon,
   Facebook,
   Instagram,
+  Plus,
 } from "lucide-react"
 
 export function EmergencySupport() {
   const [showScheduling, setShowScheduling] = useState(false)
+  const [showAddDialog, setShowAddDialog] = useState(false)
+  const [addDialogType, setAddDialogType] = useState<'university' | 'private'>('university')
+  const [customContacts, setCustomContacts] = useState<{
+    university: any[]
+    private: any[]
+  }>({ university: [], private: [] })
 
   const governmentContacts = [
     {
@@ -151,16 +168,16 @@ export function EmergencySupport() {
   ]
 
   const renderContacts = (contacts: any[]) =>
-    contacts.map((contact) => {
+    contacts.map((contact, index) => {
       const Icon = contact.icon
       return (
-        <Card key={contact.title} className="p-3">
+        <Card key={`${contact.title}-${index}`} className="p-3">
           <div className="flex items-center justify-between">
             <div className="flex items-start gap-3">
               <div
-                className={`w-8 h-8 rounded-lg ${contact.bgColor} flex items-center justify-center mt-1`}
+                className={`w-8 h-8 rounded-lg ${contact.bgColor || 'bg-blue-100'} flex items-center justify-center mt-1`}
               >
-                {Icon && <Icon className={`w-4 h-4 ${contact.color}`} />}
+                {Icon && <Icon className={`w-4 h-4 ${contact.color || 'text-blue-600'}`} />}
               </div>
               <div>
                 <h4 className="text-sm font-medium">{contact.title}</h4>
@@ -188,6 +205,23 @@ export function EmergencySupport() {
                     </button>
                   </div>
                 )}
+                {contact.socialLinks && contact.socialLinks.length > 0 && (
+                  <div className="flex items-center gap-2 mt-2">
+                    {contact.socialLinks.map((link: any, linkIndex: number) => {
+                      const SocialIcon = link.icon
+                      return (
+                        <button
+                          key={linkIndex}
+                          onClick={() => window.open(link.url, '_blank')}
+                          className="flex items-center gap-1 text-xs text-blue-600 hover:underline"
+                        >
+                          <SocialIcon className="w-3 h-3" />
+                          {link.label}
+                        </button>
+                      )
+                    })}
+                  </div>
+                )}
               </div>
             </div>
             {contact.action && contact.onClick && (
@@ -202,9 +236,49 @@ export function EmergencySupport() {
 
   const sections = [
     { title: "Government / Public Services", contacts: governmentContacts },
-    { title: "University Services", contacts: universityServices },
-    { title: "Private / NGOs", contacts: privateContacts },
+    { title: "University Services", contacts: [...universityServices, ...customContacts.university] },
+    { title: "Private / NGOs", contacts: [...privateContacts, ...customContacts.private] },
   ]
+
+  const handleAddContact = (formData: FormData) => {
+    const title = formData.get('title') as string
+    const description = formData.get('description') as string
+    const phone = formData.get('phone') as string
+    const facebookUrl = formData.get('facebookUrl') as string
+    const instagramUrl = formData.get('instagramUrl') as string
+
+    const newContact = {
+      title,
+      description,
+      phone: phone || undefined,
+      onPhoneClick: phone ? () => {
+        try {
+          window.open(`tel:${phone}`, "_blank")
+        } catch {
+          navigator.clipboard.writeText(phone)
+          alert(`Phone number copied to clipboard: ${phone}`)
+        }
+      } : undefined,
+      socialLinks: [
+        ...(facebookUrl ? [{
+          icon: Facebook,
+          url: facebookUrl,
+          label: "Facebook",
+        }] : []),
+        ...(instagramUrl ? [{
+          icon: Instagram,
+          url: instagramUrl,
+          label: "Instagram",
+        }] : []),
+      ],
+    }
+
+    setCustomContacts(prev => ({
+      ...prev,
+      [addDialogType]: [...prev[addDialogType], newContact]
+    }))
+    setShowAddDialog(false)
+  }
 
   return (
   <div className="space-y-6">
@@ -223,6 +297,64 @@ export function EmergencySupport() {
         <div className="space-y-3">
           {renderContacts(section.contacts)}
         </div>
+        
+        {/* Add button only for University Services and Private/NGOs */}
+        {(section.title === "University Services" || section.title === "Private / NGOs") && (
+          <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+            <DialogTrigger asChild>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="w-full mt-3"
+                onClick={() => {
+                  setAddDialogType(section.title === "University Services" ? 'university' : 'private')
+                  setShowAddDialog(true)
+                }}
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add {section.title === "University Services" ? "University Service" : "Private/NGO Contact"}
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Add New {section.title === "University Services" ? "University Service" : "Private/NGO Contact"}</DialogTitle>
+                <DialogDescription>
+                  Add a new contact for {section.title.toLowerCase()}. All fields are optional except title and description.
+                </DialogDescription>
+              </DialogHeader>
+              <form action={handleAddContact} className="space-y-4">
+                <div>
+                  <Label htmlFor="title">Contact Title *</Label>
+                  <Input id="title" name="title" placeholder="e.g., Student Counseling Service" required />
+                </div>
+                <div>
+                  <Label htmlFor="description">Description *</Label>
+                  <Input id="description" name="description" placeholder="Brief description of the service" required />
+                </div>
+                <div>
+                  <Label htmlFor="phone">Phone Number (Optional)</Label>
+                  <Input id="phone" name="phone" placeholder="e.g., +603-1234-5678" />
+                </div>
+                <div>
+                  <Label htmlFor="facebookUrl">Facebook URL (Optional)</Label>
+                  <Input id="facebookUrl" name="facebookUrl" placeholder="https://facebook.com/..." />
+                </div>
+                <div>
+                  <Label htmlFor="instagramUrl">Instagram URL (Optional)</Label>
+                  <Input id="instagramUrl" name="instagramUrl" placeholder="https://instagram.com/..." />
+                </div>
+                <div className="flex justify-end gap-2">
+                  <Button type="button" variant="outline" onClick={() => setShowAddDialog(false)}>
+                    Cancel
+                  </Button>
+                  <Button type="submit">
+                    Add Contact
+                  </Button>
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
+        )}
       </Card>
     ))}
   </div>
