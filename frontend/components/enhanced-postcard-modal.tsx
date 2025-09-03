@@ -46,9 +46,28 @@ export function EnhancedPostcardModal({ isOpen, onClose, onSave, imageUrl }: Enh
   }
 
   const handleSave = () => {
-    onSave(note, mood, location)
-    onClose()
+  // 1️⃣ Call parent save function
+  onSave(note, mood, location)
+
+  // 2️⃣ Update localStorage for calendar emojis
+  if (mood) {
+    const now = new Date()
+    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`
+
+    const moodCounter: Record<string, string[]> = JSON.parse(
+      localStorage.getItem("wellpal_mood_counter") || "{}"
+    )
+
+    if (!moodCounter[todayStr]) moodCounter[todayStr] = []
+    moodCounter[todayStr].push(mood)
+
+    localStorage.setItem("wellpal_mood_counter", JSON.stringify(moodCounter))
   }
+
+  // 3️⃣ Close modal
+  onClose()
+}
+
 
   const handleClose = () => {
     onClose()

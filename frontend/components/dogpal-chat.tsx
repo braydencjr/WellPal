@@ -10,6 +10,7 @@ interface DogChatReminderProps {
 
 export function DogChatReminder({ onClose }: DogChatReminderProps) {
   const router = useRouter()
+  
 
   return (
     <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
@@ -45,6 +46,7 @@ export function DogChatReminder({ onClose }: DogChatReminderProps) {
           <DogPal />
         </div>
       </div>
+
     </div>
   )
 }
