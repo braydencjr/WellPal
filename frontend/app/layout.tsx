@@ -3,7 +3,6 @@ import type { Metadata, Viewport } from "next"
 import { Poppins } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
 import { UserProvider } from "@/contexts/user-context"
-import { AIChatButton } from "@/components/ai-chat-button"
 import "./globals.css"
 import "./animations.css"
 
@@ -51,7 +50,6 @@ export default function RootLayout({
         >
           <UserProvider>
             {children}
-            <AIChatButton />
           </UserProvider>
         </ThemeProvider>
       </body>

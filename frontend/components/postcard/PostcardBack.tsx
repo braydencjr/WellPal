@@ -29,7 +29,6 @@ export function PostcardBack({
   onNoteChange,
   mood,
   onMoodChange,
-  location,
   onLocationChange,
   isReadOnly = false,
   onSave,
@@ -92,22 +91,7 @@ export function PostcardBack({
                 </button>
               ))}
             </div>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={location}
-                onChange={handleLoc}
-                placeholder="Location (optional)"
-                className="min-w-[30%] bg-transparent border border-border rounded-md px-3 py-1 text-sm font-caveat"
-              />
-              <button
-                onClick={onSave}
-                disabled={!note.trim() || !mood}
-                className="px-4 py-1 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-caveat"
-              >
-                Save
-              </button>
-            </div>
+            
           </div>
         )}
       </div>
