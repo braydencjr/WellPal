@@ -1,9 +1,8 @@
 "use client"
-
 import { useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Gamepad2, Dumbbell, Headphones, Music, Play, Pause } from "lucide-react"
+import { Gamepad2, Dumbbell, Headphones, Music, Play, Pause, Grid3x3, Zap, Box } from "lucide-react"
 import { FifteenPuzzle } from "@/components/fifteen-puzzle"
 import { SnakeGame } from "@/components/snake-game"
 import { TetrisGame } from "@/components/tetris-game"
@@ -21,43 +20,72 @@ const tabs = [
   { id: "music", label: "Music", icon: Music },
 ]
 
+const gameOptions = [
+  {
+    id: "fifteen-puzzle",
+    title: "15 Puzzle",
+    description: "Classic sliding number puzzle game",
+    icon: Grid3x3,
+  },
+  {
+    id: "snake",
+    title: "Snake Game",
+    description: "Navigate the snake to collect food",
+    icon: Zap,
+  },
+  {
+    id: "tetris",
+    title: "Tetris",
+    description: "Arrange falling blocks to clear lines",
+    icon: Box,
+
+  },
+  {
+    id: "custom",
+    title: "Custom Games",
+    description: "Additional mini-games and puzzles",
+    icon: Gamepad2,
+
+  }
+]
+
 const exerciseActivities = [
-  { 
-    title: "Deep Breathing", 
-    description: "4-7-8 breathing technique with guided visualization", 
+  {
+    title: "Deep Breathing",
+    description: "4-7-8 breathing technique with guided visualization",
     duration: "5 min",
     component: "breathing"
   },
-  { 
-    title: "Progressive Relaxation", 
-    description: "Step-by-step muscle tension release guide", 
+  {
+    title: "Progressive Relaxation",
+    description: "Step-by-step muscle tension release guide",
     duration: "15 min",
-    component: "progressive" 
+    component: "progressive"
   },
-  { 
-    title: "Gentle Stretches", 
-    description: "Simple desk and neck stretches", 
+  {
+    title: "Gentle Stretches",
+    description: "Simple desk and neck stretches",
     duration: "8 min",
     component: "stretches"
   },
 ]
 
 const musicSuggestions = [
-  { 
-    title: "Calm Focus", 
-    description: "Instrumental music for concentration and study", 
+  {
+    title: "Calm Focus",
+    description: "Instrumental music for concentration and study",
     mood: "Focused",
     duration: "25:00"
   },
-  { 
-    title: "Peaceful Mind", 
-    description: "Ambient sounds for relaxation and sleep", 
+  {
+    title: "Peaceful Mind",
+    description: "Ambient sounds for relaxation and sleep",
     mood: "Calm",
     duration: "30:00"
   },
-  { 
-    title: "Uplifting Vibes", 
-    description: "Gentle melodies for motivation and energy", 
+  {
+    title: "Uplifting Vibes",
+    description: "Gentle melodies for motivation and energy",
     mood: "Happy",
     duration: "20:00"
   },
@@ -67,29 +95,112 @@ export function StressReliefTabs() {
   const [activeTab, setActiveTab] = useState<TabType>("game")
   const [playingAudio, setPlayingAudio] = useState<string | null>(null)
   const [currentExercise, setCurrentExercise] = useState<string | null>(null)
+  const [currentGame, setCurrentGame] = useState<string | null>(null)
 
   const handleAudioToggle = (title: string) => {
     setPlayingAudio(playingAudio === title ? null : title)
   }
 
-  const renderContent = () => {
-    switch (activeTab) {
-      case "game":
+  const renderGameContent = () => {
+    switch (currentGame) {
+      case "fifteen-puzzle":
         return (
-          <div className="space-y-6">
+          <div className="space-y-4">
+            <Button
+              variant="outline"
+              onClick={() => setCurrentGame(null)}
+              className="mb-4"
+            >
+              ← Back to Games
+            </Button>
             <FifteenPuzzle />
+          </div>
+        )
+      case "snake":
+        return (
+          <div className="space-y-4">
+            <Button
+              variant="outline"
+              onClick={() => setCurrentGame(null)}
+              className="mb-4"
+            >
+              ← Back to Games
+            </Button>
             <SnakeGame />
+          </div>
+        )
+      case "tetris":
+        return (
+          <div className="space-y-4">
+            <Button
+              variant="outline"
+              onClick={() => setCurrentGame(null)}
+              className="mb-4"
+            >
+              ← Back to Games
+            </Button>
             <TetrisGame />
+          </div>
+        )
+      case "custom":
+        return (
+          <div className="space-y-4">
+            <Button
+              variant="outline"
+              onClick={() => setCurrentGame(null)}
+              className="mb-4"
+            >
+              ← Back to Games
+            </Button>
             <CustomGameManager />
           </div>
         )
+      default:
+        return (
+          <div className="space-y-4">
+            {gameOptions.map((game) => (
+              <Card key={game.id} className="p-4 hover:shadow-md transition-shadow">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-start space-x-4">
+                    <div className="p-3 bg-primary/10 rounded-lg">
+                      <game.icon className="h-6 w-6 text-primary" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-2 mb-1">
+                        <h3 className="font-medium text-foreground">{game.title}</h3>
+                     
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-2">{game.description}</p>
+               
+                    </div>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    className="ml-4"
+                    onClick={() => setCurrentGame(game.id)}
+                  >
+                    Play
+                  </Button>
+                </div>
+              </Card>
+            ))}
+          </div>
+        )
+    }
+  }
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case "game":
+        return renderGameContent()
 
       case "exercise":
         if (currentExercise === "breathing") {
           return (
             <div className="space-y-4">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => setCurrentExercise(null)}
                 className="mb-4"
               >
@@ -99,12 +210,12 @@ export function StressReliefTabs() {
             </div>
           )
         }
-        
+
         if (currentExercise === "progressive") {
           return (
             <div className="space-y-4">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => setCurrentExercise(null)}
                 className="mb-4"
               >
@@ -114,12 +225,12 @@ export function StressReliefTabs() {
             </div>
           )
         }
-        
+
         if (currentExercise === "stretches") {
           return (
             <div className="space-y-4">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => setCurrentExercise(null)}
                 className="mb-4"
               >
@@ -136,7 +247,9 @@ export function StressReliefTabs() {
                       <p className="text-sm text-muted-foreground mb-4">
                         Embedded stretching video would appear here
                       </p>
-                      <Button onClick={() => window.open("https://www.youtube.com/watch?v=1VYlOKUdylM", "_blank")}>
+                      <Button
+                        onClick={() => window.open("https://www.youtube.com/watch?v=1VYlOKUdylM", "_blank")}
+                      >
                         Watch on YouTube
                       </Button>
                     </div>
@@ -146,7 +259,7 @@ export function StressReliefTabs() {
             </div>
           )
         }
-        
+
         return (
           <div className="space-y-4">
             {exerciseActivities.map((activity) => (
@@ -157,9 +270,9 @@ export function StressReliefTabs() {
                     <p className="text-sm text-muted-foreground mb-2">{activity.description}</p>
                     <span className="text-xs text-secondary font-medium">{activity.duration}</span>
                   </div>
-                  <Button 
-                    size="sm" 
-                    variant="secondary" 
+                  <Button
+                    size="sm"
+                    variant="secondary"
                     className="ml-4"
                     onClick={() => setCurrentExercise(activity.component)}
                   >
@@ -209,7 +322,6 @@ export function StressReliefTabs() {
                     )}
                   </Button>
                 </div>
-                
                 {playingAudio === music.title && (
                   <div className="mt-4 p-3 bg-muted rounded-lg">
                     <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
@@ -243,9 +355,10 @@ export function StressReliefTabs() {
             key={tab.id}
             onClick={() => {
               setActiveTab(tab.id as TabType)
-              setCurrentExercise(null) // Reset exercise view when switching tabs
+              setCurrentExercise(null)
+              setCurrentGame(null) // Reset game view when switching tabs
             }}
-            className={`flex-1 flex items-center justify-center space-x-2 py-2 px-3 rounded-md text-sm font-medium transition-colors ${
+            className={`flex-1 flex items-center justify-center space-x-1 py-2 px-1 text-xs font-medium transition-colors ${
               activeTab === tab.id
                 ? "bg-background text-foreground shadow-sm"
                 : "text-muted-foreground hover:text-foreground"
