@@ -1,33 +1,31 @@
 "use client"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
 import { Card } from "@/components/ui/card"
-import { Bell, Mail } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { ReminderItem } from "./reminder-dashboard"
 
-export function MiniCalendar() {
+interface MiniCalendarProps {
+  reminders: ReminderItem[]
+  setReminders: (reminders: ReminderItem[]) => void
+}
+
+export function MiniCalendar({ reminders, setReminders }: MiniCalendarProps) {
   const today = new Date()
   const router = useRouter()
 
-  const [reminders, setReminders] = useState([
-    { text: "Take a deep breath 🌿", checked: false },
-    { text: "Drink 2L of water 💧", checked: false },
-    { text: "Write 3 lines in your journal ✍️", checked: false },
-  ])
-
   const handleToggle = (index: number) => {
-    const newReminders = [...reminders]
-    newReminders[index].checked = !newReminders[index].checked
-    setReminders(newReminders)
+    const updated = [...reminders]
+    updated[index].checked = !updated[index].checked
+    setReminders(updated)
   }
 
   const goToCalendar = () => {
-    router.push("/calendar") // Navigate to full calendar page
+    router.push("/calendar")
   }
 
   const goToTodaysPhotos = (e: React.MouseEvent) => {
-    e.stopPropagation() // Prevent card click
-    const dateStr = today.toISOString().split("T")[0] // YYYY-MM-DD
+    e.stopPropagation()
+    const dateStr = today.toISOString().split("T")[0]
     router.push(`/photos/${dateStr}`)
   }
 
@@ -37,11 +35,9 @@ export function MiniCalendar() {
       onClick={goToCalendar}
     >
       <div className="flex h-24">
-        {/* Left: date + small button */}
+        {/* Left: date + button */}
         <div className="flex flex-col items-center justify-start pr-4 border-r border-gray-200 dark:border-gray-700">
-          <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100">
-            {today.getDate()}
-          </h2>
+          <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100">{today.getDate()}</h2>
           <p className="text-sm text-gray-500 dark:text-gray-300 mb-2">
             {today.toLocaleString("en-US", { month: "short" })} {today.getFullYear()}
           </p>
@@ -55,6 +51,9 @@ export function MiniCalendar() {
 
         {/* Right: reminders */}
         <div className="flex-1 flex flex-col overflow-y-auto pl-4">
+          {reminders.length === 0 && (
+            <p className="text-gray-500 text-sm text-center">No reminders yet.</p>
+          )}
           {reminders.map((reminder, index) => (
             <label
               key={index}
@@ -62,15 +61,12 @@ export function MiniCalendar() {
             >
               <input
                 type="checkbox"
-                checked={reminder.checked}
-                onChange={(e) => {
-                  e.stopPropagation() // Prevent card click
-                  handleToggle(index)
-                }}
+                checked={reminder.checked || false}
+                onChange={(e) => { e.stopPropagation(); handleToggle(index) }}
                 className="mr-2"
               />
               <span className={reminder.checked ? "line-through text-gray-400" : ""}>
-                {reminder.text}
+                {reminder.title}
               </span>
             </label>
           ))}

@@ -12,6 +12,7 @@ export interface PostcardBackProps {
   onLocationChange: (value: string) => void
   isReadOnly?: boolean
   onSave?: () => void
+  
 }
 
 // Replace emojis with dog images

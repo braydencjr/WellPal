@@ -1,12 +1,33 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { BottomNavigation } from "@/components/bottom-navigation"
 import { Calendar } from "@/components/calendar-ui"
 import { Reminder } from "@/components/reminder"
+import { ReminderItem } from "@/components/reminder-dashboard"
 import { PostCardList } from "@/components/postcard-list"
 
-
 export default function CalendarPage() {
+  const [reminders, setReminders] = useState<ReminderItem[]>(() => {
+  // 🔹 Initialize state from localStorage immediately
+  if (typeof window !== "undefined") {
+    const stored = localStorage.getItem("reminders")
+    return stored ? JSON.parse(stored) : []
+  }
+  return []
+})
+
+  // 🔹 Load reminders from localStorage when page first loads
+  useEffect(() => {
+  localStorage.setItem("reminders", JSON.stringify(reminders))
+}, [reminders])
+
+  // 🔹 Save reminders to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem("reminders", JSON.stringify(reminders))
+    console.log("💾 Saved reminders:", reminders)
+  }, [reminders])
+
   return (
     <div className="min-h-screen bg-background">
       {/* White card container like Dashboard */}
@@ -21,15 +42,14 @@ export default function CalendarPage() {
           {/* Calendar inside the card */}
           <Calendar />
 
-           {/* Reminder below calendar */}
+          {/* Reminder below calendar */}
           <div className="mt-6">
-            <Reminder />
+            <Reminder reminders={reminders} setReminders={setReminders} />
           </div>
 
           <div className="mt-6 w-full">
             <PostCardList />
           </div>
-
         </div>
       </div>
 

@@ -1,34 +1,65 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Plus, Trash2, Calendar } from "lucide-react"
+import { Plus, Minus, Trash2 } from "lucide-react"
 
-export function Reminder() {
-  const [reminders, setReminders] = useState<{ title: string; description: string; date: string }[]>([])
+export interface ReminderItem {
+  title: string
+  description?: string
+  date: string
+}
+
+interface ReminderProps {
+  reminders?: ReminderItem[] // optional, defaults to []
+  setReminders: (reminders: ReminderItem[]) => void
+}
+
+export function Reminder({ reminders = [], setReminders }: ReminderProps) {
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [showInput, setShowInput] = useState(false)
 
+  // 🔹 Load reminders from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem("reminders")
+    if (saved) {
+      setReminders(JSON.parse(saved))
+    }
+  }, [setReminders])
+
+  // 🔹 Save reminders whenever they change
+  useEffect(() => {
+    localStorage.setItem("reminders", JSON.stringify(reminders))
+  }, [reminders])
+
+  const toggleInput = () => {
+    setShowInput(!showInput)
+    if (showInput) {
+      setTitle("")
+      setDescription("")
+    }
+  }
+
   const addReminder = () => {
     if (!title.trim()) return
-    setReminders([...reminders, { title, description, date: new Date().toLocaleDateString() }])
+    const newReminder: ReminderItem = {
+      title,
+      description,
+      date: new Date().toLocaleDateString(),
+    }
+    setReminders([...reminders, newReminder])
     setTitle("")
     setDescription("")
     setShowInput(false)
   }
 
-  const addTodayReminder = () => {
-    setTitle("Today's Reminder")
-    setDescription("")
-    setShowInput(true)
-  }
-
   const deleteReminder = (index: number) => {
-    setReminders(reminders.filter((_, i) => i !== index))
+    const updated = reminders.filter((_, i) => i !== index)
+    setReminders(updated)
   }
 
   return (
@@ -36,11 +67,13 @@ export function Reminder() {
       <CardHeader className="flex justify-between items-center">
         <CardTitle className="text-xl font-semibold">Reminders</CardTitle>
         <Button
-          onClick={addTodayReminder}
-          title="Add Reminder for Today"
-           className="bg-yellow-400 hover:bg-yellow-500 text-white rounded-full p-3 flex items-center justify-center"
+          onClick={toggleInput}
+          title={showInput ? "Cancel" : "Add Reminder"}
+          className={`text-white rounded-full p-3 flex items-center justify-center ${
+            showInput ? "bg-red-400 hover:bg-red-500" : "bg-yellow-400 hover:bg-yellow-500"
+          }`}
         >
-          <Plus size={20} />
+          {showInput ? <Minus size={20} /> : <Plus size={20} />}
         </Button>
       </CardHeader>
 
