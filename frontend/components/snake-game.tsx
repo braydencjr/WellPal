@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect, useCallback } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Play, Pause, RotateCcw, Trophy } from "lucide-react"
+import { Play, Pause, RotateCcw, Trophy, ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from "lucide-react"
 
 interface SnakeGameState {
   snake: { x: number; y: number }[]
@@ -18,8 +18,8 @@ export function SnakeGame() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const gameLoopRef = useRef<NodeJS.Timeout | null>(null)
   const [gameState, setGameState] = useState<SnakeGameState>({
-    snake: [{ x: 160, y: 160 }],
-    apple: { x: 320, y: 320 },
+    snake: [{ x: 80, y: 80 }],
+    apple: { x: 160, y: 160 },
     direction: { x: 16, y: 0 },
     score: 0,
     gameOver: false,
@@ -27,7 +27,7 @@ export function SnakeGame() {
   })
 
   const GRID_SIZE = 16
-  const CANVAS_SIZE = 400
+  const CANVAS_SIZE = 320
 
   const getRandomInt = (min: number, max: number) => {
     return Math.floor(Math.random() * (max - min)) + min
@@ -45,7 +45,7 @@ export function SnakeGame() {
   }, [])
 
   const resetGame = useCallback(() => {
-    const initialSnake = [{ x: 160, y: 160 }]
+    const initialSnake = [{ x: 80, y: 80 }]
     setGameState({
       snake: initialSnake,
       apple: generateApple(initialSnake),
@@ -72,7 +72,6 @@ export function SnakeGame() {
       const newSnake = [...prevState.snake]
       const head = { ...newSnake[0] }
 
-      // Move head
       head.x += prevState.direction.x
       head.y += prevState.direction.y
 
@@ -82,14 +81,10 @@ export function SnakeGame() {
       if (head.y < 0) head.y = CANVAS_SIZE - GRID_SIZE
       if (head.y >= CANVAS_SIZE) head.y = 0
 
-      // Check collision with self
+      // Collision with self
       const hasCollision = newSnake.some(segment => segment.x === head.x && segment.y === head.y)
       if (hasCollision) {
-        return {
-          ...prevState,
-          gameOver: true,
-          isPlaying: false
-        }
+        return { ...prevState, gameOver: true, isPlaying: false }
       }
 
       newSnake.unshift(head)
@@ -97,7 +92,6 @@ export function SnakeGame() {
       let newApple = prevState.apple
       let newScore = prevState.score
 
-      // Check if apple is eaten
       if (head.x === prevState.apple.x && head.y === prevState.apple.y) {
         newScore += 10
         newApple = generateApple(newSnake)
@@ -114,82 +108,66 @@ export function SnakeGame() {
     })
   }, [generateApple])
 
+  const updateDirection = (newDir: { x: number; y: number }) => {
+    setGameState(prevState => {
+      if (prevState.gameOver) return prevState
+      return { ...prevState, direction: newDir }
+    })
+  }
+
   const handleKeyPress = useCallback((e: KeyboardEvent) => {
+    if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', ' '].includes(e.key)) {
+      e.preventDefault()
+    }
     if (gameState.gameOver) return
 
-    setGameState(prevState => {
-      const newDirection = { ...prevState.direction }
-
-      switch (e.key) {
-        case 'ArrowLeft':
-          if (prevState.direction.x === 0) {
-            newDirection.x = -GRID_SIZE
-            newDirection.y = 0
-          }
-          break
-        case 'ArrowRight':
-          if (prevState.direction.x === 0) {
-            newDirection.x = GRID_SIZE
-            newDirection.y = 0
-          }
-          break
-        case 'ArrowUp':
-          if (prevState.direction.y === 0) {
-            newDirection.x = 0
-            newDirection.y = -GRID_SIZE
-          }
-          break
-        case 'ArrowDown':
-          if (prevState.direction.y === 0) {
-            newDirection.x = 0
-            newDirection.y = GRID_SIZE
-          }
-          break
-        case ' ':
-          e.preventDefault()
-          return {
-            ...prevState,
-            isPlaying: !prevState.isPlaying
-          }
-      }
-
-      return {
-        ...prevState,
-        direction: newDirection
-      }
-    })
-  }, [gameState.gameOver])
+    switch (e.key) {
+      case 'ArrowLeft':
+        if (gameState.direction.x === 0) updateDirection({ x: -GRID_SIZE, y: 0 })
+        break
+      case 'ArrowRight':
+        if (gameState.direction.x === 0) updateDirection({ x: GRID_SIZE, y: 0 })
+        break
+      case 'ArrowUp':
+        if (gameState.direction.y === 0) updateDirection({ x: 0, y: -GRID_SIZE })
+        break
+      case 'ArrowDown':
+        if (gameState.direction.y === 0) updateDirection({ x: 0, y: GRID_SIZE })
+        break
+      case ' ':
+        toggleGame()
+        break
+    }
+  }, [gameState.direction, gameState.gameOver])
 
   const draw = useCallback(() => {
     const canvas = canvasRef.current
     if (!canvas) return
-
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
-    // Clear canvas
-    ctx.fillStyle = 'black'
+    ctx.fillStyle = '#F5F5DC'
     ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE)
 
-    // Draw snake
-    ctx.fillStyle = 'green'
+    ctx.fillStyle = '#8B4513'
     gameState.snake.forEach(segment => {
       ctx.fillRect(segment.x, segment.y, GRID_SIZE - 1, GRID_SIZE - 1)
     })
 
-    // Draw apple
-    ctx.fillStyle = 'red'
+    ctx.save()
+    ctx.shadowColor = '#4ADE80'
+    ctx.shadowBlur = 4
+    ctx.fillStyle = '#6FC276'
     ctx.fillRect(gameState.apple.x, gameState.apple.y, GRID_SIZE - 1, GRID_SIZE - 1)
+    ctx.restore()
 
-    // Draw score
-    ctx.fillStyle = 'white'
+    ctx.fillStyle = '#654321'
     ctx.font = '16px monospace'
     ctx.fillText(`Score: ${gameState.score}`, 10, 20)
 
     if (gameState.gameOver) {
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.75)'
+      ctx.fillStyle = 'rgba(0,0,0,0.75)'
       ctx.fillRect(0, CANVAS_SIZE / 2 - 30, CANVAS_SIZE, 60)
-
       ctx.fillStyle = 'white'
       ctx.font = '24px monospace'
       ctx.textAlign = 'center'
@@ -198,9 +176,7 @@ export function SnakeGame() {
     }
   }, [gameState])
 
-  useEffect(() => {
-    draw()
-  }, [draw])
+  useEffect(() => { draw() }, [draw])
 
   useEffect(() => {
     if (gameState.isPlaying && !gameState.gameOver) {
@@ -211,7 +187,6 @@ export function SnakeGame() {
         gameLoopRef.current = null
       }
     }
-
     return () => {
       if (gameLoopRef.current) {
         clearInterval(gameLoopRef.current)
@@ -225,17 +200,15 @@ export function SnakeGame() {
     return () => window.removeEventListener('keydown', handleKeyPress)
   }, [handleKeyPress])
 
-  useEffect(() => {
-    resetGame()
-  }, [resetGame])
+  useEffect(() => { resetGame() }, [resetGame])
 
   return (
-    <Card className="p-4">
+    <Card className="p-4 max-w-sm mx-auto">
       <div className="flex items-center justify-between mb-4">
         <div>
           <h3 className="font-medium text-foreground">Snake Game</h3>
           <p className="text-sm text-muted-foreground">
-            Use arrow keys to control the snake
+            Use arrow keys or buttons to control the snake
           </p>
         </div>
         <div className="flex items-center space-x-2">
@@ -248,7 +221,8 @@ export function SnakeGame() {
           ref={canvasRef}
           width={CANVAS_SIZE}
           height={CANVAS_SIZE}
-          className="border border-border rounded-lg bg-black"
+          className="border-2 border-amber-200 rounded-lg"
+          style={{ backgroundColor: '#F5F5DC' }}
           tabIndex={0}
         />
       </div>
@@ -261,37 +235,47 @@ export function SnakeGame() {
         >
           {gameState.isPlaying ? (
             <>
-              <Pause className="h-4 w-4 mr-2" />
-              Pause
+              <Pause className="h-4 w-4 mr-2" /> Pause
             </>
           ) : (
             <>
-              <Play className="h-4 w-4 mr-2" />
-              {gameState.score > 0 ? "Resume" : "Start"}
+              <Play className="h-4 w-4 mr-2" /> {gameState.score > 0 ? "Resume" : "Start"}
             </>
           )}
         </Button>
-        
         <Button onClick={resetGame} variant="outline">
-          <RotateCcw className="h-4 w-4 mr-2" />
-          Reset
+          <RotateCcw className="h-4 w-4 mr-2" /> Reset
         </Button>
       </div>
 
-      <div className="text-center space-y-2">
-        <div className="text-sm text-muted-foreground">
-          Use arrow keys or WASD to move
+      {/* ✅ Mobile Touch Control Pad (Left & Right closer) */}
+      <div className="grid grid-cols-3 gap-0 justify-items-center mb-2">
+        {/* Up button centered */}
+        <div className="col-span-3 flex justify-center">
+          <Button onClick={() => updateDirection({ x: 0, y: -GRID_SIZE })} className="p-4">
+            <ArrowUp />
+          </Button>
         </div>
-        <div className="text-sm text-muted-foreground">
-          Press Space to pause/resume
+
+        {/* Left + Right without space between */}
+        <div className="col-span-3 gap-10 flex justify-center">
+          <Button onClick={() => updateDirection({ x: -GRID_SIZE, y: 0 })} className="p-4 ">
+            <ArrowLeft />
+          </Button>
+          <Button onClick={() => updateDirection({ x: GRID_SIZE, y: 0 })} className="p-4 ">
+            <ArrowRight />
+          </Button>
         </div>
-        {gameState.gameOver && (
-          <div className="flex items-center justify-center text-sm text-destructive">
-            <Trophy className="h-4 w-4 mr-1" />
-            Final Score: {gameState.score}
-          </div>
-        )}
+
+        {/* Down button centered */}
+        <div className="col-span-3 flex justify-center">
+          <Button onClick={() => updateDirection({ x: 0, y: GRID_SIZE })} className="p-4">
+            <ArrowDown />
+          </Button>
+        </div>
       </div>
+
+
     </Card>
   )
 }
