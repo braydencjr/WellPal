@@ -4,31 +4,97 @@ import type React from "react"
 
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Phone, MessageSquare, AlertTriangle, MapPin, Clock, Share2, Calendar } from "lucide-react"
+import { Phone, MessageSquare, AlertTriangle, MapPin, Clock, Share2, Calendar, ExternalLink } from "lucide-react"
 import { useState } from "react"
+import { useUser } from "@/contexts/user-context"
+import { EmergencyContactManager } from "@/components/emergency-contact-manager"
 
 const emergencyContacts = [
   {
     title: "Crisis Text Line",
-    description: "Text SUPPORT to 012-3456789 (hypothetical Malaysian crisis line number)",
+    description: "Text SUPPORT to 15999 (Befrienders Malaysia)",
     action: "Text Now",
     icon: MessageSquare,
     color: "text-destructive",
     bgColor: "bg-destructive/10",
     onClick: () => {
       try {
-        window.open("sms:0123456789?body=I need support.", "_blank")
+        window.open("sms:15999?body=I need support.", "_blank")
       } catch (error) {
         console.error("Error opening SMS:", error)
-        // Fallback: copy number to clipboard
-        navigator.clipboard.writeText("0123456789")
-        alert("Phone number copied to clipboard: 0123456789")
+        navigator.clipboard.writeText("15999")
+        alert("Phone number copied to clipboard: 15999")
+      }
+    },
+  },
+  {
+    title: "Call Now",
+    description: "Befrienders Malaysia - Available 24/7",
+    action: "Call Now", 
+    icon: Phone,
+    color: "text-destructive",
+    bgColor: "bg-destructive/10",
+    onClick: () => {
+      try {
+        window.open("tel:0376272929", "_blank")
+      } catch (error) {
+        console.error("Error opening phone:", error)
+        navigator.clipboard.writeText("03-7627 2929")
+        alert("Phone number copied to clipboard: 03-7627 2929")
+      }
+    },
+  },
+  {
+    title: "WhatsApp",
+    description: "Chat via WhatsApp",
+    action: "WhatsApp", 
+    icon: MessageSquare,
+    color: "text-green-600",
+    bgColor: "bg-green-100",
+    onClick: () => {
+      try {
+        window.open("https://wa.me/60376272929?text=I need support", "_blank")
+      } catch (error) {
+        console.error("Error opening WhatsApp:", error)
+        alert("Please contact via WhatsApp: +60 3-7627 2929")
+      }
+    },
+  },
+  {
+    title: "Facebook",
+    description: "Befrienders KL Official Page",
+    action: "Facebook",
+    icon: ExternalLink,
+    color: "text-blue-600", 
+    bgColor: "bg-blue-100",
+    onClick: () => {
+      try {
+        window.open("https://www.facebook.com/BefriendersKL", "_blank")
+      } catch (error) {
+        console.error("Error opening Facebook:", error)
+        alert("Visit: facebook.com/BefriendersKL")
+      }
+    },
+  },
+  {
+    title: "Instagram", 
+    description: "@befrienderskl",
+    action: "Instagram",
+    icon: ExternalLink,
+    color: "text-pink-600",
+    bgColor: "bg-pink-100", 
+    onClick: () => {
+      try {
+        window.open("https://www.instagram.com/befrienderskl", "_blank")
+      } catch (error) {
+        console.error("Error opening Instagram:", error)
+        alert("Visit: @befrienderskl on Instagram")
       }
     },
   },
   {
     title: "National Suicide Prevention Lifeline",
-    description: "Call 999 - Available 24/7",
+    description: "Call 999 - Emergency Services",
     action: "Call Now",
     icon: Phone,
     color: "text-destructive",
@@ -38,7 +104,6 @@ const emergencyContacts = [
         window.open("tel:999", "_blank")
       } catch (error) {
         console.error("Error opening phone:", error)
-        // Fallback: copy number to clipboard
         navigator.clipboard.writeText("999")
         alert("Phone number copied to clipboard: 999")
       }
@@ -49,31 +114,28 @@ const emergencyContacts = [
 const crisisWalkIn = {
   title: "Crisis Walk-in Hours",
   description: "Immediate support when you need it most",
-  location: "Counseling Center",
-  hours: "Daily: 9AM-4PM",
+  location: "University Malaya Counselling Center",
+  hours: "Daily: 9AM-4PM", 
   phone: "No appointment needed",
   onShare: async () => {
-    const googleMapsUrl = "https://www.google.com/maps/search/Counseling+Center+University+Malaya"
+    const googleMapsUrl = "https://www.google.com/maps/search/University+Malaya+Counselling+Center"
     if (navigator.share) {
       try {
         await navigator.share({
           title: "Crisis Walk-in Hours",
-          text: "Crisis Walk-in Hours - Immediate support when you need it most. Daily: 9AM-4PM at Counseling Center. No appointment needed.",
+          text: "Crisis Walk-in Hours - Immediate support when you need it most. Daily: 9AM-4PM at University Malaya Counselling Center. No appointment needed.",
           url: googleMapsUrl,
         })
       } catch (err) {
         console.log("Error sharing:", err)
-        // Fallback to opening in new tab
         window.open(googleMapsUrl, "_blank")
       }
     } else {
-      // Fallback to copying Google Maps URL
       try {
         await navigator.clipboard.writeText(googleMapsUrl)
         alert("Google Maps link copied to clipboard!")
       } catch (err) {
         console.log("Error copying to clipboard:", err)
-        // Final fallback: open in new tab
         window.open(googleMapsUrl, "_blank")
       }
     }
@@ -81,6 +143,7 @@ const crisisWalkIn = {
 }
 
 export function EmergencySupport() {
+  const { user } = useUser()
   const [showScheduling, setShowScheduling] = useState(false)
   const [appointmentForm, setAppointmentForm] = useState({
     name: "",
@@ -97,11 +160,17 @@ export function EmergencySupport() {
 
   const handleSubmitAppointment = (e: React.FormEvent) => {
     e.preventDefault()
-    // In a real app, this would send to a backend API
-    alert(
-      `Appointment request submitted for ${appointmentForm.name}. You will receive a confirmation email at ${appointmentForm.email} within 24 hours.`,
-    )
-    setShowScheduling(false)
+    
+    // Create calendar event
+    const startDate = new Date(`${appointmentForm.preferredDate}T${appointmentForm.preferredTime}`)
+    const endDate = new Date(startDate.getTime() + 60 * 60 * 1000) // 1 hour later
+    
+    const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=Mental Health Counseling Appointment&dates=${startDate.toISOString().replace(/[-:]/g, '').split('.')[0]}Z/${endDate.toISOString().replace(/[-:]/g, '').split('.')[0]}Z&details=Counseling appointment scheduled through WellPal&location=University Malaya Counselling Center`
+    
+    // Open Google Calendar
+    window.open(googleCalendarUrl, '_blank')
+    
+    // Reset form and close modal
     setAppointmentForm({
       name: "",
       email: "",
@@ -110,10 +179,16 @@ export function EmergencySupport() {
       preferredTime: "",
       urgency: "normal",
     })
+    setShowScheduling(false)
+    
+    alert("Appointment request submitted! Please check your calendar and contact the counseling center to confirm.")
   }
 
   return (
     <div className="space-y-4">
+      {/* Emergency Contact Manager */}
+      <EmergencyContactManager />
+      
       <div className="flex items-center gap-2 mb-4">
         <AlertTriangle className="w-5 h-5 text-destructive" />
         <h2 className="text-lg font-semibold text-foreground">Emergency Support</h2>

@@ -175,26 +175,23 @@ export function EnhancedPhotobook({ entries, onPostcardClick }: EnhancedPhotoboo
                     whileTap={{ scale: 0.98 }}
                   >
                     {/* Postcard Thumbnail */}
-                    <div className="aspect-[3/2] overflow-hidden bg-muted relative">
+                    <div className="aspect-[3/2] overflow-hidden bg-muted relative group">
                       <img
                         src={entry.imageDataUrl}
                         alt="Postcard"
                         className="w-full h-full object-cover"
                       />
-                      
-                      {/* Overlay with mood and date */}
+
+                      {/* Overlay with date */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-                      
+
                       <div className="absolute bottom-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                         <div className="text-white text-sm font-medium">
                           {format(parseISO(entry.dateISO), 'MMM d')}
                         </div>
                       </div>
-                      
-                      <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                        <div className="text-2xl">{entry.mood}</div>
-                      </div>
                     </div>
+
 
                     
                   </motion.div>
