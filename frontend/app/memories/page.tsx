@@ -7,6 +7,8 @@ import { EnhancedCameraModal } from "@/components/enhanced-camera-modal"
 import { EnhancedPostcardModal } from "@/components/enhanced-postcard-modal"
 import { EnhancedPhotobook } from "@/components/enhanced-photobook"
 import { EnhancedPostcardViewer } from "@/components/enhanced-postcard-viewer"
+import { DogPal } from "@/components/DogPal-animation"
+import { DogPalFloating } from "@/components/DogPalFloating"
 
 export default function MemoriesPage() {
   const [entries, setEntries] = useState<PostcardEntry[]>([])
@@ -64,7 +66,7 @@ export default function MemoriesPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-sm mx-auto bg-card pb-24">
+      <div className="max-w-sm mx-auto bg-card pb-24 relative">
         <div className="px-6 pt-10 pb-4">
           <h1 className="text-2xl font-semibold">Memories</h1>
           <p className="text-muted-foreground">Create and revisit your Dear Moments</p>
@@ -129,6 +131,8 @@ export default function MemoriesPage() {
           postcard={selectedPostcard}
         />
       </div>
+
+      <DogPalFloating image="/assets/petdog.gif" alt="WellPal" />
 
       <BottomNavigation activeTab="memories" />
     </div>
@@ -198,6 +202,9 @@ function InsightsSection() {
           </div>
         ))}
       </div>
+
+      
     </div>
+    
   )
 }
