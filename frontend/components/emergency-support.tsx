@@ -25,6 +25,7 @@ import {
   Facebook,
   Instagram,
   Plus,
+  Trash2,
 } from "lucide-react"
 
 export function EmergencySupport() {
@@ -167,9 +168,13 @@ export function EmergencySupport() {
     },
   ]
 
-  const renderContacts = (contacts: any[]) =>
+  const renderContacts = (contacts: any[], sectionTitle: string) =>
     contacts.map((contact, index) => {
       const Icon = contact.icon
+      const isCustomContact = sectionTitle === "University Services" ? 
+        index >= universityServices.length : 
+        sectionTitle === "Private / NGOs" ? index >= privateContacts.length : false
+      
       return (
         <Card key={`${contact.title}-${index}`} className="p-3">
           <div className="flex items-center justify-between">
@@ -224,11 +229,26 @@ export function EmergencySupport() {
                 )}
               </div>
             </div>
-            {contact.action && contact.onClick && (
-              <Button size="sm" variant="destructive" onClick={contact.onClick}>
-                {contact.action}
-              </Button>
-            )}
+            <div className="flex items-center gap-2">
+              {contact.action && contact.onClick && (
+                <Button size="sm" variant="destructive" onClick={contact.onClick}>
+                  {contact.action}
+                </Button>
+              )}
+              {isCustomContact && (
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  onClick={() => handleDeleteContact(
+                    contact.title, 
+                    sectionTitle === "University Services" ? 'university' : 'private'
+                  )}
+                  className="p-2"
+                >
+                  <Trash2 className="w-4 h-4 text-destructive" />
+                </Button>
+              )}
+            </div>
           </div>
         </Card>
       )
@@ -280,6 +300,13 @@ export function EmergencySupport() {
     setShowAddDialog(false)
   }
 
+  const handleDeleteContact = (contactTitle: string, sectionType: 'university' | 'private') => {
+    setCustomContacts(prev => ({
+      ...prev,
+      [sectionType]: prev[sectionType].filter(contact => contact.title !== contactTitle)
+    }))
+  }
+
   return (
   <div className="space-y-6">
     <div className="flex items-center gap-2 mb-4">
@@ -295,7 +322,7 @@ export function EmergencySupport() {
           {section.title}
         </h3>
         <div className="space-y-3">
-          {renderContacts(section.contacts)}
+          {renderContacts(section.contacts, section.title)}
         </div>
         
         {/* Add button only for University Services and Private/NGOs */}
