@@ -30,54 +30,42 @@ export function FifteenPuzzle() {
     const totalTiles = size * size
     const tiles = Array.from({ length: totalTiles - 1 }, (_, i) => i + 1)
     tiles.push(0) // 0 represents empty space
-    
-    const newState: PuzzleState = {
+    return {
       tiles,
       emptyIndex: totalTiles - 1,
       size,
       isComplete: false,
-      moves: 0
+      moves: 0,
     }
-    
-    setPuzzleState(newState)
-    return newState
   }
 
   const shufflePuzzle = (state: PuzzleState, moves: number = 300) => {
     let currentState = { ...state }
     const directions = [-1, 1, -state.size, state.size]
-    
+
     for (let i = 0; i < moves; i++) {
-      const validMoves = directions.filter(dir => {
+      const validMoves = directions.filter((dir) => {
         const newIndex = currentState.emptyIndex + dir
-        
-        // Check bounds
         if (newIndex < 0 || newIndex >= state.size * state.size) return false
-        
-        // Check horizontal wrapping
         if (dir === -1 && currentState.emptyIndex % state.size === 0) return false
         if (dir === 1 && currentState.emptyIndex % state.size === state.size - 1) return false
-        
         return true
       })
-      
+
       if (validMoves.length > 0) {
         const randomMove = validMoves[Math.floor(Math.random() * validMoves.length)]
         const newEmptyIndex = currentState.emptyIndex + randomMove
-        
-        // Swap tiles
         const newTiles = [...currentState.tiles]
         newTiles[currentState.emptyIndex] = newTiles[newEmptyIndex]
         newTiles[newEmptyIndex] = 0
-        
         currentState = {
           ...currentState,
           tiles: newTiles,
-          emptyIndex: newEmptyIndex
+          emptyIndex: newEmptyIndex,
         }
       }
     }
-    
+
     currentState.moves = 0
     return currentState
   }
@@ -87,16 +75,7 @@ export function FifteenPuzzle() {
     if (file && (file.type === "image/png" || file.type === "image/jpeg" || file.type === "image/jpg")) {
       const reader = new FileReader()
       reader.onload = (e) => {
-        const img = new Image()
-        img.onload = () => {
-          if (originalImageRef.current) {
-            originalImageRef.current.src = img.src
-            originalImageRef.current.width = img.width
-            originalImageRef.current.height = img.height
-          }
-          setSelectedImage(e.target?.result as string)
-        }
-        img.src = e.target?.result as string
+        setSelectedImage(e.target?.result as string)
       }
       reader.readAsDataURL(file)
     } else {
@@ -109,16 +88,14 @@ export function FifteenPuzzle() {
       alert("Please select an image first")
       return
     }
-    
     const sizeMap: { [key: string]: number } = {
       "3x3": 3,
       "4x4": 4,
       "5x5": 5,
       "6x6": 6,
       "7x7": 7,
-      "8x8": 8
+      "8x8": 8,
     }
-    
     const size = sizeMap[puzzleSize]
     const initialState = initializePuzzle(size)
     const shuffledState = shufflePuzzle(initialState)
@@ -128,72 +105,82 @@ export function FifteenPuzzle() {
 
   const moveTile = (clickedIndex: number) => {
     if (!puzzleState || puzzleState.isComplete) return
-    
     const { tiles, emptyIndex, size } = puzzleState
     const diff = clickedIndex - emptyIndex
-    
-    // Check if the clicked tile is adjacent to empty space
-    const isAdjacent = 
-      (Math.abs(diff) === 1 && Math.floor(clickedIndex / size) === Math.floor(emptyIndex / size)) || // horizontal
-      Math.abs(diff) === size // vertical
-    
+    const isAdjacent =
+      (Math.abs(diff) === 1 && Math.floor(clickedIndex / size) === Math.floor(emptyIndex / size)) ||
+      Math.abs(diff) === size
     if (!isAdjacent) return
-    
-    // Swap tiles
     const newTiles = [...tiles]
     newTiles[emptyIndex] = newTiles[clickedIndex]
     newTiles[clickedIndex] = 0
-    
-    // Check if puzzle is complete
     const isComplete = newTiles.slice(0, -1).every((tile, index) => tile === index + 1)
-    
     setPuzzleState({
       ...puzzleState,
       tiles: newTiles,
       emptyIndex: clickedIndex,
       moves: puzzleState.moves + 1,
-      isComplete
+      isComplete,
     })
   }
 
   const drawPuzzle = () => {
     const canvas = canvasRef.current
     const img = originalImageRef.current
-    
+  
     if (!canvas || !img || !puzzleState) return
-    
-    const ctx = canvas.getContext('2d')
+  
+    const ctx = canvas.getContext("2d")
     if (!ctx) return
-    
+  
     const { tiles, size } = puzzleState
     const tileSize = 300 / size
-    
+  
     canvas.width = 300
     canvas.height = 300
-    
+  
     ctx.clearRect(0, 0, 300, 300)
-    
+  
     tiles.forEach((tileNumber, index) => {
       if (tileNumber === 0) return // Skip empty space
-      
+  
       const col = index % size
       const row = Math.floor(index / size)
-      
+  
       const srcCol = (tileNumber - 1) % size
       const srcRow = Math.floor((tileNumber - 1) / size)
-      
+  
       ctx.drawImage(
         img,
-        (srcCol * img.width) / size, (srcRow * img.height) / size, img.width / size, img.height / size,
-        col * tileSize, row * tileSize, tileSize, tileSize
+        (srcCol * img.width) / size,
+        (srcRow * img.height) / size,
+        img.width / size,
+        img.height / size,
+        col * tileSize,
+        row * tileSize,
+        tileSize,
+        tileSize
       )
-      
+  
       // Draw border
-      ctx.strokeStyle = '#e2e8f0'
+      ctx.strokeStyle = "#e2e8f0"
       ctx.lineWidth = 2
       ctx.strokeRect(col * tileSize, row * tileSize, tileSize, tileSize)
+  
+      // Draw tile number (smaller, top-left)
+      ctx.fillStyle = "rgba(0,0,0,0.6)"
+      ctx.font = "${Math.floor(tileSize / 4)}px Arial"
+      ctx.textAlign = "left" // align left
+      ctx.textBaseline = "top" // align top
+      ctx.fillText(
+        tileNumber.toString(),
+        col * tileSize + 4, // small padding from left
+        row * tileSize + 4  // small padding from top
+      )
     })
   }
+  
+  
 
   useEffect(() => {
     if (puzzleState && selectedImage) {
@@ -214,22 +201,19 @@ export function FifteenPuzzle() {
         <div className="flex items-center justify-between mb-4">
           <div>
             <h3 className="font-medium text-foreground">Fifteen Sliding Puzzle</h3>
-            <p className="text-sm text-muted-foreground">
-              Upload an image and solve the sliding puzzle
-            </p>
+            <p className="text-sm text-muted-foreground">Upload an image and solve the sliding puzzle</p>
           </div>
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
               <Button size="sm">
                 <Upload className="h-4 w-4 mr-2" />
-                New Game
+                Upload
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-sm mx-auto">
               <DialogHeader>
                 <DialogTitle>Create Puzzle</DialogTitle>
               </DialogHeader>
-              
               <div className="space-y-4">
                 <div>
                   <Label>Upload Image</Label>
@@ -246,7 +230,6 @@ export function FifteenPuzzle() {
                     </div>
                   )}
                 </div>
-                
                 <div>
                   <Label>Puzzle Size</Label>
                   <Select value={puzzleSize} onValueChange={setPuzzleSize}>
@@ -263,7 +246,6 @@ export function FifteenPuzzle() {
                     </SelectContent>
                   </Select>
                 </div>
-                
                 <Button onClick={startGame} className="w-full">
                   Start Game
                 </Button>
@@ -271,13 +253,10 @@ export function FifteenPuzzle() {
             </DialogContent>
           </Dialog>
         </div>
-
         {puzzleState ? (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <div className="text-sm text-muted-foreground">
-                Moves: {puzzleState.moves}
-              </div>
+              <div className="text-sm text-muted-foreground">Moves: {puzzleState.moves}</div>
               <div className="flex space-x-2">
                 <Button size="sm" variant="outline" onClick={resetPuzzle}>
                   <Shuffle className="h-4 w-4" />
@@ -287,7 +266,6 @@ export function FifteenPuzzle() {
                 </Button>
               </div>
             </div>
-
             <div className="flex justify-center">
               <div className="relative">
                 <canvas
@@ -296,18 +274,15 @@ export function FifteenPuzzle() {
                   onClick={(e) => {
                     const rect = canvasRef.current?.getBoundingClientRect()
                     if (!rect || !puzzleState) return
-                    
                     const x = e.clientX - rect.left
                     const y = e.clientY - rect.top
                     const tileSize = 300 / puzzleState.size
                     const col = Math.floor(x / tileSize)
                     const row = Math.floor(y / tileSize)
                     const index = row * puzzleState.size + col
-                    
                     moveTile(index)
                   }}
                 />
-                
                 {puzzleState.isComplete && (
                   <div className="absolute inset-0 bg-black/50 rounded-lg flex items-center justify-center">
                     <div className="text-center text-white">
@@ -319,7 +294,6 @@ export function FifteenPuzzle() {
                 )}
               </div>
             </div>
-
             <div className="text-center text-sm text-muted-foreground">
               Click on tiles adjacent to the empty space to move them
             </div>
@@ -333,6 +307,8 @@ export function FifteenPuzzle() {
           </div>
         )}
       </Card>
+      {/* hidden original image element bound to selectedImage */}
+      <img ref={originalImageRef} src={selectedImage || ""} alt="original" style={{ display: "none" }} />
     </div>
   )
 }
