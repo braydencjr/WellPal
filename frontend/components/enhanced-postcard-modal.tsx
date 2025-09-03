@@ -104,9 +104,7 @@ export function EnhancedPostcardModal({ isOpen, onClose, onSave, imageUrl }: Enh
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                   >
-                    <div className="flex items-center gap-2 bg-black/70 text-white px-3 py-2 text-sm shadow-lg">
-                      <span>Swipe to rotate</span>
-                    </div>
+                    
                   </motion.div>
                 )}
               </AnimatePresence>

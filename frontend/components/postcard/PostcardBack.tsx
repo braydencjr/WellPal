@@ -11,7 +11,7 @@ export interface PostcardBackProps {
   location: string
   onLocationChange: (value: string) => void
   isReadOnly?: boolean
-  onSave: () => void
+  onSave?: () => void
 }
 
 // Replace emojis with dog images
@@ -40,7 +40,7 @@ export function PostcardBack({
 
   return (
     <motion.div
-      className="relative w-full aspect-[3/2] overflow-hidden rounded-xl bg-card lined-paper sparkle-shadow"
+      className="relative w-full aspect-[3/2] overflow-hidden bg-card lined-paper sparkle-shadow"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
