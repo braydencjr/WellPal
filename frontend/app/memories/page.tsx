@@ -8,7 +8,6 @@ import { EnhancedPostcardModal } from "@/components/enhanced-postcard-modal"
 import { EnhancedPhotobook } from "@/components/enhanced-photobook"
 import { EnhancedPostcardViewer } from "@/components/enhanced-postcard-viewer"
 import { DogPal } from "@/components/DogPal-animation"
-import { DogPalFloating } from "@/components/DogPalFloating"
 
 export default function MemoriesPage() {
   const [entries, setEntries] = useState<PostcardEntry[]>([])
@@ -131,8 +130,6 @@ export default function MemoriesPage() {
           postcard={selectedPostcard}
         />
       </div>
-
-      <DogPalFloating image="/assets/petdog.gif" alt="WellPal" />
 
       <BottomNavigation activeTab="memories" />
     </div>
