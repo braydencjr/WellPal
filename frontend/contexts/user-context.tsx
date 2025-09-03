@@ -17,7 +17,7 @@ export interface UserProfile {
   username: string
   memberSince: string
   university?: string
-  emergencyContact?: EmergencyContact
+  emergencyContacts: EmergencyContact[]
   notifications: {
     reminders: boolean
     wellnessCheckins: boolean
@@ -34,7 +34,7 @@ export interface UserProfile {
 interface UserContextType {
   user: UserProfile
   updateUser: (updates: Partial<UserProfile>) => void
-  updateEmergencyContact: (contact: EmergencyContact) => void
+  updateEmergencyContacts: (contacts: EmergencyContact[]) => void
   updateNotifications: (notifications: Partial<UserProfile['notifications']>) => void
   updatePrivacy: (privacy: Partial<UserProfile['privacy']>) => void
   resetPassword: (currentPassword: string, newPassword: string) => Promise<boolean>
@@ -48,6 +48,7 @@ const defaultUser: UserProfile = {
   username: 'alexj2024',
   memberSince: 'October 2024',
   university: 'University of Technology',
+  emergencyContacts: [],
   notifications: {
     reminders: true,
     wellnessCheckins: true,
@@ -70,8 +71,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
     setUser(prev => ({ ...prev, ...updates }))
   }
 
-  const updateEmergencyContact = (contact: EmergencyContact) => {
-    setUser(prev => ({ ...prev, emergencyContact: contact }))
+  const updateEmergencyContacts = (contacts: EmergencyContact[]) => {
+    setUser(prev => ({ ...prev, emergencyContacts: contacts }))
   }
 
   const updateNotifications = (notifications: Partial<UserProfile['notifications']>) => {
@@ -89,12 +90,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
   }
 
   const resetPassword = async (currentPassword: string, newPassword: string): Promise<boolean> => {
-    // Simulate API call
     return new Promise(resolve => {
-      setTimeout(() => {
-        // In a real app, this would make an API call
-        resolve(true)
-      }, 1000)
+      setTimeout(() => resolve(true), 1000)
     })
   }
 
@@ -102,7 +99,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     <UserContext.Provider value={{
       user,
       updateUser,
-      updateEmergencyContact,
+      updateEmergencyContacts,
       updateNotifications,
       updatePrivacy,
       resetPassword
@@ -114,8 +111,6 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
 export function useUser() {
   const context = useContext(UserContext)
-  if (context === undefined) {
-    throw new Error('useUser must be used within a UserProvider')
-  }
+  if (!context) throw new Error('useUser must be used within a UserProvider')
   return context
 }
