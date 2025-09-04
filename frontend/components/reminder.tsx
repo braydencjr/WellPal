@@ -14,27 +14,19 @@ export interface ReminderItem {
 }
 
 interface ReminderProps {
-  reminders?: ReminderItem[] // optional, defaults to []
+  reminders?: ReminderItem[] // only reminders for the selected date
   setReminders: (reminders: ReminderItem[]) => void
+  selectedDate: string
 }
 
-export function Reminder({ reminders = [], setReminders }: ReminderProps) {
+export function Reminder({
+  reminders = [],
+  setReminders,
+  selectedDate,
+}: ReminderProps) {
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [showInput, setShowInput] = useState(false)
-
-  // 🔹 Load reminders from localStorage on mount
-  useEffect(() => {
-    const saved = localStorage.getItem("reminders")
-    if (saved) {
-      setReminders(JSON.parse(saved))
-    }
-  }, [setReminders])
-
-  // 🔹 Save reminders whenever they change
-  useEffect(() => {
-    localStorage.setItem("reminders", JSON.stringify(reminders))
-  }, [reminders])
 
   const toggleInput = () => {
     setShowInput(!showInput)
@@ -49,7 +41,7 @@ export function Reminder({ reminders = [], setReminders }: ReminderProps) {
     const newReminder: ReminderItem = {
       title,
       description,
-      date: new Date().toLocaleDateString(),
+      date: selectedDate, // ✅ attach reminder to the selected date
     }
     setReminders([...reminders, newReminder])
     setTitle("")
@@ -65,12 +57,16 @@ export function Reminder({ reminders = [], setReminders }: ReminderProps) {
   return (
     <Card className="w-full max-w-md mx-auto mt-6 shadow-lg rounded-2xl h-[350px] flex flex-col">
       <CardHeader className="flex justify-between items-center">
-        <CardTitle className="text-xl font-semibold">Reminders</CardTitle>
+        <CardTitle className="text-xl font-semibold">
+          Reminders
+        </CardTitle>
         <Button
           onClick={toggleInput}
           title={showInput ? "Cancel" : "Add Reminder"}
           className={`text-white rounded-full p-3 flex items-center justify-center ${
-            showInput ? "bg-red-400 hover:bg-red-500" : "bg-yellow-400 hover:bg-yellow-500"
+            showInput
+              ? "bg-red-400 hover:bg-red-500"
+              : "bg-yellow-400 hover:bg-yellow-500"
           }`}
         >
           {showInput ? <Minus size={20} /> : <Plus size={20} />}
@@ -100,7 +96,9 @@ export function Reminder({ reminders = [], setReminders }: ReminderProps) {
         {/* List Section */}
         <div className="flex-1 overflow-y-auto space-y-3">
           {reminders.length === 0 && (
-            <p className="text-sm text-gray-500 text-center">No reminders yet.</p>
+            <p className="text-sm text-gray-500 text-center">
+              No reminders for this date.
+            </p>
           )}
           {reminders.map((reminder, index) => (
             <div
@@ -110,7 +108,9 @@ export function Reminder({ reminders = [], setReminders }: ReminderProps) {
               <div>
                 <p className="font-medium">{reminder.title}</p>
                 {reminder.description && (
-                  <p className="text-sm text-gray-500">{reminder.description}</p>
+                  <p className="text-sm text-gray-500">
+                    {reminder.description}
+                  </p>
                 )}
                 <p className="text-xs text-gray-400">{reminder.date}</p>
               </div>

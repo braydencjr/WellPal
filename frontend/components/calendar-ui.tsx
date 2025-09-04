@@ -2,9 +2,14 @@
 
 import { useState } from "react"
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react"
-import { getMostFrequentMoodEmoji, moodOptions } from "./emojilog"
+import { getMostFrequentMoodEmoji } from "./emojilog"
 
-export function Calendar() {
+type CalendarProps = {
+  selectedDate: string
+  onSelectDate: (date: string) => void
+}
+
+export function Calendar({ selectedDate, onSelectDate }: CalendarProps) {
   const [today] = useState(new Date())
   const [currentMonth, setCurrentMonth] = useState(today.getMonth())
   const [currentYear, setCurrentYear] = useState(today.getFullYear())
@@ -68,28 +73,32 @@ export function Calendar() {
           <div key={`empty-${i}`} />
         ))}
         {days.map((day) => {
-  const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`
-  const moodImg = getMostFrequentMoodEmoji(dateStr) // returns PNG path
+          const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`
+          const moodImg = getMostFrequentMoodEmoji(dateStr)
 
-  return (
-    <div
-      key={day}
-      className={`p-1.5 mt-1 rounded-full cursor-pointer text-sm transition flex items-center justify-center ${
-        isToday(day)
-          ? "bg-primary font-bold"
-          : "hover:bg-gray-200 dark:hover:bg-gray-700"
-      }`}
-      style={{ aspectRatio: "1/1" }}
-    >
-      {moodImg ? (
-        <img src={moodImg} alt="mood" className="w-6 h-6 object-contain" />
-      ) : (
-        <span>{day}</span> // fallback: show day if no mood
-      )}
-    </div>
-  )
-})}
+          const isSelected = selectedDate === dateStr
 
+          return (
+            <div
+              key={day}
+              onClick={() => onSelectDate(dateStr)}
+              className={`p-1.5 mt-1 rounded-full cursor-pointer text-sm transition flex items-center justify-center ${
+                isSelected
+                  ? "bg-yellow-400 font-bold"
+                  : isToday(day)
+                  ? "bg-primary font-bold"
+                  : "hover:bg-gray-200 dark:hover:bg-gray-700"
+              }`}
+              style={{ aspectRatio: "1/1" }}
+            >
+              {moodImg ? (
+                <img src={moodImg} alt="mood" className="w-6 h-6 object-contain" />
+              ) : (
+                <span>{day}</span>
+              )}
+            </div>
+          )
+        })}
       </div>
     </div>
   )
