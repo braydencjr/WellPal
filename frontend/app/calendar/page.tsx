@@ -3,57 +3,60 @@
 import { useState, useEffect } from "react"
 import { BottomNavigation } from "@/components/bottom-navigation"
 import { Calendar } from "@/components/calendar-ui"
-import { Reminder } from "@/components/reminder"
-import { ReminderItem } from "@/components/reminder-dashboard"
+import { Reminder, ReminderItem } from "@/components/reminder"
 import { PostCardList } from "@/components/postcard-list"
 
 export default function CalendarPage() {
   const [reminders, setReminders] = useState<ReminderItem[]>(() => {
-  // 🔹 Initialize state from localStorage immediately
-  if (typeof window !== "undefined") {
-    const stored = localStorage.getItem("reminders")
-    return stored ? JSON.parse(stored) : []
-  }
-  return []
-})
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("reminders")
+      return stored ? JSON.parse(stored) : []
+    }
+    return []
+  })
 
-  // 🔹 Load reminders from localStorage when page first loads
-  useEffect(() => {
-  localStorage.setItem("reminders", JSON.stringify(reminders))
-}, [reminders])
+  // ✅ Use consistent YYYY-MM-DD format
+  const [selectedDate, setSelectedDate] = useState(
+    new Date().toISOString().split("T")[0]
+  )
 
-  // 🔹 Save reminders to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem("reminders", JSON.stringify(reminders))
-    console.log("💾 Saved reminders:", reminders)
   }, [reminders])
 
   return (
     <div className="min-h-screen bg-background">
-      {/* White card container like Dashboard */}
       <div className="max-w-sm mx-auto bg-card">
         <div className="max-w-sm mx-auto px-6 pt-12 pb-24">
-          {/* Header */}
-          <h1 className="text-2xl font-semibold text-foreground mb-2">Calendar</h1>
-          <p className="text-muted-foreground leading-relaxed mb-6">
+          <h1 className="text-2xl font-semibold mb-2">Calendar</h1>
+          <p className="text-muted-foreground mb-6">
             Keep track of your schedule and important dates here.
           </p>
 
-          {/* Calendar inside the card */}
-          <Calendar />
+          {/* Calendar passes selection back */}
+          <Calendar
+            selectedDate={selectedDate}
+            onSelectDate={setSelectedDate}
+          />
 
-          {/* Reminder below calendar */}
+          {/* Show reminders for that date */}
           <div className="mt-6">
-            <Reminder reminders={reminders} setReminders={setReminders} />
+            <Reminder
+              reminders={reminders.filter((r) => r.date === selectedDate)}
+              setReminders={(newReminders) => {
+                // merge back with all reminders
+                const others = reminders.filter((r) => r.date !== selectedDate)
+                setReminders([...others, ...newReminders])
+              }}
+              selectedDate={selectedDate}
+            />
           </div>
 
           <div className="mt-6 w-full">
-            <PostCardList />
+            <PostCardList selectedDate={selectedDate} />
           </div>
         </div>
       </div>
-
-      {/* Bottom navigation bar */}
       <BottomNavigation activeTab="home" />
     </div>
   )
