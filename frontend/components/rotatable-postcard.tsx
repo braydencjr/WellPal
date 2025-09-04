@@ -33,6 +33,7 @@ export function RotatablePostcard({
   const [isDragging, setIsDragging] = useState(false)
   const [currentRotation, setCurrentRotation] = useState(0)
   const [targetRotation, setTargetRotation] = useState(0)
+  const [hasInteracted, setHasInteracted] = useState(false) // track if user ever rotated
 
   const containerRef = useRef<HTMLDivElement>(null)
   const rotationY = useMotionValue(0)
@@ -64,7 +65,8 @@ export function RotatablePostcard({
   // Handle drag start
   const handleDragStart = useCallback(() => {
     setIsDragging(true)
-  }, [])
+    if (!hasInteracted) setHasInteracted(true) // mark that user interacted
+  }, [hasInteracted])
 
   // Handle drag end (snap to nearest side)
   const handleDragEnd = useCallback(() => {
@@ -154,7 +156,7 @@ export function RotatablePostcard({
       </motion.div>
   
       {/* Rotation hint */}
-      {!isDragging && (
+      {!isDragging && !hasInteracted && (
         <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-center">
           <div className="text-xs text-muted-foreground bg-background/80 px-3 py-1 rounded-full backdrop-blur-sm border border-border/50">
             <div className="flex items-center gap-2">
@@ -165,14 +167,6 @@ export function RotatablePostcard({
         </div>
       )}
   
-      {/* Rotation indicator */}
-      {isDragging && (
-        <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-center">
-          <div className="text-xs text-primary bg-primary/10 px-3 py-1 rounded-full backdrop-blur-sm border border-primary/20">
-            <span>Rotating... {Math.round(currentRotation)}°</span>
-          </div>
-        </div>
-      )}
     </div>
   )
 }
