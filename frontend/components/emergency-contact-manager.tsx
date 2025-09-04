@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Phone, UserPlus, MessageSquare, Video } from "lucide-react"
+import { Phone, UserPlus, MessageSquare, Video, Trash2 } from "lucide-react"
 import { useUser } from "@/contexts/user-context"
 import type { EmergencyContact } from "@/contexts/user-context"
 
@@ -45,6 +45,11 @@ export function EmergencyContactManager() {
     setIsOpen(false)
   }
 
+  const handleDelete = (indexToDelete: number) => {
+    const updatedContacts = user.emergencyContacts.filter((_, idx) => idx !== indexToDelete)
+    updateEmergencyContacts(updatedContacts)
+  }
+
   // Detect app links
   const getAppLinks = (contact: EmergencyContact) => {
     const fullNumber = contact.countryCode + contact.phoneNumber
@@ -76,6 +81,14 @@ export function EmergencyContactManager() {
               </Button>
               <Button asChild>
                 <a href={links.whatsapp}><MessageSquare className="h-4 w-4" /></a>
+              </Button>
+              <Button 
+                variant="outline"
+                size="icon"
+                onClick={() => handleDelete(idx)}
+                className="h-10 w-10 hover:bg-destructive hover:text-destructive-foreground"
+              >
+                <Trash2 className="h-4 w-4" />
               </Button>
               {links.facetime && (
                 <Button asChild>

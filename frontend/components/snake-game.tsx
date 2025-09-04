@@ -10,6 +10,7 @@ interface SnakeGameState {
   apple: { x: number; y: number }
   direction: { x: number; y: number }
   score: number
+  highScore: number
   gameOver: boolean
   isPlaying: boolean
 }
@@ -17,11 +18,29 @@ interface SnakeGameState {
 export function SnakeGame() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const gameLoopRef = useRef<NodeJS.Timeout | null>(null)
+  
+  // Get high score from localStorage
+  const getHighScore = () => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('snakeHighScore')
+      return stored ? parseInt(stored, 10) : 0
+    }
+    return 0
+  }
+
+  // Save high score to localStorage
+  const saveHighScore = (score: number) => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('snakeHighScore', score.toString())
+    }
+  }
+
   const [gameState, setGameState] = useState<SnakeGameState>({
     snake: [{ x: 80, y: 80 }],
     apple: { x: 160, y: 160 },
     direction: { x: 16, y: 0 },
     score: 0,
+    highScore: getHighScore(),
     gameOver: false,
     isPlaying: false
   })
@@ -46,14 +65,15 @@ export function SnakeGame() {
 
   const resetGame = useCallback(() => {
     const initialSnake = [{ x: 80, y: 80 }]
-    setGameState({
+    setGameState(prev => ({
       snake: initialSnake,
       apple: generateApple(initialSnake),
       direction: { x: GRID_SIZE, y: 0 },
       score: 0,
+      highScore: prev.highScore, // Keep the existing high score
       gameOver: false,
       isPlaying: false
-    })
+    }))
   }, [generateApple])
 
   const toggleGame = () => {
@@ -75,16 +95,37 @@ export function SnakeGame() {
       head.x += prevState.direction.x
       head.y += prevState.direction.y
 
-      // Wrap around screen
-      if (head.x < 0) head.x = CANVAS_SIZE - GRID_SIZE
-      if (head.x >= CANVAS_SIZE) head.x = 0
-      if (head.y < 0) head.y = CANVAS_SIZE - GRID_SIZE
-      if (head.y >= CANVAS_SIZE) head.y = 0
+      // Wall collision detection (instead of wrapping around)
+      if (head.x < 0 || head.x >= CANVAS_SIZE || head.y < 0 || head.y >= CANVAS_SIZE) {
+        // Update high score if current score is higher
+        let newHighScore = prevState.highScore
+        if (prevState.score > prevState.highScore) {
+          newHighScore = prevState.score
+          saveHighScore(prevState.score)
+        }
+        return { 
+          ...prevState, 
+          gameOver: true, 
+          isPlaying: false,
+          highScore: newHighScore
+        }
+      }
 
       // Collision with self
       const hasCollision = newSnake.some(segment => segment.x === head.x && segment.y === head.y)
       if (hasCollision) {
-        return { ...prevState, gameOver: true, isPlaying: false }
+        // Update high score if current score is higher
+        let newHighScore = prevState.highScore
+        if (prevState.score > prevState.highScore) {
+          newHighScore = prevState.score
+          saveHighScore(prevState.score)
+        }
+        return { 
+          ...prevState, 
+          gameOver: true, 
+          isPlaying: false,
+          highScore: newHighScore
+        }
       }
 
       newSnake.unshift(head)
@@ -164,14 +205,24 @@ export function SnakeGame() {
     ctx.fillStyle = '#654321'
     ctx.font = '16px monospace'
     ctx.fillText(`Score: ${gameState.score}`, 10, 20)
+    ctx.fillText(`High: ${gameState.highScore}`, 10, 40)
 
     if (gameState.gameOver) {
       ctx.fillStyle = 'rgba(0,0,0,0.75)'
-      ctx.fillRect(0, CANVAS_SIZE / 2 - 30, CANVAS_SIZE, 60)
+      ctx.fillRect(0, CANVAS_SIZE / 2 - 40, CANVAS_SIZE, 80)
       ctx.fillStyle = 'white'
       ctx.font = '24px monospace'
       ctx.textAlign = 'center'
-      ctx.fillText('GAME OVER!', CANVAS_SIZE / 2, CANVAS_SIZE / 2)
+      ctx.fillText('GAME OVER!', CANVAS_SIZE / 2, CANVAS_SIZE / 2 - 10)
+      ctx.font = '16px monospace'
+      ctx.fillText(`Final Score: ${gameState.score}`, CANVAS_SIZE / 2, CANVAS_SIZE / 2 + 10)
+      
+      // Show if new high score achieved
+      if (gameState.score === gameState.highScore && gameState.score > 0) {
+        ctx.fillStyle = '#FFD700'
+        ctx.fillText('🎉 NEW HIGH SCORE! 🎉', CANVAS_SIZE / 2, CANVAS_SIZE / 2 + 30)
+      }
+      
       ctx.textAlign = 'left'
     }
   }, [gameState])
@@ -208,11 +259,19 @@ export function SnakeGame() {
         <div>
           <h3 className="font-medium text-foreground">Snake Game</h3>
           <p className="text-sm text-muted-foreground">
-            Use arrow keys or buttons to control the snake
+            Hit walls = Game Over! Use arrow keys or buttons.
           </p>
         </div>
-        <div className="flex items-center space-x-2">
-          <span className="text-sm font-medium">Score: {gameState.score}</span>
+        <div className="text-right">
+          <div className="flex items-center justify-end space-x-2">
+            <span className="text-sm font-medium">Score: {gameState.score}</span>
+          </div>
+          <div className="flex items-center justify-end space-x-2">
+            <Trophy className="h-4 w-4 text-yellow-500" />
+            <span className="text-sm font-bold text-yellow-700 bg-yellow-100 px-2 py-1 rounded border border-yellow-300">
+              High: {gameState.highScore}
+            </span>
+          </div>
         </div>
       </div>
 
