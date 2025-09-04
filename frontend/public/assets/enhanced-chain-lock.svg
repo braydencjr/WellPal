@@ -1,0 +1,55 @@
+<svg width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="100%" height="100%" fill="#F7F6F0"/>
+  
+  <!-- Chain Group -->
+  <defs>
+    <!-- Gradient for chain links -->
+    <linearGradient id="linkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFD54F"/>
+      <stop offset="100%" stop-color="#FFA000"/>
+    </linearGradient>
+    
+    <!-- Single chain link shape -->
+    <symbol id="chainLink" viewBox="0 0 100 40">
+      <rect x="2" y="2" width="96" height="36" rx="10" fill="url(#linkGrad)" stroke="#B8860B" stroke-width="2"/>
+    </symbol>
+  </defs>
+  
+  <!-- Draw two diagonal chains by repeating links -->
+  <!-- Top-left to bottom-right -->
+  <g id="chainTLBR" stroke="none" fill="none">
+    <use href="#chainLink" x="10" y="10"/>
+    <use href="#chainLink" x="60" y="60" transform="rotate(45 110 90)"/>
+    <use href="#chainLink" x="110" y="110" transform="rotate(45 160 140)"/>
+    <use href="#chainLink" x="160" y="160" transform="rotate(45 210 190)"/>
+    <use href="#chainLink" x="210" y="210" transform="rotate(45 260 240)"/>
+  </g>
+  
+  <!-- Bottom-left to top-right -->
+  <g id="chainBLTR" stroke="none" fill="none">
+    <use href="#chainLink" x="10" y="260" transform="rotate(-45 60 280)"/>
+    <use href="#chainLink" x="60" y="210" transform="rotate(-45 110 230)"/>
+    <use href="#chainLink" x="110" y="160" transform="rotate(-45 160 180)"/>
+    <use href="#chainLink" x="160" y="110" transform="rotate(-45 210 130)"/>
+    <use href="#chainLink" x="210" y="60" transform="rotate(-45 260 80)"/>
+  </g>
+  
+  <!-- Padlock Gradients -->
+  <defs>
+    <linearGradient id="padGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFD740"/>
+      <stop offset="100%" stop-color="#FF8F00"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Padlock Body -->
+  <rect x="110" y="115" width="80" height="90" rx="15" fill="url(#padGrad)" stroke="#B8860B" stroke-width="3"/>
+  
+  <!-- Shackle -->
+  <path d="M130 115 A30 30 0 0 1 230 115 L230 135 A10 10 0 0 0 120 135 Z" fill="none" stroke="#FFB300" stroke-width="8"/>
+  
+  <!-- Keyhole -->
+  <rect x="148" y="155" width="10" height="25" rx="5" fill="#333"/>
+  <circle cx="153" cy="155" r="5" fill="#333"/>
+</svg>

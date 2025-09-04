@@ -103,7 +103,11 @@ export function StressReliefTabs() {
   const [currentTime, setCurrentTime] = useState<{ [key: string]: number }>({})
   
   // Locked games state - Snake, Tetris, and Custom Games are locked
-  const lockedGames = ["snake", "tetris", "custom"]
+  const [lockedGames, setLockedGames] = useState<string[]>(["snake", "tetris", "custom"])
+  
+  const unlockGame = (gameId: string) => {
+    setLockedGames(prev => prev.filter(id => id !== gameId))
+  }
   
   // Simulate audio playback progression
   useEffect(() => {
@@ -186,9 +190,13 @@ export function StressReliefTabs() {
             >
               ← Back to Games
             </Button>
-            <LockWrapper isLocked={lockedGames.includes("snake")}>
+            {lockedGames.includes("snake") ? (
+              <LockWrapper isLocked={true}>
+                <SnakeGame />
+              </LockWrapper>
+            ) : (
               <SnakeGame />
-            </LockWrapper>
+            )}
           </div>
         )
       case "tetris":
@@ -201,9 +209,13 @@ export function StressReliefTabs() {
             >
               ← Back to Games
             </Button>
-            <LockWrapper isLocked={lockedGames.includes("tetris")}>
+            {lockedGames.includes("tetris") ? (
+              <LockWrapper isLocked={true}>
+                <TetrisGame />
+              </LockWrapper>
+            ) : (
               <TetrisGame />
-            </LockWrapper>
+            )}
           </div>
         )
       case "custom":
@@ -216,9 +228,13 @@ export function StressReliefTabs() {
             >
               ← Back to Games
             </Button>
-            <LockWrapper isLocked={lockedGames.includes("custom")}>
+            {lockedGames.includes("custom") ? (
+              <LockWrapper isLocked={true}>
+                <CustomGameManager />
+              </LockWrapper>
+            ) : (
               <CustomGameManager />
-            </LockWrapper>
+            )}
           </div>
         )
       default:
@@ -243,6 +259,23 @@ export function StressReliefTabs() {
                           )}
                         </div>
                         <p className="text-sm text-muted-foreground mb-2">{game.description}</p>
+                        {isLocked && (
+                          <div className="mt-2 space-y-2">
+                            <p className="text-xs text-yellow-700 font-medium">
+                              {game.id === "snake" && "Unlock after 3 days login streak"}
+                              {game.id === "tetris" && "Unlock after 7 days login streak"}
+                              {game.id === "custom" && "Unlock after you purchase Pro version"}
+                            </p>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="bg-yellow-50 border-yellow-300 text-yellow-700 hover:bg-yellow-100"
+                              onClick={() => unlockGame(game.id)}
+                            >
+                              Unlock
+                            </Button>
+                          </div>
+                        )}
                       </div>
                     </div>
                     <Button
