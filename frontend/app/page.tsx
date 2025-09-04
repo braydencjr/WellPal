@@ -1,14 +1,9 @@
-import { auth } from "@clerk/nextjs/server"
-import { redirect } from "next/navigation"
+import { WelcomeHeader } from "@/components/welcome-header"
 
-export default async function HomePage() {
-  const { userId } = await auth()
-  
-  if (userId) {
-    // User is signed in, redirect to dashboard
-    redirect("/dashboard")
-  } else {
-    // User is not signed in, redirect to welcome page
-    redirect("/auth/welcome")
-  }
+export default function HomePage() {
+  return (
+    <div className="min-h-screen bg-background">
+      <WelcomeHeader />
+    </div>
+  )
 }

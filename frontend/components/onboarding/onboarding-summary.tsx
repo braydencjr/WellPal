@@ -1,75 +1,51 @@
 "use client"
 
 import { useState } from "react"
+import { useUser } from "@clerk/nextjs"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { CheckCircle, User, Bell, Shield, Palette, Calendar, ChevronRight } from "lucide-react"
 import { useRouter } from "next/navigation"
-
-// Mock data - in a real app, this would come from the onboarding state/context
-const mockUserData = {
-  name: "John Doe",
-  university: "University of Example",
-  faculty: "Computer Science",
-  studyYear: "3rd Year",
-  timeZone: "UTC-05:00",
-  language: "English",
-  moodCheckInTime: "09:00",
-  notifications: {
-    reminders: true,
-    encouragement: true,
-    studyBreaks: false,
-  },
-  accessibility: {
-    largerText: false,
-    highContrast: false,
-    dyslexiaFriendlyFont: true,
-    reduceMotion: false,
-    screenReaderHints: false,
-  },
-  privacy: {
-    dataUsage: true,
-    termsAndPrivacy: true,
-    anonymizedAnalytics: true,
-  },
-  theme: "Calming Green",
-  backgroundStyle: "Solid Colors",
-  integrations: {
-    calendarSync: true,
-    healthDataSync: false,
-  },
-}
+import { useOnboarding } from "@/contexts/onboarding-context"
 
 export function OnboardingSummary() {
   const [isLoading, setIsLoading] = useState(false)
+  const { user } = useUser()
+  const { data } = useOnboarding()
   const router = useRouter()
 
   const handleStartApp = async () => {
+    if (!user) return
+
     setIsLoading(true)
 
     try {
-      // Simulate final setup completion
+      // Save onboarding data to Clerk metadata
+      await user.update({
+        unsafeMetadata: {
+          ...user.unsafeMetadata,
+          onboardingData: data,
+          onboardingCompleted: true,
+        }
+      })
+
+      // Wait a moment for the update to process
       await new Promise((resolve) => setTimeout(resolve, 1500))
-      router.push("/onboarding/understand-user-better")
+      
+      // Navigate to dashboard
+      router.push("/dashboard")
     } catch (error) {
       console.error("Error completing onboarding:", error)
+      // Still navigate to dashboard even if metadata update fails
+      router.push("/dashboard")
     } finally {
       setIsLoading(false)
     }
   }
 
-  const enabledNotifications = Object.entries(mockUserData.notifications)
-    .filter(([_, enabled]) => enabled)
-    .map(([key, _]) => key)
-
-  const enabledAccessibility = Object.entries(mockUserData.accessibility)
-    .filter(([_, enabled]) => enabled)
-    .map(([key, _]) => key)
-
-  const enabledIntegrations = Object.entries(mockUserData.integrations)
-    .filter(([_, enabled]) => enabled)
-    .map(([key, _]) => key)
+  // Get user's first name for personalization
+  const firstName = user?.firstName || user?.fullName?.split(" ")[0] || "User"
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -97,7 +73,7 @@ export function OnboardingSummary() {
               </div>
               <div>
                 <CardTitle className="text-2xl font-semibold">
-                  You're all set, {mockUserData.name.split(" ")[0]}!
+                  You're all set, {firstName}!
                 </CardTitle>
                 <CardDescription className="mt-2">
                   Your personalized mental wellness experience is ready. Here's a summary of your preferences.
@@ -107,153 +83,134 @@ export function OnboardingSummary() {
           </Card>
 
           {/* Personal Information */}
-          <Card className="border-0 shadow-sm">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <User className="w-5 h-5 text-primary" />
-                Personal Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">University:</span>
-                <span className="font-medium">{mockUserData.university}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Faculty:</span>
-                <span className="font-medium">{mockUserData.faculty}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Year:</span>
-                <span className="font-medium">{mockUserData.studyYear}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Language:</span>
-                <span className="font-medium">{mockUserData.language}</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Notifications & Schedule */}
-          <Card className="border-0 shadow-sm">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Bell className="w-5 h-5 text-primary" />
-                Notifications & Schedule
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Daily check-in:</span>
-                <span className="font-medium">{mockUserData.moodCheckInTime}</span>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground mb-2">Enabled notifications:</p>
-                <div className="flex flex-wrap gap-2">
-                  {enabledNotifications.map((notification) => (
-                    <Badge key={notification} variant="secondary" className="text-xs">
-                      {notification === "reminders" && "Gentle Reminders"}
-                      {notification === "encouragement" && "Encouragement"}
-                      {notification === "studyBreaks" && "Study Breaks"}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Privacy & Security */}
-          <Card className="border-0 shadow-sm">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Shield className="w-5 h-5 text-primary" />
-                Privacy & Security
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <div className="flex items-center gap-2 text-sm">
-                <CheckCircle className="w-4 h-4 text-green-500" />
-                <span>Data usage consent provided</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm">
-                <CheckCircle className="w-4 h-4 text-green-500" />
-                <span>Terms & Privacy Policy accepted</span>
-              </div>
-              {mockUserData.privacy.anonymizedAnalytics && (
-                <div className="flex items-center gap-2 text-sm">
-                  <CheckCircle className="w-4 h-4 text-green-500" />
-                  <span>Anonymized analytics enabled</span>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Accessibility */}
-          {enabledAccessibility.length > 0 && (
+          {data.personalInfo && (
             <Card className="border-0 shadow-sm">
               <CardHeader className="pb-3">
                 <CardTitle className="text-lg flex items-center gap-2">
                   <User className="w-5 h-5 text-primary" />
-                  Accessibility
+                  Personal Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {data.personalInfo.university && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">University:</span>
+                    <span className="font-medium">{data.personalInfo.university}</span>
+                  </div>
+                )}
+                {data.personalInfo.faculty && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Faculty:</span>
+                    <span className="font-medium">{data.personalInfo.faculty}</span>
+                  </div>
+                )}
+                {data.personalInfo.year && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Year:</span>
+                    <span className="font-medium">{data.personalInfo.year}</span>
+                  </div>
+                )}
+                {data.personalInfo.language && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Language:</span>
+                    <span className="font-medium">{data.personalInfo.language}</span>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Mental Health Information */}
+          {data.mentalHealth && (
+            <Card className="border-0 shadow-sm">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Shield className="w-5 h-5 text-primary" />
+                  Mental Health Support
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex items-center gap-2 text-sm">
+                  <CheckCircle className="w-4 h-4 text-green-500" />
+                  <span>
+                    {data.mentalHealth.hasMentalHealth 
+                      ? "Mental health support enabled" 
+                      : "General wellness support enabled"
+                    }
+                  </span>
+                </div>
+                {data.mentalHealth.conditions && data.mentalHealth.conditions.length > 0 && (
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-2">Support areas:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {data.mentalHealth.conditions.map((condition, index) => (
+                        <Badge key={index} variant="secondary" className="text-xs">
+                          {condition}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Accessibility Features */}
+          {data.accessibility && (Object.values(data.accessibility).some(v => v === true)) && (
+            <Card className="border-0 shadow-sm">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <User className="w-5 h-5 text-primary" />
+                  Accessibility Features
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="flex flex-wrap gap-2">
-                  {enabledAccessibility.map((feature) => (
-                    <Badge key={feature} variant="outline" className="text-xs">
-                      {feature === "largerText" && "Larger Text"}
-                      {feature === "highContrast" && "High Contrast"}
-                      {feature === "dyslexiaFriendlyFont" && "Dyslexia-Friendly Font"}
-                      {feature === "reduceMotion" && "Reduce Motion"}
-                      {feature === "screenReaderHints" && "Screen Reader Hints"}
-                    </Badge>
-                  ))}
+                <div className="space-y-2">
+                  {data.accessibility.hasDyslexia && (
+                    <div className="flex items-center gap-2 text-sm">
+                      <CheckCircle className="w-4 h-4 text-green-500" />
+                      <span>Dyslexia-friendly features enabled</span>
+                    </div>
+                  )}
+                  {data.accessibility.hasColorBlindness && (
+                    <div className="flex items-center gap-2 text-sm">
+                      <CheckCircle className="w-4 h-4 text-green-500" />
+                      <span>Color accessibility features enabled</span>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
           )}
 
           {/* Personalization */}
-          <Card className="border-0 shadow-sm">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Palette className="w-5 h-5 text-primary" />
-                Personalization
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Theme:</span>
-                <span className="font-medium">{mockUserData.theme}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Background:</span>
-                <span className="font-medium">{mockUserData.backgroundStyle}</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Integrations */}
-          {enabledIntegrations.length > 0 && (
+          {data.preferences && (
             <Card className="border-0 shadow-sm">
               <CardHeader className="pb-3">
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-primary" />
-                  Integrations
+                  <Palette className="w-5 h-5 text-primary" />
+                  Personalization
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  {enabledIntegrations.map((integration) => (
-                    <div key={integration} className="flex items-center gap-2 text-sm">
-                      <CheckCircle className="w-4 h-4 text-green-500" />
-                      <span>
-                        {integration === "calendarSync" && "Google Calendar Sync"}
-                        {integration === "healthDataSync" && "Health Data Sync"}
-                      </span>
+              <CardContent className="space-y-2">
+                {data.preferences.calmingTheme && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Theme:</span>
+                    <span className="font-medium">{data.preferences.calmingTheme}</span>
+                  </div>
+                )}
+                {data.preferences.notificationPreferences && data.preferences.notificationPreferences.length > 0 && (
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-2">Notifications:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {data.preferences.notificationPreferences.map((pref, index) => (
+                        <Badge key={index} variant="outline" className="text-xs">
+                          {pref}
+                        </Badge>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           )}

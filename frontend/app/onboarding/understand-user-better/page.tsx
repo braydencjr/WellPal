@@ -20,7 +20,7 @@ export default function UnderstandUserBetterPage() {
     if (step < messages.length - 1) {
       setStep(step + 1)
     } else {
-      router.push("/onboarding/color-blind") // ✅ navigate when last step
+      router.push("/onboarding/mental-health") // Navigate to mental health questions
     }
   }
 

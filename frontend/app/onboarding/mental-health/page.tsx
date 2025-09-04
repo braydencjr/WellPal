@@ -3,9 +3,11 @@
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { QuestionLayout } from "@/components/onboarding/QuestionLayout"
+import { useOnboarding } from "@/contexts/onboarding-context"
 
 export default function MentalHealthPage() {
   const router = useRouter()
+  const { updateMentalHealth } = useOnboarding()
   const [selected, setSelected] = useState("")
   const [showOptions, setShowOptions] = useState(false)
   const [otherText, setOtherText] = useState("")
@@ -16,17 +18,35 @@ export default function MentalHealthPage() {
       setShowOptions(true)
     } else {
       // Second Yes → submit answer & navigate
-      const answer = selected === "other" ? otherText : selected
-      console.log("Selected:", answer)
-      router.push("/dashboard")
+      const conditions = []
+      if (selected === "other" && otherText) {
+        conditions.push(otherText)
+      } else if (selected) {
+        conditions.push(selected)
+      }
+      
+      updateMentalHealth({
+        hasMentalHealth: true,
+        conditions: conditions
+      })
+      
+      router.push("/onboarding/dyslexia")
     }
+  }
+
+  const handleNo = () => {
+    updateMentalHealth({
+      hasMentalHealth: false,
+      conditions: []
+    })
+    router.push("/onboarding/dyslexia")
   }
 
   return (
     <QuestionLayout
       question="Do you have any mental health issues?"
       onYes={handleYes}
-      onNo={() => router.push("/dashboard")}
+      onNo={handleNo}
     >
       {showOptions && (
         <div className="mt-4 space-y-3">
