@@ -1,23 +1,23 @@
-import { SignIn } from "@clerk/nextjs"
+"use client"
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { SignInForm } from "@/components/auth/signin-form"
 
 export default function SignInPage() {
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="max-w-sm w-full">
-        <SignIn 
-          appearance={{
-            elements: {
-              rootBox: "mx-auto",
-              card: "border-0 shadow-lg",
-              headerTitle: "text-2xl font-semibold",
-              headerSubtitle: "text-muted-foreground",
-            }
-          }}
-          routing="path"
-          path="/auth/signin"
-          redirectUrl="/dashboard"
-          signUpUrl="/auth/signup"
-        />
+        <Card className="border-0 shadow-lg">
+          <CardHeader className="text-center space-y-2">
+            <CardTitle className="text-2xl font-semibold">Welcome back</CardTitle>
+            <CardDescription>Sign in to continue your wellness journey</CardDescription>
+          </CardHeader>
+
+          <CardContent>
+            {/* Your custom Clerk-powered form */}
+            <SignInForm />
+          </CardContent>
+        </Card>
       </div>
     </div>
   )
