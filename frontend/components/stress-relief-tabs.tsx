@@ -243,7 +243,7 @@ export function StressReliefTabs() {
             {gameOptions.map((game) => {
               const isLocked = lockedGames.includes(game.id)
               return (
-                <Card key={game.id} className={`p-4 transition-shadow ${isLocked ? 'opacity-70 border-yellow-400' : 'hover:shadow-md'}`}>
+                <Card key={game.id} className={`p-4 transition-shadow ${isLocked ? 'opacity-70 border-yellow-400 relative' : 'hover:shadow-md'}`}>
                   <div className="flex items-center justify-between">
                     <div className="flex items-start space-x-4">
                       <div className="p-3 bg-primary/10 rounded-lg">
@@ -259,23 +259,6 @@ export function StressReliefTabs() {
                           )}
                         </div>
                         <p className="text-sm text-muted-foreground mb-2">{game.description}</p>
-                        {isLocked && (
-                          <div className="mt-2 space-y-2">
-                            <p className="text-xs text-yellow-700 font-medium">
-                              {game.id === "snake" && "Unlock after 3 days login streak"}
-                              {game.id === "tetris" && "Unlock after 7 days login streak"}
-                              {game.id === "custom" && "Unlock after you purchase Pro version"}
-                            </p>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="bg-yellow-50 border-yellow-300 text-yellow-700 hover:bg-yellow-100"
-                              onClick={() => unlockGame(game.id)}
-                            >
-                              Unlock
-                            </Button>
-                          </div>
-                        )}
                       </div>
                     </div>
                     <Button
@@ -288,6 +271,25 @@ export function StressReliefTabs() {
                       {isLocked ? "🔒 Locked" : "Play"}
                     </Button>
                   </div>
+                  
+                  {/* Overlay for locked games */}
+                  {isLocked && (
+                    <div className="absolute inset-0 rounded-lg flex flex-col items-center justify-center space-y-3 z-10">
+                      <p className="text-sm text-yellow-700 font-medium text-center px-4 bg-white/90 rounded-lg py-2">
+                        {game.id === "snake" && "Unlock after 3 days login streak"}
+                        {game.id === "tetris" && "Unlock after 7 days login streak"}
+                        {game.id === "custom" && "Unlock after you purchase Pro version"}
+                      </p>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="bg-yellow-50 border-yellow-300 text-yellow-700 hover:bg-yellow-100 shadow-lg"
+                        onClick={() => unlockGame(game.id)}
+                      >
+                        Unlock
+                      </Button>
+                    </div>
+                  )}
                 </Card>
               )
             })}
