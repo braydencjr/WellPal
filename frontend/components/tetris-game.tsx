@@ -18,6 +18,7 @@ interface TetrisGameState {
   playfield: (TetrominoType | 0)[][]
   currentPiece: Tetromino | null
   score: number
+  highScore: number
   lines: number
   level: number
   gameOver: boolean
@@ -28,10 +29,28 @@ export function TetrisGame() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const gameLoopRef = useRef<NodeJS.Timeout | null>(null)
   const dropCounterRef = useRef(0)
+  
+  // Get high score from localStorage
+  const getHighScore = () => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('tetrisHighScore')
+      return stored ? parseInt(stored, 10) : 0
+    }
+    return 0
+  }
+
+  // Save high score to localStorage
+  const saveHighScore = (score: number) => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('tetrisHighScore', score.toString())
+    }
+  }
+
   const [gameState, setGameState] = useState<TetrisGameState>({
     playfield: Array(20).fill(null).map(() => Array(10).fill(0)),
     currentPiece: null,
     score: 0,
+    highScore: getHighScore(),
     lines: 0,
     level: 1,
     gameOver: false,
@@ -119,15 +138,16 @@ export function TetrisGame() {
   }, [])
 
   const resetGame = useCallback(() => {
-    setGameState({
+    setGameState(prev => ({
       playfield: Array(20).fill(null).map(() => Array(10).fill(0)),
       currentPiece: createPiece(getRandomPiece()),
       score: 0,
+      highScore: prev.highScore, // Keep the existing high score
       lines: 0,
       level: 1,
       gameOver: false,
       isPlaying: false
-    })
+    }))
     dropCounterRef.current = 0
   }, [createPiece, getRandomPiece])
 
@@ -147,7 +167,20 @@ export function TetrisGame() {
           return { ...prevState, currentPiece: movedPiece }
         } else {
           const { newPlayfield, gameOver, linesCleared } = placePiece(prevState.currentPiece, prevState.playfield)
-          if (gameOver) return { ...prevState, gameOver: true, isPlaying: false }
+          if (gameOver) {
+            // Update high score if current score is higher
+            let newHighScore = prevState.highScore
+            if (prevState.score > prevState.highScore) {
+              newHighScore = prevState.score
+              saveHighScore(prevState.score)
+            }
+            return { 
+              ...prevState, 
+              gameOver: true, 
+              isPlaying: false,
+              highScore: newHighScore
+            }
+          }
           const newScore = prevState.score + (linesCleared * 100 * prevState.level)
           const newLines = prevState.lines + linesCleared
           const newLevel = Math.floor(newLines / 10) + 1
@@ -264,7 +297,13 @@ export function TetrisGame() {
           <p className="text-sm text-muted-foreground">Classic block-stacking puzzle game</p>
         </div>
         <div className="text-right text-sm">
-          <div>Score: {gameState.score}</div>
+          <div className="font-medium">Score: {gameState.score}</div>
+          <div className="flex items-center justify-end">
+            <Trophy className="h-4 w-4 text-yellow-500 mr-1" />
+            <span className="font-bold text-yellow-700 bg-yellow-100 px-2 py-1 rounded text-sm">
+              High: {gameState.highScore}
+            </span>
+          </div>
           <div>Lines: {gameState.lines}</div>
           <div>Level: {gameState.level}</div>
         </div>
@@ -316,8 +355,15 @@ export function TetrisGame() {
         <div className="text-sm text-muted-foreground">Up: Rotate • Down: Drop</div>
         <div className="text-sm text-muted-foreground">Space: Pause/Resume</div>
         {gameState.gameOver && (
-          <div className="flex items-center justify-center text-sm text-destructive">
-            <Trophy className="h-4 w-4 mr-1" /> Final Score: {gameState.score}
+          <div className="text-center space-y-1">
+            <div className="flex items-center justify-center text-sm text-destructive">
+              <Trophy className="h-4 w-4 mr-1" /> Final Score: {gameState.score}
+            </div>
+            {gameState.score === gameState.highScore && gameState.score > 0 && (
+              <div className="text-sm text-yellow-600 font-medium">
+                🎉 NEW HIGH SCORE! 🎉
+              </div>
+            )}
           </div>
         )}
       </div>
