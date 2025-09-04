@@ -1,8 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/nextjs"
-import { WelcomeHeader } from "@/components/welcome-header"
+import { SignedIn, SignedOut, RedirectToSignIn, useUser } from "@clerk/nextjs"
 import { QuickActions } from "@/components/quick-actions"
 import { BottomNavigation } from "@/components/bottom-navigation"
 import { MusicPlayerCard } from "@/components/music-player-card"
@@ -11,6 +10,24 @@ import { CameraButton } from "@/components/camera-button-dashboard"
 import { DogPal } from "@/components/DogPal-animation"
 import { DogChatReminder } from "@/components/dogpal-chat"
 import { ReminderItem } from "@/components/reminder-dashboard"
+
+function DashboardGreeting() {
+  const { user } = useUser()
+  const currentHour = new Date().getHours()
+  const greeting = currentHour < 12 ? "Good morning" : currentHour < 18 ? "Good afternoon" : "Good evening"
+  
+  // Get first name from Clerk user
+  const firstName = user?.firstName || user?.fullName?.split(' ')[0] || "there"
+
+  return (
+    <div className="mb-6">
+      <h1 className="text-2xl font-semibold text-foreground mb-2">{greeting}, {firstName}!</h1>
+      <p className="text-muted-foreground leading-relaxed">
+        "Preserve Your Moments with WellPal"
+      </p>
+    </div>
+  )
+}
 
 export default function DashboardPage() {
   const [hasTakenPhotoToday, setHasTakenPhotoToday] = useState(false)
@@ -38,7 +55,7 @@ export default function DashboardPage() {
         <div className="min-h-screen bg-background">
           <div className="max-w-sm mx-auto bg-card relative"> 
             <div className="max-w-sm mx-auto px-6 pt-8 pb-24">
-              <WelcomeHeader />
+              <DashboardGreeting />
               <div className="flex flex-row items-center gap-2 mb-4">
                 <CameraButton />
                 <MusicPlayerCard />

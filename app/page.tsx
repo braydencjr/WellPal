@@ -1,16 +1,16 @@
-"use client"
-
 import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/nextjs"
 import { redirect } from "next/navigation"
+import WelcomePage from "./auth/welcome/page"
 
-export default function OnboardingPage() {
+export default function HomePage() {
   return (
     <>
       <SignedIn>
-        {redirect("/onboarding/personal-info")}
+        {redirect("/dashboard")}
       </SignedIn>
+      
       <SignedOut>
-        <RedirectToSignIn />
+        <WelcomePage />
       </SignedOut>
     </>
   )

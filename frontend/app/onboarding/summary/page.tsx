@@ -1,9 +1,19 @@
-import { OnboardingSummary } from "@/components/onboarding/onboarding-summary"
+"use client"
+
+import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/nextjs"
+import { AccessibilityForm } from "@/components/onboarding/accessibility-form"
 
 export default function SummaryPage() {
   return (
-    <div className="min-h-screen bg-background">
-      <OnboardingSummary />
-    </div>
+    <>
+      <SignedIn>
+        <div className="min-h-screen bg-background">
+          <AccessibilityForm />
+        </div>
+      </SignedIn>
+      <SignedOut>
+        <RedirectToSignIn />
+      </SignedOut>
+    </>
   )
 }

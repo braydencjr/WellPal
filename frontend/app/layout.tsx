@@ -4,6 +4,7 @@ import { Poppins } from "next/font/google"
 import { ClerkProvider } from "@clerk/nextjs"
 import { ThemeProvider } from "@/components/theme-provider"
 import { UserProvider } from "@/contexts/user-context"
+import { OnboardingProvider } from "@/contexts/onboarding-context"
 import "./globals.css"
 import "./animations.css"
 
@@ -50,9 +51,11 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange={false}
           >
-            <UserProvider>
-              {children}
-            </UserProvider>
+            <OnboardingProvider>
+              <UserProvider>
+                {children}
+              </UserProvider>
+            </OnboardingProvider>
           </ThemeProvider>
         </body>
       </html>

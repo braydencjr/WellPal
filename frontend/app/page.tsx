@@ -1,9 +1,5 @@
-import { WelcomeHeader } from "@/components/welcome-header"
+import WelcomePage from "./auth/welcome/page"
 
 export default function HomePage() {
-  return (
-    <div className="min-h-screen bg-background">
-      <WelcomeHeader />
-    </div>
-  )
+  return <WelcomePage />
 }

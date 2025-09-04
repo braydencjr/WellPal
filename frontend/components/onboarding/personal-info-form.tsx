@@ -12,57 +12,31 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { ChevronLeft } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { useOnboarding } from "@/contexts/onboarding-context"
+import { useUser } from "@clerk/nextjs"
 
+const languages = ["English", "Malay", "Chinese", "Tamil", "Other"]
 
-const languages = [
-  "English",
-  "Malay",
-  "Chinese",
-  "Spanish",
-  "French",
-  "German",
-  "Italian",
-  "Portuguese",
-  "Dutch",
-  "Russian",
-  "Japanese",
-  "Korean",
-  "Arabic",
-  "Hindi",
-  "Other",
-]
+const universities = ["NUS", "NTU", "SMU", "SUSS", "SIT", "Other"]
 
-const studyYears = ["1st Year", "2nd Year", "3rd Year", "4th Year", "5th Year", "Graduate", "PhD", "Other"]
+const years = ["Year 1", "Year 2", "Year 3", "Year 4", "Graduate"]
 
-const countries = [
-  "United States",
-  "Canada",
-  "United Kingdom",
-  "Australia",
-  "Germany",
-  "France",
-  "Spain",
-  "Italy",
-  "Netherlands",
-  "Sweden",
-  "Norway",
-  "Denmark",
-  "Other",
-]
+const countries = ["Singapore", "Malaysia", "United States", "United Kingdom", "Australia", "Other"]
 
 export function PersonalInfoForm() {
+  const { data, updateData } = useOnboarding()
+  const { user } = useUser()
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    university: "",
-    faculty: "",
-    studyYear: "",
-    timeZone: "",
-    language: "",
-    emergencyContactName: "",
-    emergencyContactPhone: "",
-    crisisHotlineCountry: "",
-    includeEmergencyContact: false,
+    firstName: data.personalInfo?.firstName || "",
+    lastName: data.personalInfo?.lastName || "",
+    university: data.personalInfo?.university || "",
+    faculty: data.personalInfo?.faculty || "",
+    year: data.personalInfo?.year || "",
+    language: data.personalInfo?.language || "",
+    crisisHotlineCountry: data.personalInfo?.crisisHotlineCountry || "",
+    emergencyContactName: data.personalInfo?.emergencyContactName || "",
+    emergencyContactPhone: data.personalInfo?.emergencyContactPhone || "",
+    includeEmergencyContact: !!data.personalInfo?.emergencyContactName,
   })
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
   const [isLoading, setIsLoading] = useState(false)
@@ -87,12 +61,8 @@ export function PersonalInfoForm() {
       newErrors.faculty = "Faculty/Major is required"
     }
 
-    if (!formData.studyYear) {
-      newErrors.studyYear = "Year of study is required"
-    }
-
-    if (!formData.timeZone) {
-      newErrors.timeZone = "Time zone is required"
+    if (!formData.year) {
+      newErrors.year = "Year of study is required"
     }
 
     if (!formData.language) {
@@ -116,20 +86,57 @@ export function PersonalInfoForm() {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    if (!validateForm()) {
+      return
+    }
+
     setIsLoading(true)
-    setErrors({}) // clear errors if any
 
-    // here you could add validation logic
-    // e.g. if (!formData.firstName) { setErrors({ firstName: "Required" }); setIsLoading(false); return; }
+    try {
+      // Save to onboarding context
+      const personalInfoData = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        university: formData.university,
+        faculty: formData.faculty,
+        year: formData.year,
+        language: formData.language,
+        crisisHotlineCountry: formData.crisisHotlineCountry,
+        emergencyContactName: formData.includeEmergencyContact ? formData.emergencyContactName : "",
+        emergencyContactPhone: formData.includeEmergencyContact ? formData.emergencyContactPhone : "",
+      }
 
-    // simulate "saving" delay
-    setTimeout(() => {
-      // ✅ navigate after "saving"
-      router.push("/onboarding/preferences")
+      updateData({
+        personalInfo: personalInfoData
+      })
+
+      // Save to Clerk metadata (partial onboarding data)
+      if (user) {
+        const updatedData = {
+          ...data,
+          personalInfo: personalInfoData
+        }
+        
+        await user.update({
+          unsafeMetadata: {
+            ...user.unsafeMetadata,
+            onboardingData: updatedData
+          }
+        })
+      }
+
+      // Navigate to preferences
+      setTimeout(() => {
+        router.push("/onboarding/preferences")
+        setIsLoading(false)
+      }, 1000)
+    } catch (error) {
+      console.error("Error saving personal info:", error)
       setIsLoading(false)
-    }, 1000)
+    }
   }
 
   const updateFormData = (field: string, value: string | boolean) => {
@@ -149,8 +156,7 @@ export function PersonalInfoForm() {
         </Button>
         <div className="flex space-x-2">
           <div className="h-2 w-8 rounded-full bg-primary"></div>
-          <div className="h-2 w-8 rounded-full bg-primary"></div>
-          <div className="h-2 w-8 rounded-full bg-primary"></div>
+          <div className="h-2 w-8 rounded-full bg-muted"></div>
           <div className="h-2 w-8 rounded-full bg-muted"></div>
           <div className="h-2 w-8 rounded-full bg-muted"></div>
         </div>
@@ -167,12 +173,6 @@ export function PersonalInfoForm() {
 
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
-                {errors.general && (
-                  <Alert variant="destructive">
-                    <AlertDescription>{errors.general}</AlertDescription>
-                  </Alert>
-                )}
-
                 {/* Name Fields */}
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-2">
@@ -202,16 +202,51 @@ export function PersonalInfoForm() {
                 {/* University */}
                 <div className="space-y-2">
                   <Label htmlFor="university">University</Label>
-                  <Input
-                    id="university"
-                    placeholder="University of Example"
-                    value={formData.university}
-                    onChange={(e) => updateFormData("university", e.target.value)}
-                    className={errors.university ? "border-destructive" : ""}
-                  />
+                  <Select value={formData.university} onValueChange={(value) => updateFormData("university", value)}>
+                    <SelectTrigger className={errors.university ? "border-destructive" : ""}>
+                      <SelectValue placeholder="Select your university" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {universities.map((uni) => (
+                        <SelectItem key={uni} value={uni}>
+                          {uni}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   {errors.university && <p className="text-xs text-destructive">{errors.university}</p>}
                 </div>
 
+                {/* Faculty */}
+                <div className="space-y-2">
+                  <Label htmlFor="faculty">Faculty/Major</Label>
+                  <Input
+                    id="faculty"
+                    placeholder="e.g. Computer Science"
+                    value={formData.faculty}
+                    onChange={(e) => updateFormData("faculty", e.target.value)}
+                    className={errors.faculty ? "border-destructive" : ""}
+                  />
+                  {errors.faculty && <p className="text-xs text-destructive">{errors.faculty}</p>}
+                </div>
+
+                {/* Year */}
+                <div className="space-y-2">
+                  <Label htmlFor="year">Year of Study</Label>
+                  <Select value={formData.year} onValueChange={(value) => updateFormData("year", value)}>
+                    <SelectTrigger className={errors.year ? "border-destructive" : ""}>
+                      <SelectValue placeholder="Select your year" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {years.map((year) => (
+                        <SelectItem key={year} value={year}>
+                          {year}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {errors.year && <p className="text-xs text-destructive">{errors.year}</p>}
+                </div>
 
                 {/* Preferred Language */}
                 <div className="space-y-2">
@@ -292,7 +327,7 @@ export function PersonalInfoForm() {
                       <Label htmlFor="emergencyContactPhone">Emergency Contact Phone</Label>
                       <Input
                         id="emergencyContactPhone"
-                        placeholder="+1 (555) 123-4567"
+                        placeholder="+65 9123 4567"
                         value={formData.emergencyContactPhone}
                         onChange={(e) => updateFormData("emergencyContactPhone", e.target.value)}
                         className={errors.emergencyContactPhone ? "border-destructive" : ""}

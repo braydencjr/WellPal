@@ -11,6 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { ChevronLeft, Bell, Calendar, Palette, Smartphone, Volume2 } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { useOnboarding } from "@/contexts/onboarding-context"
+import { useUser } from "@clerk/nextjs"
 
 const timeOptions = [
   "08:00",
@@ -57,6 +59,8 @@ const backgroundStyles = [
 ]
 
 export function UserPreferencesForm() {
+  const { data, updateData } = useOnboarding()
+  const { user } = useUser()
   const [preferences, setPreferences] = useState({
     moodCheckInTime: "09:00",
     notifications: {
@@ -66,8 +70,8 @@ export function UserPreferencesForm() {
     },
     calendarSync: false,
     healthDataSync: false,
-    theme: "green",
-    backgroundStyle: "solid",
+    theme: "light",
+    backgroundStyle: "default",
     haptics: true,
     sounds: false,
   })
@@ -81,6 +85,39 @@ const handleSubmit = async (e: React.FormEvent) => {
   setError("")
 
   try {
+    // Save preferences to onboarding context
+    const preferencesData = {
+      calmingTheme: preferences.backgroundStyle,
+      theme: preferences.theme,
+      notificationPreferences: Object.entries(preferences.notifications)
+        .filter(([_, enabled]) => enabled)
+        .map(([key, _]) => key),
+      moodCheckInTime: preferences.moodCheckInTime,
+      calendarSync: preferences.calendarSync,
+      healthDataSync: preferences.healthDataSync,
+      haptics: preferences.haptics,
+      sounds: preferences.sounds,
+    }
+    
+    updateData({
+      preferences: preferencesData
+    })
+
+    // Save to Clerk metadata (partial onboarding data)
+    if (user) {
+      const updatedData = {
+        ...data,
+        preferences: preferencesData
+      }
+      
+      await user.update({
+        unsafeMetadata: {
+          ...user.unsafeMetadata,
+          onboardingData: updatedData
+        }
+      })
+    }
+    
     // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1000))
     router.push("/onboarding/summary")
@@ -258,31 +295,96 @@ const handleSubmit = async (e: React.FormEvent) => {
                 </div>
               </div>
 
-              {/* Theme Selection */}
-              <div className="space-y-4">
+              {/* Theme and Background Selection */}
+              <div className="space-y-6">
                 <div className="flex items-center gap-2">
-                  <Palette className="w-5 h-5 text-primary" />
-                  <Label className="text-sm font-medium">Choose Your Theme</Label>
+                  <Palette className="w-5 h-5 text-orange-600" />
+                  <Label className="text-lg font-semibold">Personalization</Label>
                 </div>
 
-                <div className="grid gap-3">
-                  {themeOptions.map((theme) => (
-                    <div
-                      key={theme.id}
-                      className={`p-3 rounded-lg border cursor-pointer transition-colors ${
-                        preferences.theme === theme.id ? "border-primary bg-primary/5" : "border-border bg-card/50"
+                {/* Theme Selection */}
+                <div className="space-y-4">
+                  <Label className="text-base font-medium">🎨 Theme</Label>
+                  <div className="grid grid-cols-3 gap-3">
+                    <div 
+                      className={`p-4 rounded-xl border-2 cursor-pointer text-center transition-all ${
+                        preferences.theme === "light" ? "border-orange-500 bg-orange-50" : "border-gray-200"
                       }`}
-                      onClick={() => updatePreference("theme", theme.id)}
+                      onClick={() => updatePreference("theme", "light")}
                     >
-                      <div className="flex items-center gap-3">
-                        <div className={`w-6 h-6 rounded-full ${theme.color}`}></div>
-                        <div>
-                          <p className="text-sm font-medium">{theme.name}</p>
-                          <p className="text-xs text-muted-foreground">{theme.description}</p>
-                        </div>
-                      </div>
+                      <div className="mb-2">☀️</div>
+                      <div className="text-sm font-medium">Light</div>
+                      <div className="text-xs text-gray-500">Bright and clean</div>
                     </div>
-                  ))}
+                    
+                    <div 
+                      className={`p-4 rounded-xl border-2 cursor-pointer text-center transition-all ${
+                        preferences.theme === "dark" ? "border-orange-500 bg-orange-50" : "border-gray-200"
+                      }`}
+                      onClick={() => updatePreference("theme", "dark")}
+                    >
+                      <div className="mb-2">🌙</div>
+                      <div className="text-sm font-medium">Dark</div>
+                      <div className="text-xs text-gray-500">Easy on the eyes</div>
+                    </div>
+                    
+                    <div 
+                      className={`p-4 rounded-xl border-2 cursor-pointer text-center transition-all ${
+                        preferences.theme === "auto" ? "border-orange-500 bg-orange-50" : "border-gray-200"
+                      }`}
+                      onClick={() => updatePreference("theme", "auto")}
+                    >
+                      <div className="mb-2">📱</div>
+                      <div className="text-sm font-medium">Auto</div>
+                      <div className="text-xs text-gray-500">Follows system</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Calming Background */}
+                <div className="space-y-4">
+                  <Label className="text-base font-medium">Calming Background</Label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div 
+                      className={`p-4 rounded-xl border-2 cursor-pointer text-center transition-all ${
+                        preferences.backgroundStyle === "default" ? "border-orange-500" : "border-gray-200"
+                      }`}
+                      onClick={() => updatePreference("backgroundStyle", "default")}
+                    >
+                      <div className="h-12 w-full rounded-lg bg-gray-200 mb-2"></div>
+                      <div className="text-sm font-medium">Default</div>
+                    </div>
+                    
+                    <div 
+                      className={`p-4 rounded-xl border-2 cursor-pointer text-center transition-all ${
+                        preferences.backgroundStyle === "softGreen" ? "border-orange-500" : "border-gray-200"
+                      }`}
+                      onClick={() => updatePreference("backgroundStyle", "softGreen")}
+                    >
+                      <div className="h-12 w-full rounded-lg bg-green-200 mb-2"></div>
+                      <div className="text-sm font-medium">Soft Green</div>
+                    </div>
+                    
+                    <div 
+                      className={`p-4 rounded-xl border-2 cursor-pointer text-center transition-all ${
+                        preferences.backgroundStyle === "calmBlue" ? "border-orange-500" : "border-gray-200"
+                      }`}
+                      onClick={() => updatePreference("backgroundStyle", "calmBlue")}
+                    >
+                      <div className="h-12 w-full rounded-lg bg-blue-200 mb-2"></div>
+                      <div className="text-sm font-medium">Calm Blue</div>
+                    </div>
+                    
+                    <div 
+                      className={`p-4 rounded-xl border-2 cursor-pointer text-center transition-all ${
+                        preferences.backgroundStyle === "warmBeige" ? "border-orange-500" : "border-gray-200"
+                      }`}
+                      onClick={() => updatePreference("backgroundStyle", "warmBeige")}
+                    >
+                      <div className="h-12 w-full rounded-lg bg-amber-100 mb-2"></div>
+                      <div className="text-sm font-medium">Warm Beige</div>
+                    </div>
+                  </div>
                 </div>
               </div>
 

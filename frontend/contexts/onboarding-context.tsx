@@ -4,10 +4,15 @@ import { createContext, useContext, useState, ReactNode } from 'react'
 
 interface OnboardingData {
   personalInfo?: {
+    firstName?: string
+    lastName?: string
     university?: string
     faculty?: string
     year?: string
     language?: string
+    crisisHotlineCountry?: string
+    emergencyContactName?: string
+    emergencyContactPhone?: string
   }
   mentalHealth?: {
     hasMentalHealth?: boolean
@@ -19,12 +24,19 @@ interface OnboardingData {
   }
   preferences?: {
     calmingTheme?: string
+    theme?: string
     notificationPreferences?: string[]
+    moodCheckInTime?: string
+    calendarSync?: boolean
+    healthDataSync?: boolean
+    haptics?: boolean
+    sounds?: boolean
   }
 }
 
 interface OnboardingContextType {
   data: OnboardingData
+  updateData: (newData: Partial<OnboardingData>) => void
   updatePersonalInfo: (info: OnboardingData['personalInfo']) => void
   updateMentalHealth: (health: OnboardingData['mentalHealth']) => void
   updateAccessibility: (accessibility: OnboardingData['accessibility']) => void
@@ -36,6 +48,10 @@ const OnboardingContext = createContext<OnboardingContextType | undefined>(undef
 
 export function OnboardingProvider({ children }: { children: ReactNode }) {
   const [data, setData] = useState<OnboardingData>({})
+
+  const updateData = (newData: Partial<OnboardingData>) => {
+    setData(prev => ({ ...prev, ...newData }))
+  }
 
   const updatePersonalInfo = (info: OnboardingData['personalInfo']) => {
     setData(prev => ({ ...prev, personalInfo: info }))
@@ -60,6 +76,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
   return (
     <OnboardingContext.Provider value={{
       data,
+      updateData,
       updatePersonalInfo,
       updateMentalHealth,
       updateAccessibility,
