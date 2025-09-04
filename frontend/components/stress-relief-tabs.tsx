@@ -367,7 +367,7 @@ export function StressReliefTabs() {
                   onChange={(e) => setMasterVolume(parseFloat(e.target.value))}
                   className="w-full h-2 bg-secondary rounded-lg appearance-none cursor-pointer"
                   style={{
-                    background: `linear-gradient(to right, hsl(var(--primary)) 0%, hsl(var(--primary)) ${masterVolume * 100}%, hsl(var(--secondary)) ${masterVolume * 100}%, hsl(var(--secondary)) 100%)`
+                    background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${masterVolume * 100}%, #d1d5db ${masterVolume * 100}%, #d1d5db 100%)`
                   }}
                 />
                 <p className="text-xs text-muted-foreground">
