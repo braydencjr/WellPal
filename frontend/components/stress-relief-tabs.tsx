@@ -10,6 +10,7 @@ import { CustomGameManager } from "@/components/custom-game-manager"
 import { DeepBreathingExercise } from "@/components/deep-breathing-exercise"
 import { ProgressiveMuscleRelaxation } from "@/components/progressive-muscle-relaxation"
 import { AdvancedASMRPlayer } from "@/components/advanced-asmr-player"
+import { LockWrapper } from "@/components/LockWrapper"
 
 type TabType = "game" | "exercise" | "asmr" | "music"
 
@@ -101,6 +102,9 @@ export function StressReliefTabs() {
   const [masterVolume, setMasterVolume] = useState(0.7)
   const [currentTime, setCurrentTime] = useState<{ [key: string]: number }>({})
   
+  // Locked games state - Snake and Tetris are locked
+  const lockedGames = ["snake", "tetris"]
+  
   // Simulate audio playback progression
   useEffect(() => {
     if (!playingAudio) return
@@ -182,7 +186,9 @@ export function StressReliefTabs() {
             >
               ← Back to Games
             </Button>
-            <SnakeGame />
+            <LockWrapper isLocked={lockedGames.includes("snake")}>
+              <SnakeGame />
+            </LockWrapper>
           </div>
         )
       case "tetris":
@@ -195,7 +201,9 @@ export function StressReliefTabs() {
             >
               ← Back to Games
             </Button>
-            <TetrisGame />
+            <LockWrapper isLocked={lockedGames.includes("tetris")}>
+              <TetrisGame />
+            </LockWrapper>
           </div>
         )
       case "custom":
@@ -214,33 +222,40 @@ export function StressReliefTabs() {
       default:
         return (
           <div className="space-y-4">
-            {gameOptions.map((game) => (
-              <Card key={game.id} className="p-4 hover:shadow-md transition-shadow">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-start space-x-4">
-                    <div className="p-3 bg-primary/10 rounded-lg">
-                      <game.icon className="h-6 w-6 text-primary" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2 mb-1">
-                        <h3 className="font-medium text-foreground">{game.title}</h3>
-                     
+            {gameOptions.map((game) => {
+              const isLocked = lockedGames.includes(game.id)
+              return (
+                <Card key={game.id} className={`p-4 transition-shadow ${isLocked ? 'opacity-70 border-yellow-400' : 'hover:shadow-md'}`}>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-start space-x-4">
+                      <div className="p-3 bg-primary/10 rounded-lg">
+                        <game.icon className="h-6 w-6 text-primary" />
                       </div>
-                      <p className="text-sm text-muted-foreground mb-2">{game.description}</p>
-               
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2 mb-1">
+                          <h3 className="font-medium text-foreground">{game.title}</h3>
+                          {isLocked && (
+                            <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">
+                              🔒 Locked
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-sm text-muted-foreground mb-2">{game.description}</p>
+                      </div>
                     </div>
+                    <Button
+                      size="sm"
+                      variant={isLocked ? "outline" : "secondary"}
+                      className="ml-4"
+                      disabled={isLocked}
+                      onClick={() => !isLocked && setCurrentGame(game.id)}
+                    >
+                      {isLocked ? "🔒 Locked" : "Play"}
+                    </Button>
                   </div>
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    className="ml-4"
-                    onClick={() => setCurrentGame(game.id)}
-                  >
-                    Play
-                  </Button>
-                </div>
-              </Card>
-            ))}
+                </Card>
+              )
+            })}
           </div>
         )
     }
