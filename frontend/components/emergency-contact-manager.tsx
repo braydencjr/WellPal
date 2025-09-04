@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -8,8 +8,13 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Phone, UserPlus, MessageSquare, Video } from "lucide-react"
-import { useUser } from "@/contexts/user-context"
-import type { EmergencyContact } from "@/contexts/user-context"
+import { useUser } from "@clerk/nextjs"
+
+interface EmergencyContact {
+  name: string
+  countryCode: string
+  phoneNumber: string
+}
 
 const countryCodes = [
   { code: "+60", country: "Malaysia", flag: "🇲🇾" },
@@ -20,7 +25,8 @@ const countryCodes = [
 ]
 
 export function EmergencyContactManager() {
-  const { user, updateEmergencyContacts } = useUser()
+  const { user } = useUser()
+  const [emergencyContacts, setEmergencyContacts] = useState<EmergencyContact[]>([])
   const [isOpen, setIsOpen] = useState(false)
   const [formData, setFormData] = useState<EmergencyContact>({
     name: "",
@@ -28,7 +34,21 @@ export function EmergencyContactManager() {
     phoneNumber: "",
   })
 
-  const handleSave = () => {
+  // Load emergency contact from onboarding data
+  useEffect(() => {
+    if (user?.unsafeMetadata?.onboardingData?.personalInfo) {
+      const personalInfo = user.unsafeMetadata.onboardingData.personalInfo as any
+      if (personalInfo.emergencyContactName && personalInfo.emergencyContactPhone) {
+        setEmergencyContacts([{
+          name: personalInfo.emergencyContactName,
+          countryCode: "+60", // Default, could be made dynamic
+          phoneNumber: personalInfo.emergencyContactPhone.replace(/^\+\d+\s*/, '') // Remove country code if present
+        }])
+      }
+    }
+  }, [user])
+
+  const handleSave = async () => {
     if (!formData.name.trim() || !formData.phoneNumber.trim()) {
       alert("Please fill in all fields")
       return
@@ -40,7 +60,30 @@ export function EmergencyContactManager() {
       return
     }
 
-    updateEmergencyContacts([...user.emergencyContacts, formData])
+    const newContacts = [...emergencyContacts, formData]
+    setEmergencyContacts(newContacts)
+    
+    // Update Clerk metadata
+    if (user) {
+      try {
+        await user.update({
+          unsafeMetadata: {
+            ...user.unsafeMetadata,
+            onboardingData: {
+              ...user.unsafeMetadata.onboardingData,
+              personalInfo: {
+                ...(user.unsafeMetadata.onboardingData as any)?.personalInfo,
+                emergencyContactName: formData.name,
+                emergencyContactPhone: formData.countryCode + formData.phoneNumber
+              }
+            }
+          }
+        })
+      } catch (error) {
+        console.error('Failed to update emergency contact:', error)
+      }
+    }
+    
     setFormData({ name: "", countryCode: "+60", phoneNumber: "" })
     setIsOpen(false)
   }
@@ -60,7 +103,7 @@ export function EmergencyContactManager() {
       <h2 className="text-lg font-semibold">Emergency Contacts</h2>
 
       {/* Show existing contacts */}
-      {user.emergencyContacts.map((contact, idx) => {
+      {emergencyContacts.map((contact, idx) => {
         const links = getAppLinks(contact)
         return (
           <div key={idx} className="flex items-center justify-between p-2 rounded-md bg-muted">
@@ -88,7 +131,7 @@ export function EmergencyContactManager() {
       })}
 
       {/* Add button (only if less than 3 contacts) */}
-      {user.emergencyContacts.length < 3 && (
+      {emergencyContacts.length < 3 && (
         <div className="text-center py-2">
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>

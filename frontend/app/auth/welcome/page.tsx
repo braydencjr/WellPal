@@ -7,7 +7,7 @@ import Image from "next/image"
 
 export default function WelcomePage() {
   return (
-    <div className="min-h-screen bg-orange-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-white flex items-center justify-center p-4">
       <div className="max-w-sm w-full">
         <SignedIn>
           {/* Check if user has completed onboarding */}
@@ -27,50 +27,50 @@ export default function WelcomePage() {
                 />
               </div>
               <div>
-                <CardTitle className="text-2xl font-semibold text-orange-900">
+                <CardTitle className="text-2xl font-semibold text-gray-800">
                   WellPal
                 </CardTitle>
-                <CardDescription className="text-orange-700 mt-2">
+                <CardDescription className="text-gray-600 mt-2">
                   Your personal mental wellness companion for university life
                 </CardDescription>
               </div>
             </CardHeader>
 
             <CardContent className="space-y-4">
-              <div className="space-y-3 text-center text-sm text-orange-700">
+              <div className="space-y-3 text-center text-sm text-amber-800">
                 <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-orange-600 rounded-full"></div>
+                  <div className="w-2 h-2 bg-amber-700 rounded-full"></div>
                   <span>Track your daily mood and emotions</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                  <div className="w-2 h-2 bg-amber-700 rounded-full"></div>
                   <span>Access stress relief tools and techniques</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                  <div className="w-2 h-2 bg-amber-700 rounded-full"></div>
                   <span>Connect with support when you need it</span>
                 </div>
               </div>
 
               <div className="space-y-3 pt-4">
                 <SignUpButton mode="redirect" redirectUrl="/onboarding">
-                  <Button className="w-full h-12 bg-orange-700 hover:bg-orange-800 text-white">Get Started</Button>
+                  <Button className="w-full h-12 bg-amber-800 hover:bg-amber-900 text-white">Get Started</Button>
                 </SignUpButton>
 
                 <SignInButton mode="redirect" redirectUrl="/auth/welcome">
-                  <Button variant="outline" className="w-full h-12 bg-transparent border-orange-600 text-orange-700 hover:bg-orange-50">
+                  <Button variant="outline" className="w-full h-12 bg-transparent border-black text-black hover:bg-gray-50">
                     I already have an account
                   </Button>
                 </SignInButton>
               </div>
 
-              <p className="text-xs text-orange-600 text-center pt-4">
+              <p className="text-xs text-gray-500 text-center pt-4">
                 By continuing, you agree to our{" "}
-                <Link href="/terms" className="text-orange-800 hover:underline">
+                <Link href="/terms" className="text-amber-700 hover:underline">
                   Terms of Service
                 </Link>{" "}
                 and{" "}
-                <Link href="/privacy" className="text-orange-800 hover:underline">
+                <Link href="/privacy" className="text-amber-700 hover:underline">
                   Privacy Policy
                 </Link>
               </p>

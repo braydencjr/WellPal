@@ -19,6 +19,9 @@ interface OnboardingData {
     faculty?: string
     year?: string
     language?: string
+    crisisHotlineCountry?: string
+    emergencyContactName?: string
+    emergencyContactPhone?: string
   }
   mentalHealth?: {
     hasMentalHealth?: boolean
@@ -183,19 +186,11 @@ export default function PrivacyDataPage() {
               <div>
                 <Label className="text-sm font-medium mb-2 block">University</Label>
                 {isEditing ? (
-                  <Select
+                  <Input
                     value={editingData.personalInfo?.university || ""}
-                    onValueChange={(value) => updateEditingData('personalInfo', 'university', value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select university" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {universities.map((uni) => (
-                        <SelectItem key={uni} value={uni}>{uni}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    onChange={(e) => updateEditingData('personalInfo', 'university', e.target.value)}
+                    placeholder="Enter university name"
+                  />
                 ) : (
                   <p className="text-sm text-muted-foreground">{onboardingData.personalInfo?.university || "Not set"}</p>
                 )}
@@ -253,6 +248,45 @@ export default function PrivacyDataPage() {
                   </Select>
                 ) : (
                   <p className="text-sm text-muted-foreground">{onboardingData.personalInfo?.language || "Not set"}</p>
+                )}
+              </div>
+
+              <div>
+                <Label className="text-sm font-medium mb-2 block">Crisis Hotline Country</Label>
+                {isEditing ? (
+                  <Input
+                    value={editingData.personalInfo?.crisisHotlineCountry || ""}
+                    onChange={(e) => updateEditingData('personalInfo', 'crisisHotlineCountry', e.target.value)}
+                    placeholder="Enter country"
+                  />
+                ) : (
+                  <p className="text-sm text-muted-foreground">{onboardingData.personalInfo?.crisisHotlineCountry || "Not set"}</p>
+                )}
+              </div>
+
+              <div>
+                <Label className="text-sm font-medium mb-2 block">Emergency Contact Name</Label>
+                {isEditing ? (
+                  <Input
+                    value={editingData.personalInfo?.emergencyContactName || ""}
+                    onChange={(e) => updateEditingData('personalInfo', 'emergencyContactName', e.target.value)}
+                    placeholder="Enter emergency contact name"
+                  />
+                ) : (
+                  <p className="text-sm text-muted-foreground">{onboardingData.personalInfo?.emergencyContactName || "Not set"}</p>
+                )}
+              </div>
+
+              <div>
+                <Label className="text-sm font-medium mb-2 block">Emergency Contact Phone</Label>
+                {isEditing ? (
+                  <Input
+                    value={editingData.personalInfo?.emergencyContactPhone || ""}
+                    onChange={(e) => updateEditingData('personalInfo', 'emergencyContactPhone', e.target.value)}
+                    placeholder="Enter emergency contact phone"
+                  />
+                ) : (
+                  <p className="text-sm text-muted-foreground">{onboardingData.personalInfo?.emergencyContactPhone || "Not set"}</p>
                 )}
               </div>
             </div>

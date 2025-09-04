@@ -27,8 +27,6 @@ export function PersonalInfoForm() {
   const { data, updateData } = useOnboarding()
   const { user } = useUser()
   const [formData, setFormData] = useState({
-    firstName: data.personalInfo?.firstName || "",
-    lastName: data.personalInfo?.lastName || "",
     university: data.personalInfo?.university || "",
     faculty: data.personalInfo?.faculty || "",
     year: data.personalInfo?.year || "",
@@ -44,14 +42,6 @@ export function PersonalInfoForm() {
 
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {}
-
-    if (!formData.firstName.trim()) {
-      newErrors.firstName = "First name is required"
-    }
-
-    if (!formData.lastName.trim()) {
-      newErrors.lastName = "Last name is required"
-    }
 
     if (!formData.university.trim()) {
       newErrors.university = "University is required"
@@ -98,8 +88,6 @@ export function PersonalInfoForm() {
     try {
       // Save to onboarding context
       const personalInfoData = {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
         university: formData.university,
         faculty: formData.faculty,
         year: formData.year,
@@ -173,47 +161,16 @@ export function PersonalInfoForm() {
 
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
-                {/* Name Fields */}
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="space-y-2">
-                    <Label htmlFor="firstName">First Name</Label>
-                    <Input
-                      id="firstName"
-                      placeholder="John"
-                      value={formData.firstName}
-                      onChange={(e) => updateFormData("firstName", e.target.value)}
-                      className={errors.firstName ? "border-destructive" : ""}
-                    />
-                    {errors.firstName && <p className="text-xs text-destructive">{errors.firstName}</p>}
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="lastName">Last Name</Label>
-                    <Input
-                      id="lastName"
-                      placeholder="Doe"
-                      value={formData.lastName}
-                      onChange={(e) => updateFormData("lastName", e.target.value)}
-                      className={errors.lastName ? "border-destructive" : ""}
-                    />
-                    {errors.lastName && <p className="text-xs text-destructive">{errors.lastName}</p>}
-                  </div>
-                </div>
-
                 {/* University */}
                 <div className="space-y-2">
                   <Label htmlFor="university">University</Label>
-                  <Select value={formData.university} onValueChange={(value) => updateFormData("university", value)}>
-                    <SelectTrigger className={errors.university ? "border-destructive" : ""}>
-                      <SelectValue placeholder="Select your university" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {universities.map((uni) => (
-                        <SelectItem key={uni} value={uni}>
-                          {uni}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Input
+                    id="university"
+                    placeholder="e.g. National University of Singapore"
+                    value={formData.university}
+                    onChange={(e) => updateFormData("university", e.target.value)}
+                    className={errors.university ? "border-destructive" : ""}
+                  />
                   {errors.university && <p className="text-xs text-destructive">{errors.university}</p>}
                 </div>
 

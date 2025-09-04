@@ -15,7 +15,10 @@ export function AccessibilityPreferencesForm() {
   const [preferences, setPreferences] = useState({
     largerText: false,
     highContrast: false,
-    dyslexiaFriendlyFont: false,
+    colorBlindness: false,
+    colorBlindnessType: "",
+    dyslexia: false,
+    dyslexiaSupport: "",
     reduceMotion: false,
     screenReaderHints: false,
   })
@@ -39,7 +42,7 @@ export function AccessibilityPreferencesForm() {
     }
   }
 
-  const updatePreference = (key: string, value: boolean) => {
+  const updatePreference = (key: string, value: boolean | string) => {
     setPreferences((prev) => ({ ...prev, [key]: value }))
   }
 
@@ -63,11 +66,18 @@ export function AccessibilityPreferencesForm() {
       value: preferences.highContrast,
     },
     {
-      key: "dyslexiaFriendlyFont",
-      title: "Dyslexia-Friendly Font",
-      description: "Use fonts designed to improve reading for dyslexia",
+      key: "colorBlindness",
+      title: "I have colour blindness",
+      description: "Enable color accessibility features",
       icon: Eye,
-      value: preferences.dyslexiaFriendlyFont,
+      value: preferences.colorBlindness,
+    },
+    {
+      key: "dyslexia",
+      title: "I have dyslexia",
+      description: "Enable dyslexia-friendly reading features",
+      icon: Type,
+      value: preferences.dyslexia,
     },
     {
       key: "reduceMotion",
@@ -124,23 +134,69 @@ export function AccessibilityPreferencesForm() {
                   {accessibilityOptions.map((option) => {
                     const IconComponent = option.icon
                     return (
-                      <div key={option.key} className="flex items-start space-x-4 p-4 rounded-lg border bg-card/50">
-                        <div className="flex-shrink-0 w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mt-1">
-                          <IconComponent className="w-5 h-5 text-primary" />
-                        </div>
-                        <div className="flex-1 space-y-2">
-                          <div className="flex items-center justify-between">
-                            <Label htmlFor={option.key} className="text-sm font-medium cursor-pointer">
-                              {option.title}
-                            </Label>
-                            <Switch
-                              id={option.key}
-                              checked={option.value}
-                              onCheckedChange={(checked) => updatePreference(option.key, checked)}
-                            />
+                      <div key={option.key}>
+                        <div className="flex items-start space-x-4 p-4 rounded-lg border bg-card/50">
+                          <div className="flex-shrink-0 w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mt-1">
+                            <IconComponent className="w-5 h-5 text-primary" />
                           </div>
-                          <p className="text-xs text-muted-foreground leading-relaxed">{option.description}</p>
+                          <div className="flex-1 space-y-2">
+                            <div className="flex items-center justify-between">
+                              <Label htmlFor={option.key} className="text-sm font-medium cursor-pointer">
+                                {option.title}
+                              </Label>
+                              <Switch
+                                id={option.key}
+                                checked={option.value}
+                                onCheckedChange={(checked) => updatePreference(option.key, checked)}
+                              />
+                            </div>
+                            <p className="text-xs text-muted-foreground leading-relaxed">{option.description}</p>
+                          </div>
                         </div>
+
+                        {/* Color Blindness Sub-options */}
+                        {option.key === "colorBlindness" && preferences.colorBlindness && (
+                          <div className="ml-6 mt-3 space-y-2">
+                            <Label className="text-sm font-medium">Type of color blindness:</Label>
+                            <div className="space-y-2">
+                              {["Protanopia (Red-Green)", "Deuteranopia (Red-Green)", "Tritanopia (Blue-Yellow)", "Monochromacy", "Other"].map((type) => (
+                                <label key={type} className="flex items-center space-x-2 p-2 rounded border bg-card/30 cursor-pointer hover:bg-card/50">
+                                  <input
+                                    type="radio"
+                                    name="colorBlindnessType"
+                                    value={type}
+                                    checked={preferences.colorBlindnessType === type}
+                                    onChange={(e) => updatePreference("colorBlindnessType", e.target.value)}
+                                    className="w-4 h-4 text-primary"
+                                  />
+                                  <span className="text-sm">{type}</span>
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Dyslexia Sub-options */}
+                        {option.key === "dyslexia" && preferences.dyslexia && (
+                          <div className="ml-6 mt-3 space-y-2">
+                            <Label className="text-sm font-medium">Dyslexia support options:</Label>
+                            <div className="space-y-2">
+                              {["OpenDyslexic Font", "Increased Letter Spacing", "Larger Line Height", "Reading Ruler/Guide", "Text-to-Speech", "All of the above"].map((support) => (
+                                <label key={support} className="flex items-center space-x-2 p-2 rounded border bg-card/30 cursor-pointer hover:bg-card/50">
+                                  <input
+                                    type="radio"
+                                    name="dyslexiaSupport"
+                                    value={support}
+                                    checked={preferences.dyslexiaSupport === support}
+                                    onChange={(e) => updatePreference("dyslexiaSupport", e.target.value)}
+                                    className="w-4 h-4 text-primary"
+                                  />
+                                  <span className="text-sm">{support}</span>
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     )
                   })}
@@ -151,9 +207,11 @@ export function AccessibilityPreferencesForm() {
                   <div
                     className={`space-y-2 ${preferences.largerText ? "text-lg" : "text-sm"} ${
                       preferences.highContrast ? "contrast-150" : ""
-                    } ${preferences.dyslexiaFriendlyFont ? "font-mono" : ""}`}
+                    } ${preferences.dyslexia && preferences.dyslexiaSupport === "OpenDyslexic Font" ? "font-mono" : ""}`}
                     style={{
                       animation: preferences.reduceMotion ? "none" : undefined,
+                      letterSpacing: preferences.dyslexia && preferences.dyslexiaSupport === "Increased Letter Spacing" ? "0.1em" : undefined,
+                      lineHeight: preferences.dyslexia && preferences.dyslexiaSupport === "Larger Line Height" ? "1.8" : undefined,
                     }}
                   >
                     <p className="text-foreground">Sample text with your preferences applied.</p>
@@ -166,6 +224,16 @@ export function AccessibilityPreferencesForm() {
                         </span>
                       )}
                     </p>
+                    {preferences.colorBlindness && preferences.colorBlindnessType && (
+                      <p className="text-xs text-blue-600">
+                        Color accessibility enabled for: {preferences.colorBlindnessType}
+                      </p>
+                    )}
+                    {preferences.dyslexia && preferences.dyslexiaSupport && (
+                      <p className="text-xs text-green-600">
+                        Dyslexia support: {preferences.dyslexiaSupport}
+                      </p>
+                    )}
                   </div>
                 </div>
 

@@ -302,88 +302,18 @@ const handleSubmit = async (e: React.FormEvent) => {
                   <Label className="text-lg font-semibold">Personalization</Label>
                 </div>
 
-                {/* Theme Selection */}
-                <div className="space-y-4">
-                  <Label className="text-base font-medium">🎨 Theme</Label>
-                  <div className="grid grid-cols-3 gap-3">
-                    <div 
-                      className={`p-4 rounded-xl border-2 cursor-pointer text-center transition-all ${
-                        preferences.theme === "light" ? "border-orange-500 bg-orange-50" : "border-gray-200"
-                      }`}
-                      onClick={() => updatePreference("theme", "light")}
-                    >
-                      <div className="mb-2">☀️</div>
-                      <div className="text-sm font-medium">Light</div>
-                      <div className="text-xs text-gray-500">Bright and clean</div>
-                    </div>
-                    
-                    <div 
-                      className={`p-4 rounded-xl border-2 cursor-pointer text-center transition-all ${
-                        preferences.theme === "dark" ? "border-orange-500 bg-orange-50" : "border-gray-200"
-                      }`}
-                      onClick={() => updatePreference("theme", "dark")}
-                    >
-                      <div className="mb-2">🌙</div>
-                      <div className="text-sm font-medium">Dark</div>
-                      <div className="text-xs text-gray-500">Easy on the eyes</div>
-                    </div>
-                    
-                    <div 
-                      className={`p-4 rounded-xl border-2 cursor-pointer text-center transition-all ${
-                        preferences.theme === "auto" ? "border-orange-500 bg-orange-50" : "border-gray-200"
-                      }`}
-                      onClick={() => updatePreference("theme", "auto")}
-                    >
-                      <div className="mb-2">📱</div>
-                      <div className="text-sm font-medium">Auto</div>
-                      <div className="text-xs text-gray-500">Follows system</div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Calming Background */}
-                <div className="space-y-4">
-                  <Label className="text-base font-medium">Calming Background</Label>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div 
-                      className={`p-4 rounded-xl border-2 cursor-pointer text-center transition-all ${
-                        preferences.backgroundStyle === "default" ? "border-orange-500" : "border-gray-200"
-                      }`}
-                      onClick={() => updatePreference("backgroundStyle", "default")}
-                    >
-                      <div className="h-12 w-full rounded-lg bg-gray-200 mb-2"></div>
-                      <div className="text-sm font-medium">Default</div>
-                    </div>
-                    
-                    <div 
-                      className={`p-4 rounded-xl border-2 cursor-pointer text-center transition-all ${
-                        preferences.backgroundStyle === "softGreen" ? "border-orange-500" : "border-gray-200"
-                      }`}
-                      onClick={() => updatePreference("backgroundStyle", "softGreen")}
-                    >
-                      <div className="h-12 w-full rounded-lg bg-green-200 mb-2"></div>
-                      <div className="text-sm font-medium">Soft Green</div>
-                    </div>
-                    
-                    <div 
-                      className={`p-4 rounded-xl border-2 cursor-pointer text-center transition-all ${
-                        preferences.backgroundStyle === "calmBlue" ? "border-orange-500" : "border-gray-200"
-                      }`}
-                      onClick={() => updatePreference("backgroundStyle", "calmBlue")}
-                    >
-                      <div className="h-12 w-full rounded-lg bg-blue-200 mb-2"></div>
-                      <div className="text-sm font-medium">Calm Blue</div>
-                    </div>
-                    
-                    <div 
-                      className={`p-4 rounded-xl border-2 cursor-pointer text-center transition-all ${
-                        preferences.backgroundStyle === "warmBeige" ? "border-orange-500" : "border-gray-200"
-                      }`}
-                      onClick={() => updatePreference("backgroundStyle", "warmBeige")}
-                    >
-                      <div className="h-12 w-full rounded-lg bg-amber-100 mb-2"></div>
-                      <div className="text-sm font-medium">Warm Beige</div>
-                    </div>
+                {/* Information Message */}
+                <div className="p-4 rounded-xl border-2 border-orange-200 bg-orange-50">
+                  <div className="text-center space-y-2">
+                    <p className="text-sm font-medium text-orange-800">
+                      🎨 Your Current Theme Settings
+                    </p>
+                    <p className="text-sm text-orange-700">
+                      We are currently using <strong>Light Theme</strong> with <strong>Default Color</strong> scheme.
+                    </p>
+                    <p className="text-xs text-orange-600">
+                      You can change these settings anytime in your profile preferences to match your personal style and comfort.
+                    </p>
                   </div>
                 </div>
               </div>
