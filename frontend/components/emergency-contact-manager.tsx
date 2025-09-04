@@ -7,10 +7,11 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Phone, UserPlus, MessageSquare, Video } from "lucide-react"
+import { Phone, UserPlus, MessageSquare, Video, Trash2 } from "lucide-react"
 import { useUser } from "@clerk/nextjs"
 
 interface EmergencyContact {
+  id: string
   name: string
   countryCode: string
   phoneNumber: string
@@ -28,24 +29,36 @@ export function EmergencyContactManager() {
   const { user } = useUser()
   const [emergencyContacts, setEmergencyContacts] = useState<EmergencyContact[]>([])
   const [isOpen, setIsOpen] = useState(false)
-  const [formData, setFormData] = useState<EmergencyContact>({
+  const [formData, setFormData] = useState({
     name: "",
     countryCode: "+60",
     phoneNumber: "",
   })
 
-  // Load emergency contact from onboarding data
+  // Load emergency contacts from onboarding data and any additional stored contacts
   useEffect(() => {
-    if (user?.unsafeMetadata?.onboardingData?.personalInfo) {
-      const personalInfo = user.unsafeMetadata.onboardingData.personalInfo as any
-      if (personalInfo.emergencyContactName && personalInfo.emergencyContactPhone) {
-        setEmergencyContacts([{
-          name: personalInfo.emergencyContactName,
+    const storedContacts: EmergencyContact[] = []
+    
+    // Load from onboarding data if available
+    if (user?.unsafeMetadata?.onboardingData) {
+      const onboardingData = user.unsafeMetadata.onboardingData as any
+      if (onboardingData.personalInfo?.emergencyContactName && onboardingData.personalInfo?.emergencyContactPhone) {
+        storedContacts.push({
+          id: 'onboarding-contact',
+          name: onboardingData.personalInfo.emergencyContactName,
           countryCode: "+60", // Default, could be made dynamic
-          phoneNumber: personalInfo.emergencyContactPhone.replace(/^\+\d+\s*/, '') // Remove country code if present
-        }])
+          phoneNumber: onboardingData.personalInfo.emergencyContactPhone.replace(/^\+\d+\s*/, '') // Remove country code if present
+        })
       }
     }
+    
+    // Load additional contacts from metadata
+    if (user?.unsafeMetadata?.emergencyContacts) {
+      const additionalContacts = user.unsafeMetadata.emergencyContacts as EmergencyContact[]
+      storedContacts.push(...additionalContacts)
+    }
+    
+    setEmergencyContacts(storedContacts)
   }, [user])
 
   const handleSave = async () => {
@@ -60,32 +73,62 @@ export function EmergencyContactManager() {
       return
     }
 
-    const newContacts = [...emergencyContacts, formData]
+    const newContact: EmergencyContact = {
+      id: Date.now().toString(),
+      name: formData.name,
+      countryCode: formData.countryCode,
+      phoneNumber: formData.phoneNumber
+    }
+
+    const newContacts = [...emergencyContacts, newContact]
     setEmergencyContacts(newContacts)
     
-    // Update Clerk metadata
+    // Update Clerk metadata - store additional contacts separately
     if (user) {
       try {
+        const additionalContacts = newContacts.filter(contact => contact.id !== 'onboarding-contact')
         await user.update({
           unsafeMetadata: {
             ...user.unsafeMetadata,
-            onboardingData: {
-              ...user.unsafeMetadata.onboardingData,
-              personalInfo: {
-                ...(user.unsafeMetadata.onboardingData as any)?.personalInfo,
-                emergencyContactName: formData.name,
-                emergencyContactPhone: formData.countryCode + formData.phoneNumber
-              }
-            }
+            emergencyContacts: additionalContacts
           }
         })
       } catch (error) {
-        console.error('Failed to update emergency contact:', error)
+        console.error('Failed to update emergency contacts:', error)
       }
     }
     
     setFormData({ name: "", countryCode: "+60", phoneNumber: "" })
     setIsOpen(false)
+  }
+
+  const handleDelete = async (contactId: string) => {
+    if (contactId === 'onboarding-contact') {
+      alert("Cannot delete the primary emergency contact from onboarding. Please update it in settings.")
+      return
+    }
+
+    const confirmed = window.confirm("Are you sure you want to delete this emergency contact?")
+    if (!confirmed) return
+
+    const newContacts = emergencyContacts.filter(contact => contact.id !== contactId)
+    setEmergencyContacts(newContacts)
+    
+    // Update Clerk metadata
+    if (user) {
+      try {
+        const additionalContacts = newContacts.filter(contact => contact.id !== 'onboarding-contact')
+        await user.update({
+          unsafeMetadata: {
+            ...user.unsafeMetadata,
+            emergencyContacts: additionalContacts
+          }
+        })
+      } catch (error) {
+        console.error('Failed to update emergency contacts:', error)
+        alert('Failed to delete contact. Please try again.')
+      }
+    }
   }
 
   // Detect app links
@@ -102,11 +145,19 @@ export function EmergencyContactManager() {
     <Card className="p-3 space-y-3">
       <h2 className="text-lg font-semibold">Emergency Contacts</h2>
 
+      {/* Show message if no contacts */}
+      {emergencyContacts.length === 0 && (
+        <div className="text-center py-4 text-muted-foreground">
+          <p>No emergency contacts added yet.</p>
+          <p className="text-sm">Add contacts for quick access during emergencies.</p>
+        </div>
+      )}
+
       {/* Show existing contacts */}
-      {emergencyContacts.map((contact, idx) => {
+      {emergencyContacts.map((contact) => {
         const links = getAppLinks(contact)
         return (
-          <div key={idx} className="flex items-center justify-between p-2 rounded-md bg-muted">
+          <div key={contact.id} className="flex items-center justify-between p-3 rounded-md bg-muted">
             <div className="flex flex-col">
               <p className="font-medium">{contact.name}</p>
               <p className="text-sm text-muted-foreground">
@@ -114,23 +165,31 @@ export function EmergencyContactManager() {
               </p>
             </div>
             <div className="flex space-x-2">
-              <Button asChild>
+              <Button size="sm" variant="outline" asChild>
                 <a href={links.call}><Phone className="h-4 w-4" /></a>
               </Button>
-              <Button asChild>
+              <Button size="sm" variant="outline" asChild>
                 <a href={links.whatsapp}><MessageSquare className="h-4 w-4" /></a>
               </Button>
               {links.facetime && (
-                <Button asChild>
+                <Button size="sm" variant="outline" asChild>
                   <a href={links.facetime}><Video className="h-4 w-4" /></a>
                 </Button>
               )}
+              <Button 
+                size="sm" 
+                variant="destructive" 
+                onClick={() => handleDelete(contact.id)}
+                className="ml-2"
+                title={contact.id === 'onboarding-contact' ? 'Cannot delete primary contact' : 'Delete contact'}
+                disabled={contact.id === 'onboarding-contact'}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
             </div>
           </div>
         )
-      })}
-
-      {/* Add button (only if less than 3 contacts) */}
+      })}      {/* Add button (only if less than 3 contacts) */}
       {emergencyContacts.length < 3 && (
         <div className="text-center py-2">
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
