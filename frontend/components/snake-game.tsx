@@ -263,12 +263,14 @@ export function SnakeGame() {
           </p>
         </div>
         <div className="text-right">
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center justify-end space-x-2">
             <span className="text-sm font-medium">Score: {gameState.score}</span>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center justify-end space-x-2">
             <Trophy className="h-4 w-4 text-yellow-500" />
-            <span className="text-sm font-medium text-yellow-600">High: {gameState.highScore}</span>
+            <span className="text-sm font-bold text-yellow-700 bg-yellow-100 px-2 py-1 rounded border border-yellow-300">
+              High: {gameState.highScore}
+            </span>
           </div>
         </div>
       </div>

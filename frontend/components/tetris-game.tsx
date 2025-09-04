@@ -260,11 +260,20 @@ export function TetrisGame() {
     }
     if (gameState.gameOver) {
       ctx.fillStyle = 'rgba(0, 0, 0, 0.75)'
-      ctx.fillRect(0, CANVAS_HEIGHT / 2 - 30, CANVAS_WIDTH, 60)
+      ctx.fillRect(0, CANVAS_HEIGHT / 2 - 50, CANVAS_WIDTH, 100)
       ctx.fillStyle = 'white'
       ctx.font = '24px monospace'
       ctx.textAlign = 'center'
-      ctx.fillText('GAME OVER!', CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2)
+      ctx.fillText('GAME OVER!', CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 - 20)
+      ctx.font = '16px monospace'
+      ctx.fillText(`Final Score: ${gameState.score}`, CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 5)
+      
+      // Show if new high score achieved
+      if (gameState.score === gameState.highScore && gameState.score > 0) {
+        ctx.fillStyle = '#FFD700'
+        ctx.fillText('🎉 NEW HIGH SCORE! 🎉', CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 30)
+      }
+      
       ctx.textAlign = 'left'
     }
   }, [gameState])
