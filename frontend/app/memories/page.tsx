@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState, useRef } from "react"
+import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/nextjs"
 import { BottomNavigation } from "@/components/bottom-navigation"
 import { addPostcard, loadPhotobook, PostcardEntry } from "@/lib/photobook-store"
 import { EnhancedCameraModal } from "@/components/enhanced-camera-modal"
@@ -10,6 +11,19 @@ import { EnhancedPostcardViewer } from "@/components/enhanced-postcard-viewer"
 import { MemoriesDogAnimation } from "@/components/memories-dog-animation"
 
 export default function MemoriesPage() {
+  return (
+    <>
+      <SignedIn>
+        <MemoriesContent />
+      </SignedIn>
+      <SignedOut>
+        <RedirectToSignIn />
+      </SignedOut>
+    </>
+  )
+}
+
+function MemoriesContent() {
   const [entries, setEntries] = useState<PostcardEntry[]>([])
   const [showCamera, setShowCamera] = useState(false)
   const [showPostcardCreation, setShowPostcardCreation] = useState(false)

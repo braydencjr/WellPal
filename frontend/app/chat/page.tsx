@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/nextjs";
 import { ChatInterface } from "@/components/chat-interface";
 import { BottomNavigation } from "@/components/bottom-navigation";
 import { useTheme } from "next-themes";
@@ -9,6 +10,19 @@ import { useCalmingTheme } from "@/components/theme-provider";
 import { apiClient } from "@/lib/api-client";
 
 export default function ChatPage() {
+  return (
+    <>
+      <SignedIn>
+        <ChatContent />
+      </SignedIn>
+      <SignedOut>
+        <RedirectToSignIn />
+      </SignedOut>
+    </>
+  )
+}
+
+function ChatContent() {
   const [companionAvatar, setCompanionAvatar] = useState("ai-companion-1.png");
   const { theme } = useTheme();
   const { calmingTheme } = useCalmingTheme();

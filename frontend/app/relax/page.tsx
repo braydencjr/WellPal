@@ -1,8 +1,24 @@
+"use client"
+
+import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/nextjs"
 import { StressReliefTabs } from "@/components/stress-relief-tabs"
 import { BottomNavigation } from "@/components/bottom-navigation"
 import { RelaxDogAnimation } from "@/components/relax-dog-animation"
 
 export default function RelaxPage() {
+  return (
+    <>
+      <SignedIn>
+        <RelaxContent />
+      </SignedIn>
+      <SignedOut>
+        <RedirectToSignIn />
+      </SignedOut>
+    </>
+  )
+}
+
+function RelaxContent() {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-sm mx-auto bg-card relative">

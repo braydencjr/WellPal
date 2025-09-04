@@ -1,12 +1,26 @@
 // SupportPage.tsx
 "use client"
 
+import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/nextjs"
 import { EmergencyContactManager } from "@/components/emergency-contact-manager"
 import { EmergencySupport } from "@/components/emergency-support"
 import { BottomNavigation } from "@/components/bottom-navigation"
 import { SupportDogAnimation } from "@/components/support-dog-animation"
 
 export default function SupportPage() {
+  return (
+    <>
+      <SignedIn>
+        <SupportContent />
+      </SignedIn>
+      <SignedOut>
+        <RedirectToSignIn />
+      </SignedOut>
+    </>
+  )
+}
+
+function SupportContent() {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-sm mx-auto bg-card relative">

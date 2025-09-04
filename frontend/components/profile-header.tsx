@@ -4,12 +4,19 @@ import { useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { User, Edit, Camera } from "lucide-react"
-import { useUser } from "@/contexts/user-context"
+import { useUser } from "@clerk/nextjs"
 import { ProfileEditModal } from "@/components/profile-edit-modal"
 
 export function ProfileHeader() {
   const { user } = useUser()
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+
+  if (!user) return null
+
+  const memberSince = user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-US', { 
+    year: 'numeric', 
+    month: 'long' 
+  }) : 'Unknown'
 
   return (
     <>
@@ -17,9 +24,9 @@ export function ProfileHeader() {
         <div className="flex items-center gap-4">
           <div className="relative">
             <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center border-2 border-dashed border-muted-foreground/30 overflow-hidden">
-              {user.avatar ? (
+              {user.imageUrl ? (
                 <img 
-                  src={user.avatar} 
+                  src={user.imageUrl} 
                   alt="Profile" 
                   className="w-full h-full object-cover"
                 />
@@ -35,9 +42,13 @@ export function ProfileHeader() {
             </button>
           </div>
           <div className="flex-1">
-            <h2 className="text-xl font-semibold text-foreground mb-1">{user.name}</h2>
-            <p className="text-sm text-muted-foreground mb-2">{user.title}</p>
-            <p className="text-xs text-muted-foreground">Member since {user.memberSince}</p>
+            <h2 className="text-xl font-semibold text-foreground mb-1">
+              {user.fullName || `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'User'}
+            </h2>
+            <p className="text-sm text-muted-foreground mb-2">
+              {user.primaryEmailAddress?.emailAddress}
+            </p>
+            <p className="text-xs text-muted-foreground">Member since {memberSince}</p>
           </div>
           <Button size="sm" variant="outline" className="bg-transparent" onClick={() => setIsEditModalOpen(true)}>
             <Edit className="w-4 h-4" />
