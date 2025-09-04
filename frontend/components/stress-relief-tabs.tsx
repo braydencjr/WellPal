@@ -102,8 +102,8 @@ export function StressReliefTabs() {
   const [masterVolume, setMasterVolume] = useState(0.7)
   const [currentTime, setCurrentTime] = useState<{ [key: string]: number }>({})
   
-  // Locked games state - Snake and Tetris are locked
-  const lockedGames = ["snake", "tetris"]
+  // Locked games state - Snake, Tetris, and Custom Games are locked
+  const lockedGames = ["snake", "tetris", "custom"]
   
   // Simulate audio playback progression
   useEffect(() => {
@@ -216,7 +216,9 @@ export function StressReliefTabs() {
             >
               ← Back to Games
             </Button>
-            <CustomGameManager />
+            <LockWrapper isLocked={lockedGames.includes("custom")}>
+              <CustomGameManager />
+            </LockWrapper>
           </div>
         )
       default:
