@@ -43,4 +43,10 @@ export function addPostcard(entry: Omit<PostcardEntry, "id" | "dateISO">): Postc
   return newEntry
 }
 
+export function deletePostcard(postcardId: string): void {
+  const entries = loadPhotobook()
+  const updated = entries.filter(entry => entry.id !== postcardId)
+  savePhotobook(updated)
+}
+
 

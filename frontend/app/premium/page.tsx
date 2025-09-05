@@ -67,6 +67,10 @@ export default function PremiumPage() {
               </li>
               <li className="flex items-center gap-2">
                 <Star className="h-4 w-4 text-yellow-500" />
+                <span>Allow custom games</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <Star className="h-4 w-4 text-yellow-500" />
                 <span>Priority customer support</span>
               </li>
               <li className="flex items-center gap-2">

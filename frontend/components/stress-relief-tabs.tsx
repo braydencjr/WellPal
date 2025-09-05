@@ -251,13 +251,6 @@ export function StressReliefTabs() {
             ) : (
               <CustomGameManager />
             )}
-            {lockedGames.includes("custom") ? (
-              <LockWrapper isLocked={true}>
-                <CustomGameManager />
-              </LockWrapper>
-            ) : (
-              <CustomGameManager />
-            )}
           </div>
         )
       default:
