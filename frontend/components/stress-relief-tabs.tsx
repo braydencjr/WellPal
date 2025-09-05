@@ -97,42 +97,6 @@ export function StressReliefTabs() {
   const [playingAudio, setPlayingAudio] = useState<string | null>(null)
   const [currentExercise, setCurrentExercise] = useState<string | null>(null)
   const [currentGame, setCurrentGame] = useState<string | null>(null)
-  
-  // Music player state
-  const [masterVolume, setMasterVolume] = useState(0.7)
-  const [currentTime, setCurrentTime] = useState<{ [key: string]: number }>({})
-  
-  // Locked games state - Snake, Tetris, and Custom Games are locked
-  const [lockedGames, setLockedGames] = useState<string[]>(["snake", "tetris", "custom"])
-  
-  const unlockGame = (gameId: string) => {
-    setLockedGames(prev => prev.filter(id => id !== gameId))
-  }
-  
-  // Simulate audio playback progression
-  useEffect(() => {
-    if (!playingAudio) return
-
-    const interval = setInterval(() => {
-      setCurrentTime(prev => {
-        const current = prev[playingAudio] || 0
-        const music = musicSuggestions.find(m => m.title === playingAudio)
-        if (!music) return prev
-
-        const totalSeconds = getDurationInSeconds(music.duration)
-        const newTime = current + 1
-
-        if (newTime >= totalSeconds) {
-          setPlayingAudio(null) // Auto-stop when finished
-          return { ...prev, [playingAudio]: 0 }
-        }
-
-        return { ...prev, [playingAudio]: newTime }
-      })
-    }, 1000)
-
-    return () => clearInterval(interval)
-  }, [playingAudio])
 
   const handleAudioToggle = (title: string) => {
     setPlayingAudio(playingAudio === title ? null : title)

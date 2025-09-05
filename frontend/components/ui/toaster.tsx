@@ -1,6 +1,6 @@
 "use client"
 
-import { useToast } from "@/hooks/use-toast"
+import { useToast } from "@/use-streak.ts/use-toast"
 import {
   Toast,
   ToastClose,

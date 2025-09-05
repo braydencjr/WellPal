@@ -49,12 +49,10 @@ export function MiniCalendar({ reminders, setReminders }: MiniCalendarProps) {
           <p className="text-sm text-gray-500 dark:text-gray-300 mb-2">
             {today.toLocaleString("en-US", { month: "short" })} {today.getFullYear()}
           </p>
-          <button
-            onClick={goToTodaysPhotos}
-            className="px-3 py-1 text-xs rounded bg-primary text-white hover:bg-primary/80 transition"
-          >
-            Today's Postcards
-          </button>
+          <p className="text-xs text-blue-600 dark:text-blue-400 cursor-pointer hover:underline italic text-center">
+             <span className="block">Click to</span>
+             <span className="block">Today's Full View</span>
+          </p>
         </div>
 
         {/* Right: only today's reminders */}
