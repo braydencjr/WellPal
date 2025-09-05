@@ -2,6 +2,7 @@
 
 import { Camera } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { EnhancedCameraModal } from "@/components/enhanced-camera-modal"
 
 type CameraButtonProps = {
   onClick?: () => void

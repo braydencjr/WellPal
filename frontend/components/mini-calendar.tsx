@@ -20,17 +20,25 @@ export function MiniCalendar({ reminders, setReminders }: MiniCalendarProps) {
   })
 
   const handleToggle = (index: number) => {
-  const updated = [...todayReminders]
-  updated[index].checked = !updated[index].checked
+  // Copy current reminders for today
+  const updated = [...todayReminders];
+  updated[index].checked = !updated[index].checked;
 
-  // merge back into full reminders
-  const others = reminders.filter((r) => {
-    const reminderLocalDay = new Date(r.dateISO).toLocaleDateString("en-CA")
-    return reminderLocalDay !== todayStr
-  })
+  // Sort: unchecked first, checked last
+  updated.sort((a, b) => {
+    if (a.checked === b.checked) return 0;
+    return a.checked ? 1 : -1;
+  });
 
-  setReminders([...others, ...updated])
-}
+  // Merge back with other days
+  const others = reminders.filter(r => {
+    const reminderLocalDay = new Date(r.dateISO).toLocaleDateString("en-CA");
+    return reminderLocalDay !== todayStr;
+  });
+
+  setReminders([...others, ...updated]);
+};
+
 
   const goToCalendar = () => {
     router.push("/calendar")
@@ -66,22 +74,27 @@ export function MiniCalendar({ reminders, setReminders }: MiniCalendarProps) {
           {todayReminders.length === 0 && (
             <p className="text-gray-500 text-sm text-center">No reminders for today.</p>
           )}
-          {todayReminders.map((reminder, index) => (
-            <label
-              key={index}
-              className="flex items-center p-2 bg-gray-100 dark:bg-gray-800 rounded-lg mb-2 text-gray-700 dark:text-gray-200"
-            >
-              <input
-                type="checkbox"
-                checked={reminder.checked || false}
-                onChange={(e) => { e.stopPropagation(); handleToggle(index) }}
-                className="mr-2"
-              />
-              <span className={reminder.checked ? "line-through text-gray-400" : ""}>
-                {reminder.title}
-              </span>
-            </label>
-          ))}
+         {todayReminders.map((reminder, index) => (
+  <div
+    key={index}
+    className="flex items-center p-2 bg-gray-100 dark:bg-gray-800 rounded-lg mb-2 text-gray-700 dark:text-gray-200"
+  >
+    <input
+      type="checkbox"
+      checked={reminder.checked || false}
+      onChange={() => handleToggle(index)}
+      className="mr-2"
+      onClick={(e) => e.stopPropagation()} // stop Card click
+    />
+    <span
+      className={reminder.checked ? "line-through text-gray-400" : ""}
+      onClick={(e) => e.stopPropagation()} // stop Card click if text clicked
+    >
+      {reminder.title}
+    </span>
+  </div>
+))}
+
         </div>
       </div>
     </Card>

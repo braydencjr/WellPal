@@ -46,9 +46,18 @@ export default function DashboardPage() {
           <div className="max-w-sm mx-auto px-6 pt-8 pb-24">
             <WelcomeHeader />
             <div className="flex flex-row items-center gap-2 mb-4">
-               <CameraButton onClick={() => setShowCamera(true)} />
-                {/* Camera Modal */}
-     <EnhancedPostcardModal
+               <CameraButton onClick={() => { console.log("Camera clicked"); setShowCamera(true); }} />
+
+
+{/* 📸 Camera Modal */}
+<EnhancedCameraModal
+  isOpen={showCamera}
+  onClose={() => setShowCamera(false)}
+  onCapture={handlePhotoCapture}
+/>
+
+{/* ✉️ Postcard Creation Modal */}
+<EnhancedPostcardModal
   isOpen={showPostcardCreation}
   onClose={() => setShowPostcardCreation(false)}
   onSave={(note, mood, location) => {
@@ -63,16 +72,6 @@ export default function DashboardPage() {
   imageUrl={capturedImage}
 />
 
-      {/* Postcard Creation Modal (same flow as MemoriesPage) */}
-      <EnhancedPostcardModal
-        isOpen={showPostcardCreation}
-        onClose={() => setShowPostcardCreation(false)}
-        onSave={(note, mood, location) => {
-          console.log("Save postcard here", { note, mood, location })
-          setShowPostcardCreation(false)
-        }}
-        imageUrl={capturedImage}
-      />
               <MusicPlayerCard />
             </div>
             <MiniCalendar reminders={reminders} setReminders={setReminders} />
