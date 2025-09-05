@@ -12,19 +12,25 @@ interface MiniCalendarProps {
 export function MiniCalendar({ reminders, setReminders }: MiniCalendarProps) {
   const today = new Date()
   const router = useRouter()
-  const todayStr = today.toLocaleDateString("en-CA") // ✅ YYYY-MM-DD format
+  const todayStr = new Date().toISOString().split("T")[0]
 
-  // ✅ only reminders for today
-  const todayReminders = reminders.filter((r) => r.date === todayStr)
+  const todayReminders = reminders.filter((r) => {
+    const reminderLocalDay = new Date(r.dateISO).toLocaleDateString("en-CA")
+    return reminderLocalDay === todayStr
+  })
 
   const handleToggle = (index: number) => {
-    const updated = [...todayReminders]
-    updated[index].checked = !updated[index].checked
+  const updated = [...todayReminders]
+  updated[index].checked = !updated[index].checked
 
-    // merge back into full reminders
-    const others = reminders.filter((r) => r.date !== todayStr)
-    setReminders([...others, ...updated])
-  }
+  // merge back into full reminders
+  const others = reminders.filter((r) => {
+    const reminderLocalDay = new Date(r.dateISO).toLocaleDateString("en-CA")
+    return reminderLocalDay !== todayStr
+  })
+
+  setReminders([...others, ...updated])
+}
 
   const goToCalendar = () => {
     router.push("/calendar")

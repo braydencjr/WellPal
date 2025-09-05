@@ -42,10 +42,10 @@ export default function CalendarPage() {
           {/* Show reminders for that date */}
           <div className="mt-6">
             <Reminder
-              reminders={reminders.filter((r) => r.date === selectedDate)}
+              reminders={reminders.filter((r) => r.dateISO === selectedDate)}
               setReminders={(newReminders) => {
                 // merge back with all reminders
-                const others = reminders.filter((r) => r.date !== selectedDate)
+                const others = reminders.filter((r) => r.dateISO !== selectedDate)
                 setReminders([...others, ...newReminders])
               }}
               selectedDate={selectedDate}
