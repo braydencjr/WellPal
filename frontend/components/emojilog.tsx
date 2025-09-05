@@ -1,12 +1,24 @@
 // emojilog.ts
 // Dog mood options with corresponding emoji
 export const moodOptions = [
-  { name: "Happy Dog", src: "/assets/happy.png"},
-  { name: "Sad Dog", src: "/assets/sad.png"},
-  { name: "Angry Dog", src: "/assets/angry.png"},
-  { name: "Lovely Dog", src: "/assets/lovely.png"},
-  { name: "Cool Dog", src: "/assets/cool.png"},
-  { name: "Shock Dog", src: "/assets/shock.png",},
+  { name: "Happy Dog", src: "/assets/happy.png", isPremium: false },
+  { name: "Sad Dog", src: "/assets/sad.png", isPremium: false },
+  { name: "Angry Dog", src: "/assets/angry.png", isPremium: false },
+  { name: "Lovely Dog", src: "/assets/lovely.png", isPremium: true },
+  { name: "Cool Dog", src: "/assets/cool.png", isPremium: true },
+  { name: "Shock Dog", src: "/assets/shock.png", isPremium: true },
+]
+
+export const premiumMoodOptions = [
+  { name: "Lovely Dog", src: "/assets/lovely.png" },
+  { name: "Cool Dog", src: "/assets/cool.png" },
+  { name: "Shock Dog", src: "/assets/shock.png" },
+  { name: "Just Chill Dog", src: "/assets/justchill.png" },
+  { name: "Crying Hard Dog", src: "/assets/cryinghard.png" },
+  { name: "Phew Dog", src: "/assets/phew.png" },
+  { name: "Boring Dog", src: "/assets/boring.png" },
+  { name: "Tired Dog", src: "/assets/tired.png" },
+  { name: "Scared Dog", src: "/assets/scared.png" },
 ]
 
 // emojilog.ts

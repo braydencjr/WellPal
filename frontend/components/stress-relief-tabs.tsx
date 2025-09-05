@@ -1,5 +1,6 @@
 "use client"
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Gamepad2, Dumbbell, Headphones, Music, Play, Pause, Grid3x3, Zap, Box, Volume2, SkipBack, SkipForward } from "lucide-react"
@@ -10,6 +11,8 @@ import { CustomGameManager } from "@/components/custom-game-manager"
 import { DeepBreathingExercise } from "@/components/deep-breathing-exercise"
 import { ProgressiveMuscleRelaxation } from "@/components/progressive-muscle-relaxation"
 import { AdvancedASMRPlayer } from "@/components/advanced-asmr-player"
+import { LockWrapper } from "@/components/LockWrapper"
+
 
 type TabType = "game" | "exercise" | "asmr" | "music"
 
@@ -92,15 +95,23 @@ const musicSuggestions = [
 ]
 
 export function StressReliefTabs() {
+  const router = useRouter()
   const [activeTab, setActiveTab] = useState<TabType>("game")
   const [playingAudio, setPlayingAudio] = useState<string | null>(null)
   const [currentExercise, setCurrentExercise] = useState<string | null>(null)
   const [currentGame, setCurrentGame] = useState<string | null>(null)
+
   
-  // Music player state
+  // Add locked games state management
+  const [lockedGames, setLockedGames] = useState<string[]>(["snake", "tetris", "custom"])
   const [masterVolume, setMasterVolume] = useState(0.7)
   const [currentTime, setCurrentTime] = useState<{ [key: string]: number }>({})
   
+  // Function to unlock a game
+  const unlockGame = (gameId: string) => {
+    setLockedGames(prev => prev.filter(id => id !== gameId))
+  }
+
   // Simulate audio playback progression
   useEffect(() => {
     if (!playingAudio) return
@@ -125,7 +136,6 @@ export function StressReliefTabs() {
 
     return () => clearInterval(interval)
   }, [playingAudio])
-
   const handleAudioToggle = (title: string) => {
     setPlayingAudio(playingAudio === title ? null : title)
     if (playingAudio !== title) {
@@ -182,7 +192,20 @@ export function StressReliefTabs() {
             >
               ← Back to Games
             </Button>
-            <SnakeGame />
+            {lockedGames.includes("snake") ? (
+              <LockWrapper isLocked={true}>
+                <SnakeGame />
+              </LockWrapper>
+            ) : (
+              <SnakeGame />
+            )}
+            {lockedGames.includes("snake") ? (
+              <LockWrapper isLocked={true}>
+                <SnakeGame />
+              </LockWrapper>
+            ) : (
+              <SnakeGame />
+            )}
           </div>
         )
       case "tetris":
@@ -195,7 +218,20 @@ export function StressReliefTabs() {
             >
               ← Back to Games
             </Button>
-            <TetrisGame />
+            {lockedGames.includes("tetris") ? (
+              <LockWrapper isLocked={true}>
+                <TetrisGame />
+              </LockWrapper>
+            ) : (
+              <TetrisGame />
+            )}
+            {lockedGames.includes("tetris") ? (
+              <LockWrapper isLocked={true}>
+                <TetrisGame />
+              </LockWrapper>
+            ) : (
+              <TetrisGame />
+            )}
           </div>
         )
       case "custom":
@@ -208,39 +244,92 @@ export function StressReliefTabs() {
             >
               ← Back to Games
             </Button>
-            <CustomGameManager />
+            {lockedGames.includes("custom") ? (
+              <LockWrapper isLocked={true}>
+                <CustomGameManager />
+              </LockWrapper>
+            ) : (
+              <CustomGameManager />
+            )}
+            {lockedGames.includes("custom") ? (
+              <LockWrapper isLocked={true}>
+                <CustomGameManager />
+              </LockWrapper>
+            ) : (
+              <CustomGameManager />
+            )}
           </div>
         )
       default:
         return (
           <div className="space-y-4">
-            {gameOptions.map((game) => (
-              <Card key={game.id} className="p-4 hover:shadow-md transition-shadow">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-start space-x-4">
-                    <div className="p-3 bg-primary/10 rounded-lg">
-                      <game.icon className="h-6 w-6 text-primary" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2 mb-1">
-                        <h3 className="font-medium text-foreground">{game.title}</h3>
-                     
+            {gameOptions.map((game) => {
+              const isLocked = lockedGames.includes(game.id)
+              return (
+                <Card key={game.id} className={`p-4 transition-shadow ${isLocked ? 'opacity-70 border-yellow-400 relative' : 'hover:shadow-md'}`}>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-start space-x-4">
+                      <div className="p-3 bg-primary/10 rounded-lg">
+                        <game.icon className="h-6 w-6 text-primary" />
                       </div>
-                      <p className="text-sm text-muted-foreground mb-2">{game.description}</p>
-               
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2 mb-1">
+                          <h3 className="font-medium text-foreground">{game.title}</h3>
+                          {isLocked && (
+                            <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">
+                              🔒 Locked
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-sm text-muted-foreground mb-2">{game.description}</p>
+                      </div>
                     </div>
+                    <Button
+                      size="sm"
+                      variant={isLocked ? "outline" : "secondary"}
+                      className="ml-4"
+                      disabled={isLocked}
+                      onClick={() => !isLocked && setCurrentGame(game.id)}
+                    >
+                      {isLocked ? "🔒 Locked" : "Play"}
+                    </Button>
                   </div>
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    className="ml-4"
-                    onClick={() => setCurrentGame(game.id)}
-                  >
-                    Play
-                  </Button>
-                </div>
-              </Card>
-            ))}
+                  
+                  {/* Overlay for locked games */}
+                  {isLocked && (
+                    <div className="absolute inset-0 rounded-lg flex flex-col items-center justify-center space-y-3 z-10">
+                      <p className="text-lg text-yellow-700 font-medium text-center px-4 bg-white/90 rounded-lg py-2">
+                        {game.id === "snake" && "Unlock after 3 days login streak"}
+                        {game.id === "tetris" && "Unlock after 7 days login streak"}
+                        {game.id === "custom" && "Unlock after you purchase Pro version"}
+                      </p>
+                      {game.id === "custom" ? (
+                        <Button
+                          size="lg"
+                          variant="outline"
+                          className="bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0 hover:from-purple-600 hover:to-pink-600 shadow-lg text-xl font-semibold"
+                          onClick={() => {
+                            // Navigate to Premium page using Next.js router
+                            router.push("/premium")
+                          }}
+                        >
+                          👑 Upgrade to Pro
+                        </Button>
+                      ) : (
+                        <Button
+                          size="lg"
+                          variant="outline"
+                          className="bg-yellow-50 border-yellow-300 text-yellow-700 hover:bg-yellow-100 shadow-lg text-xl"
+                          onClick={() => unlockGame(game.id)}
+                        >
+                          Unlock
+                        </Button>
+                      )}
+                    </div>
+                  )}
+                </Card>
+              )
+            })}
           </div>
         )
     }

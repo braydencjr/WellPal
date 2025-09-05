@@ -1,0 +1,27 @@
+<svg width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="100%" height="100%" fill="white"/>
+
+  <!-- Chain Links (Top-Left to Bottom-Right) -->
+  <g stroke="gold" stroke-width="6" fill="none">
+    <line x1="30" y1="30" x2="270" y2="270"/>
+    <line x1="60" y1="60" x2="240" y2="240"/>
+  </g>
+
+  <!-- Chain Links (Bottom-Left to Top-Right) -->
+  <g stroke="gold" stroke-width="6" fill="none">
+    <line x1="30" y1="270" x2="270" y2="30"/>
+    <line x1="60" y1="240" x2="240" y2="60"/>
+  </g>
+
+  <!-- Padlock -->
+  <g>
+    <!-- Body -->
+    <rect x="125" y="125" width="50" height="60" rx="8" ry="8" fill="gold" stroke="black" stroke-width="2"/>
+    <!-- Shackle -->
+    <path d="M135 125 Q150 100 165 125" stroke="gold" stroke-width="6" fill="none"/>
+    <!-- Keyhole -->
+    <circle cx="150" cy="155" r="5" fill="black"/>
+    <rect x="147" y="160" width="6" height="10" fill="black"/>
+  </g>
+</svg>
