@@ -151,6 +151,7 @@ export default function MemoriesPage() {
   )
 }
 
+
 // Insights Section
 function InsightsSection() {
   const { streak } = useStreak()

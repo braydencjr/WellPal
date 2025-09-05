@@ -76,7 +76,7 @@ export function PostcardBack({
   <motion.textarea
     value={note}
     onChange={handleText}
-    placeholder="Write your message here..."
+    placeholder={!isReadOnly ? "Write your message here..." : ""}
     className="w-full bg-transparent resize-none outline-none placeholder:text-muted-foreground/60 text-base leading-6 font-caveat text-center"
     style={{ lineHeight: "25px", padding: "0" }}
     initial={{ opacity: 0 }}

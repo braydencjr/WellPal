@@ -5,9 +5,12 @@ import { useState } from "react"
 import { MailOpen, BarChart, Heart, Phone } from "lucide-react"
 import Link from "next/link"
 import { EmergencyContactsModal } from "@/components/emergency-contact-modal"
+import { InsightsModal } from "@/components/insights-modal"
+
 
 export function QuickActions() {
   const [showEmergencyContacts, setShowEmergencyContacts] = useState(false)
+  const [showInsights, setShowInsights] = useState(false)
 
   const actions = [
     {
@@ -29,7 +32,7 @@ export function QuickActions() {
       title: "Insights",
       color: "text-chart-3",
       bgColor: "bg-chart-3/10",
-      href: "/memories",
+      onClick: () => setShowInsights(true),
     },
     {
       icon: Phone,
@@ -68,6 +71,8 @@ export function QuickActions() {
 
       {/* Emergency Contacts Modal */}
       <EmergencyContactsModal isOpen={showEmergencyContacts} setIsOpen={setShowEmergencyContacts} />
+
+      <InsightsModal isOpen={showInsights} setIsOpen={setShowInsights} />
     </div>
   )
 }

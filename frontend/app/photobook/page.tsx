@@ -2,13 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
-import { loadPhotobook, PostcardEntry, deletePostcard } from "@/lib/photobook-store"
+import { loadPhotobook, PostcardEntry } from "@/lib/photobook-store"
 import { BottomNavigation } from "@/components/bottom-navigation"
 import { PostcardFront } from "@/components/postcard/PostcardFront"
 import { motion, AnimatePresence } from "framer-motion"
 import { PostcardBack } from "@/components/postcard/PostcardBack"
-import { Button } from "@/components/ui/button"
-import { X, Trash2 } from "lucide-react"
 
 interface PostcardFlipProps {
   isFlipped: boolean
@@ -48,13 +46,6 @@ export default function PhotobookPage() {
   useEffect(() => {
     setEntries(loadPhotobook())
   }, [])
-
-  // Handle deleting a postcard
-  const handleDeletePostcard = (postcardId: string) => {
-    deletePostcard(postcardId)
-    setEntries(loadPhotobook()) // Reload the photobook
-    setActive(null) // Close the modal
-  }
 
   // Group postcards by month/year
   const months = useMemo(() => {
@@ -112,7 +103,7 @@ export default function PhotobookPage() {
           {cover && (
             <img
               src={cover}
-              alt={`Cover for ${monthLabel}`}
+              alt={"Cover for ${monthLabel"}
               className="w-full h-24 object-cover rounded-md mb-2"
             />
           )}
@@ -198,30 +189,10 @@ export default function PhotobookPage() {
                       onNoteChange={(val) => {}}
                       onMoodChange={(val) => {}}
                       onLocationChange={(val) => {}}
+                      isReadOnly={true}
                     />
                   }
                 />
-                
-                {/* Close and Delete buttons */}
-                <div className="flex gap-3 justify-center mt-4">
-                  <Button
-                    onClick={() => setActive(null)}
-                    variant="outline"
-                    className="flex-1 py-3"
-                  >
-                    <X className="h-4 w-4 mr-2" />
-                    Close
-                  </Button>
-                  
-                  <Button
-                    onClick={() => handleDeletePostcard(active.id)}
-                    variant="destructive"
-                    className="flex-1 py-3"
-                  >
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Delete
-                  </Button>
-                </div>
               </motion.div>
             </motion.div>
           )}

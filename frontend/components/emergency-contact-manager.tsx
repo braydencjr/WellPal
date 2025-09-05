@@ -123,9 +123,9 @@ export function EmergencyContactManager() {
   }
 
   return (
-    <Card className="p-3 space-y-3">
+    <Card className="p-3">
       <h2 className="text-lg font-semibold">Emergency Contacts</h2>
-
+      <div className="flex flex-col gap-y-2">
       {contacts.map((contact, idx) => {
         const links = getAppLinks(contact)
         return (
@@ -220,6 +220,7 @@ export function EmergencyContactManager() {
           </Dialog>
         </div>
       )}
+      </div>
     </Card>
   )
 }
