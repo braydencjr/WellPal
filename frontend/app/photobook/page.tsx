@@ -41,12 +41,31 @@ export default function PhotobookPage() {
   const [entries, setEntries] = useState<PostcardEntry[]>([])
   const [active, setActive] = useState<PostcardEntry | null>(null)
   const [isFlipped, setIsFlipped] = useState(false)
+  const [selectedMonth, setSelectedMonth] = useState<string | null>(null) // YYYY-MM
 
   useEffect(() => {
     setEntries(loadPhotobook())
   }, [])
 
-  const grid = useMemo(() => entries, [entries])
+  // Group postcards by month/year
+  const months = useMemo(() => {
+    const groups: Record<string, PostcardEntry[]> = {}
+    entries.forEach((entry) => {
+      const month = new Date(entry.dateISO).toISOString().slice(0, 7) // YYYY-MM
+      if (!groups[month]) groups[month] = []
+      groups[month].push(entry)
+    })
+    // Sort months descending
+    return Object.keys(groups)
+      .sort((a, b) => (a < b ? 1 : -1))
+      .map((month) => ({ month, entries: groups[month] }))
+  }, [entries])
+
+  const displayEntries = useMemo(() => {
+    if (!selectedMonth) return []
+    const monthGroup = months.find((m) => m.month === selectedMonth)
+    return monthGroup?.entries || []
+  }, [selectedMonth, months])
 
   return (
     <div className="min-h-screen bg-background">
@@ -63,31 +82,77 @@ export default function PhotobookPage() {
         <h1 className="text-2xl font-semibold mb-1">Photobook</h1>
         <p className="text-muted-foreground mb-4">Your collected postcards</p>
 
-        {/* Photobook grid */}
-        <div className="grid grid-cols-2 gap-2 flex-1 overflow-y-auto">
-          {grid.length === 0 ? (
-            <p className="col-span-2 text-center text-muted-foreground py-12">
-              No postcards yet
-            </p>
-          ) : (
-            grid.map((p) => (
-              <button
-                key={p.id}
-                onClick={() => {
-                  setActive(p)
-                  setIsFlipped(false) // reset flip when opening modal
-                }}
-                className="block"
-              >
-                <PostcardFront
-                  imageUrl={p.imageDataUrl}
-                  mood={p.mood}
-                  location={p.location}
-                />
-              </button>
-            ))
+        {/* Month folders */}
+{!selectedMonth && (
+  <div className="grid grid-cols-2 gap-4 mb-4">
+    {months.map(({ month, entries: monthEntries }) => {
+      const dateObj = new Date(month + "-01")
+      const monthLabel = dateObj.toLocaleString("en-US", {
+        month: "long",
+        year: "numeric",
+      })
+
+      const cover = monthEntries[0]?.imageDataUrl // most recent postcard in this month
+
+      return (
+        <button
+          key={month}
+          onClick={() => setSelectedMonth(month)}
+          className="p-2 rounded-lg bg-card border border-border hover:shadow-md flex flex-col items-start"
+        >
+          {cover && (
+            <img
+              src={cover}
+              alt={`Cover for ${monthLabel}`}
+              className="w-full h-24 object-cover rounded-md mb-2"
+            />
           )}
-        </div>
+          <span className="font-medium">{monthLabel}</span>
+          <span className="text-xs text-muted-foreground">
+            {monthEntries.length} postcard{monthEntries.length > 1 ? "s" : ""}
+          </span>
+        </button>
+      )
+    })}
+  </div>
+)}
+
+        {/* Display postcards for selected month */}
+        {selectedMonth && (
+          <div className="flex flex-col flex-1 overflow-y-auto">
+            <button
+              onClick={() => setSelectedMonth(null)}
+              className="mb-2 text-sm text-primary font-medium hover:underline"
+            >
+              ← Back to Months
+            </button>
+
+            <div className="grid grid-cols-2 gap-2">
+              {displayEntries.length === 0 ? (
+                <p className="col-span-2 text-center text-muted-foreground py-12">
+                  No postcards this month
+                </p>
+              ) : (
+                displayEntries.map((p) => (
+                  <button
+                    key={p.id}
+                    onClick={() => {
+                      setActive(p)
+                      setIsFlipped(false)
+                    }}
+                    className="block"
+                  >
+                    <PostcardFront
+                      imageUrl={p.imageDataUrl}
+                      mood={p.mood}
+                      location={p.location}
+                    />
+                  </button>
+                ))
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Pop-up modal for active postcard */}
         <AnimatePresence>
@@ -107,26 +172,26 @@ export default function PhotobookPage() {
                 onClick={(e) => e.stopPropagation()}
               >
                 <PostcardFlip
-  isFlipped={isFlipped}
-  onToggle={() => setIsFlipped((prev) => !prev)}
-  front={
-    <PostcardFront
-      imageUrl={active.imageDataUrl}
-      mood={active.mood}
-      location={active.location}
-    />
-  }
-  back={
-    <PostcardBack
-      note={active.note || ""}
-      mood={active.mood}
-      location={active.location || ""}
-      onNoteChange={(val) => {}}
-      onMoodChange={(val) => {}}
-      onLocationChange={(val) => {}}
-    />
-  }
-/>
+                  isFlipped={isFlipped}
+                  onToggle={() => setIsFlipped((prev) => !prev)}
+                  front={
+                    <PostcardFront
+                      imageUrl={active.imageDataUrl}
+                      mood={active.mood}
+                      location={active.location}
+                    />
+                  }
+                  back={
+                    <PostcardBack
+                      note={active.note || ""}
+                      mood={active.mood}
+                      location={active.location || ""}
+                      onNoteChange={(val) => {}}
+                      onMoodChange={(val) => {}}
+                      onLocationChange={(val) => {}}
+                    />
+                  }
+                />
               </motion.div>
             </motion.div>
           )}

@@ -1,12 +1,14 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { BottomNavigation } from "@/components/bottom-navigation"
 import { Calendar } from "@/components/calendar-ui"
 import { Reminder, ReminderItem } from "@/components/reminder"
 import { PostCardList } from "@/components/postcard-list"
 
 export default function CalendarPage() {
+  const router = useRouter()
   const [reminders, setReminders] = useState<ReminderItem[]>(() => {
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem("reminders")
@@ -28,6 +30,14 @@ export default function CalendarPage() {
     <div className="min-h-screen bg-background">
       <div className="max-w-sm mx-auto bg-card">
         <div className="max-w-sm mx-auto px-6 pt-12 pb-24">
+           {/* Back Button */}
+          <button
+            onClick={() => router.push("/dashboard")}
+            className="mb-4 text-sm text-primary font-medium hover:underline"
+          >
+            ← Back to Dashboard
+          </button>
+
           <h1 className="text-2xl font-semibold mb-2">Calendar</h1>
           <p className="text-muted-foreground mb-6">
             Keep track of your schedule and important dates here.

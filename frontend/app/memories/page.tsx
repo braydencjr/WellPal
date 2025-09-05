@@ -8,8 +8,10 @@ import { EnhancedPostcardModal } from "@/components/enhanced-postcard-modal"
 import { EnhancedPhotobook } from "@/components/enhanced-photobook"
 import { EnhancedPostcardViewer } from "@/components/enhanced-postcard-viewer"
 import { MemoriesDogAnimation } from "@/components/memories-dog-animation"
+import { useStreak } from "@/hooks/use-streak" // adjust path if needed
 
 export default function MemoriesPage() {
+  const { streak, updateStreak } = useStreak() // get hook
   const [entries, setEntries] = useState<PostcardEntry[]>([])
   const [showCamera, setShowCamera] = useState(false)
   const [showPostcardCreation, setShowPostcardCreation] = useState(false)
@@ -49,6 +51,9 @@ export default function MemoriesPage() {
     setEntries(prev => [saved, ...prev])
     setCapturedImage("")
     setShowPostcardCreation(false)
+
+    updateStreak()
+    console.log("Streak updated:", streak)
   }
 
   // Open postcard viewer
@@ -148,6 +153,7 @@ export default function MemoriesPage() {
 
 // Insights Section
 function InsightsSection() {
+  const { streak } = useStreak()
   const insights = [
     {
       icon: (props: any) => (
@@ -168,7 +174,7 @@ function InsightsSection() {
         </svg>
       ),
       title: "Check-in Streak",
-      value: "7 days",
+      value: `${streak.currentStreak} day${streak.currentStreak !== 1 ? "s" : ""}`,
       description: "Great job staying consistent with daily check-ins",
       color: "text-secondary",
       bgColor: "bg-secondary/10",
