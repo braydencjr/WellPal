@@ -298,7 +298,7 @@ export function StressReliefTabs() {
                   {/* Overlay for locked games */}
                   {isLocked && (
                     <div className="absolute inset-0 rounded-lg flex flex-col items-center justify-center space-y-3 z-10">
-                      <p className="text-m text-yellow-700 font-medium text-center px-4 bg-white/90 rounded-lg py-2">
+                      <p className="text-sm text-yellow-700 font-medium text-center px-4 bg-white/90 rounded-lg py-2">
                         {game.id === "snake" && "Unlock after 3 days login streak"}
                         {game.id === "tetris" && "Unlock after 7 days login streak"}
                         {game.id === "custom" && "Unlock after you purchase Pro version"}
