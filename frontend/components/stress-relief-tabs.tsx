@@ -301,14 +301,28 @@ export function StressReliefTabs() {
                         {game.id === "tetris" && "Unlock after 7 days login streak"}
                         {game.id === "custom" && "Unlock after you purchase Pro version"}
                       </p>
-                      <Button
-                        size="lg"
-                        variant="outline"
-                        className="bg-yellow-50 border-yellow-300 text-yellow-700 hover:bg-yellow-100 shadow-lg text-xl"
-                        onClick={() => unlockGame(game.id)}
-                      >
-                        Unlock
-                      </Button>
+                      {game.id === "custom" ? (
+                        <Button
+                          size="lg"
+                          variant="outline"
+                          className="bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0 hover:from-purple-600 hover:to-pink-600 shadow-lg text-xl font-semibold"
+                          onClick={() => {
+                            // Navigate to Premium page
+                            window.location.href = "http://localhost:3000/premium"
+                          }}
+                        >
+                          👑 Upgrade to Pro
+                        </Button>
+                      ) : (
+                        <Button
+                          size="lg"
+                          variant="outline"
+                          className="bg-yellow-50 border-yellow-300 text-yellow-700 hover:bg-yellow-100 shadow-lg text-xl"
+                          onClick={() => unlockGame(game.id)}
+                        >
+                          Unlock
+                        </Button>
+                      )}
                     </div>
                   )}
                 </Card>
