@@ -199,13 +199,6 @@ export function StressReliefTabs() {
             ) : (
               <SnakeGame />
             )}
-            {lockedGames.includes("snake") ? (
-              <LockWrapper isLocked={true}>
-                <SnakeGame />
-              </LockWrapper>
-            ) : (
-              <SnakeGame />
-            )}
           </div>
         )
       case "tetris":
@@ -218,13 +211,6 @@ export function StressReliefTabs() {
             >
               ← Back to Games
             </Button>
-            {lockedGames.includes("tetris") ? (
-              <LockWrapper isLocked={true}>
-                <TetrisGame />
-              </LockWrapper>
-            ) : (
-              <TetrisGame />
-            )}
             {lockedGames.includes("tetris") ? (
               <LockWrapper isLocked={true}>
                 <TetrisGame />
