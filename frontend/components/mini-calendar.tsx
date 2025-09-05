@@ -12,7 +12,7 @@ interface MiniCalendarProps {
 export function MiniCalendar({ reminders, setReminders }: MiniCalendarProps) {
   const today = new Date()
   const router = useRouter()
-  const todayStr = today.toISOString().split("T")[0] // ✅ YYYY-MM-DD format
+  const todayStr = today.toLocaleDateString("en-CA") // ✅ YYYY-MM-DD format
 
   // ✅ only reminders for today
   const todayReminders = reminders.filter((r) => r.date === todayStr)

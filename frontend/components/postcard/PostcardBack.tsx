@@ -2,6 +2,8 @@
 
 import { motion } from "framer-motion"
 import { ChangeEvent } from "react"
+import { useRouter } from "next/navigation"
+import Image from "next/image"
 
 export interface PostcardBackProps {
   note: string
@@ -15,14 +17,14 @@ export interface PostcardBackProps {
   
 }
 
-// Replace emojis with dog images
+// Replace emojis with dog images - now with premium status
 const moodOptions = [
-  { name: "Happy Dog", src: "/assets/happy.png" },
-  { name: "Sad Dog", src: "/assets/sad.png" },
-  { name: "Angry Dog", src: "/assets/angry.png" },
-  { name: "Lovely Dog", src: "/assets/lovely.png" },
-  { name: "Cool Dog", src: "/assets/cool.png" },
-  { name: "Shock Dog", src: "/assets/shock.png" },
+  { name: "Happy Dog", src: "/assets/happy.png", isPremium: false },
+  { name: "Sad Dog", src: "/assets/sad.png", isPremium: false },
+  { name: "Angry Dog", src: "/assets/angry.png", isPremium: false },
+  { name: "Lovely Dog", src: "/assets/lovely.png", isPremium: true },
+  { name: "Cool Dog", src: "/assets/cool.png", isPremium: true },
+  { name: "Shock Dog", src: "/assets/shock.png", isPremium: true },
 ]
 
 export function PostcardBack({
@@ -34,10 +36,20 @@ export function PostcardBack({
   isReadOnly = false,
   onSave,
 }: PostcardBackProps) {
+  const router = useRouter()
   const handleText = (e: ChangeEvent<HTMLTextAreaElement>) => onNoteChange(e.target.value)
   const handleLoc = (e: ChangeEvent<HTMLInputElement>) => onLocationChange(e.target.value)
 
   const selectedMood = moodOptions.find((m) => m.name === mood)
+
+  const handleMoodClick = (moodOption: typeof moodOptions[0]) => {
+    if (moodOption.isPremium) {
+      // Redirect to premium page
+      router.push('/premium')
+    } else {
+      onMoodChange(moodOption.name)
+    }
+  }
 
   return (
     <motion.div
@@ -82,13 +94,25 @@ export function PostcardBack({
               {moodOptions.map((m) => (
                 <button
                   key={m.name}
-                  onClick={() => onMoodChange(m.name)}
-                  className={`flex-none w-16 h-16 rounded-md border transition-colors ${
+                  onClick={() => handleMoodClick(m)}
+                  className={`relative flex-none w-16 h-16 rounded-md border transition-colors ${
                     mood === m.name ? "border-primary" : "border-transparent"
                   } hover:border-primary flex items-center justify-center`}
                   aria-label={m.name}
                 >
                   <img src={m.src} alt={m.name} className="w-12 h-12 object-contain" />
+                  {/* Lock overlay for premium moods */}
+                  {m.isPremium && (
+                    <div className="absolute inset-0 bg-black/40 rounded-md flex items-center justify-center">
+                      <Image
+                        src="/assets/cartoon-lock.png"
+                        alt="Premium"
+                        width={20}
+                        height={20}
+                        className="object-contain"
+                      />
+                    </div>
+                  )}
                 </button>
               ))}
             </div>
