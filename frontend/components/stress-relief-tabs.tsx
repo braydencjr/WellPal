@@ -1,5 +1,6 @@
 "use client"
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Gamepad2, Dumbbell, Headphones, Music, Play, Pause, Grid3x3, Zap, Box, Volume2, SkipBack, SkipForward } from "lucide-react"
@@ -94,6 +95,7 @@ const musicSuggestions = [
 ]
 
 export function StressReliefTabs() {
+  const router = useRouter()
   const [activeTab, setActiveTab] = useState<TabType>("game")
   const [playingAudio, setPlayingAudio] = useState<string | null>(null)
   const [currentExercise, setCurrentExercise] = useState<string | null>(null)
@@ -307,8 +309,8 @@ export function StressReliefTabs() {
                           variant="outline"
                           className="bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0 hover:from-purple-600 hover:to-pink-600 shadow-lg text-xl font-semibold"
                           onClick={() => {
-                            // Navigate to Premium page
-                            window.location.href = "http://localhost:3000/premium"
+                            // Navigate to Premium page using Next.js router
+                            router.push("/premium")
                           }}
                         >
                           👑 Upgrade to Pro
@@ -613,4 +615,3 @@ export function StressReliefTabs() {
     </div>
   )
 }
-

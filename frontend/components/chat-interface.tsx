@@ -198,7 +198,7 @@ export function ChatInterface({ companionAvatar = "ai-companion-1.png" }: ChatIn
             <Button
               size="sm"
               variant="outline"
-              onClick={() => window.location.href = "http://localhost:3000/premium"}
+              onClick={() => router.push('/premium')}
               className="text-xs border-orange-300 text-orange-700 hover:bg-orange-100 dark:border-orange-600 dark:text-orange-300"
             >
               <Crown className="h-3 w-3 mr-1" />
@@ -208,11 +208,11 @@ export function ChatInterface({ companionAvatar = "ai-companion-1.png" }: ChatIn
           {dailyRequestsRemaining === 0 && (
             <Button
               size="sm"
-              onClick={() => window.location.href = "http://localhost:3000/premium"}
-              className="text-xs bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
+              onClick={() => router.push('/premium')}
+              className="text-xs bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
             >
               <Crown className="h-3 w-3 mr-1" />
-              👑 Upgrade to Pro
+               👑 Upgrade to Pro
             </Button>
           )}
         </div>
@@ -227,10 +227,10 @@ export function ChatInterface({ companionAvatar = "ai-companion-1.png" }: ChatIn
             {error.includes("daily limit") && (
               <Button
                 size="sm"
-                onClick={() => window.location.href = "http://localhost:3000/premium"}
-                className="ml-2 text-xs bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
+                onClick={() => router.push('/premium')}
+                className="ml-2 text-xs bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
               >
-                👑 Upgrade to Pro
+                 👑 Upgrade to Pro
               </Button>
             )}
           </div>
