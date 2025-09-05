@@ -10,9 +10,21 @@ import { CameraButton } from "@/components/camera-button-dashboard"
 import { DogPal } from "@/components/DogPal-animation"
 import { DogChatReminder } from "@/components/dogpal-chat"
 import { ReminderItem } from "@/components/reminder-dashboard"
+import { EnhancedCameraModal } from "@/components/enhanced-camera-modal"
+import { EnhancedPostcardModal } from "@/components/enhanced-postcard-modal"
+import { addPostcard } from "@/lib/photobook-store"
+
 
 export default function DashboardPage() {
   const [hasTakenPhotoToday, setHasTakenPhotoToday] = useState(false)
+  const [showCamera, setShowCamera] = useState(false)
+  const [showPostcardCreation, setShowPostcardCreation] = useState(false)
+  const [capturedImage, setCapturedImage] = useState("")
+
+  const handlePhotoCapture = (imageDataUrl: string) => {
+    setCapturedImage(imageDataUrl)
+    setShowPostcardCreation(true)
+  }
 
   // ✅ Shared reminders with localStorage
   const [reminders, setReminders] = useState<ReminderItem[]>(() => {
@@ -34,7 +46,33 @@ export default function DashboardPage() {
           <div className="max-w-sm mx-auto px-6 pt-8 pb-24">
             <WelcomeHeader />
             <div className="flex flex-row items-center gap-2 mb-4">
-              <CameraButton />
+               <CameraButton onClick={() => setShowCamera(true)} />
+                {/* Camera Modal */}
+     <EnhancedPostcardModal
+  isOpen={showPostcardCreation}
+  onClose={() => setShowPostcardCreation(false)}
+  onSave={(note, mood, location) => {
+    addPostcard({
+      imageDataUrl: capturedImage,
+      note,
+      mood,
+      location,
+    })
+    setShowPostcardCreation(false)
+  }}
+  imageUrl={capturedImage}
+/>
+
+      {/* Postcard Creation Modal (same flow as MemoriesPage) */}
+      <EnhancedPostcardModal
+        isOpen={showPostcardCreation}
+        onClose={() => setShowPostcardCreation(false)}
+        onSave={(note, mood, location) => {
+          console.log("Save postcard here", { note, mood, location })
+          setShowPostcardCreation(false)
+        }}
+        imageUrl={capturedImage}
+      />
               <MusicPlayerCard />
             </div>
             <MiniCalendar reminders={reminders} setReminders={setReminders} />

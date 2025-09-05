@@ -10,7 +10,8 @@ import { Plus, Minus, Trash2 } from "lucide-react"
 export interface ReminderItem {
   title: string
   description?: string
-  date: string
+  dateISO: string
+  checked?: boolean
 }
 
 interface ReminderProps {
@@ -41,7 +42,7 @@ export function Reminder({
     const newReminder: ReminderItem = {
       title,
       description,
-      date: selectedDate, // ✅ attach reminder to the selected date
+      dateISO: selectedDate,
     }
     setReminders([...reminders, newReminder])
     setTitle("")
@@ -112,7 +113,7 @@ export function Reminder({
                     {reminder.description}
                   </p>
                 )}
-                <p className="text-xs text-gray-400">{reminder.date}</p>
+                <p className="text-xs text-gray-400">{reminder.dateISO}</p>
               </div>
               <Button
                 variant="ghost"
