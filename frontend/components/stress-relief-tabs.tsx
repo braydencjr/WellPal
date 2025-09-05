@@ -12,6 +12,7 @@ import { ProgressiveMuscleRelaxation } from "@/components/progressive-muscle-rel
 import { AdvancedASMRPlayer } from "@/components/advanced-asmr-player"
 import { LockWrapper } from "@/components/LockWrapper"
 
+
 type TabType = "game" | "exercise" | "asmr" | "music"
 
 const tabs = [
@@ -97,6 +98,7 @@ export function StressReliefTabs() {
   const [playingAudio, setPlayingAudio] = useState<string | null>(null)
   const [currentExercise, setCurrentExercise] = useState<string | null>(null)
   const [currentGame, setCurrentGame] = useState<string | null>(null)
+
   
   // Add locked games state management
   const [lockedGames, setLockedGames] = useState<string[]>(["snake", "tetris", "custom"])
@@ -195,6 +197,13 @@ export function StressReliefTabs() {
             ) : (
               <SnakeGame />
             )}
+            {lockedGames.includes("snake") ? (
+              <LockWrapper isLocked={true}>
+                <SnakeGame />
+              </LockWrapper>
+            ) : (
+              <SnakeGame />
+            )}
           </div>
         )
       case "tetris":
@@ -214,6 +223,13 @@ export function StressReliefTabs() {
             ) : (
               <TetrisGame />
             )}
+            {lockedGames.includes("tetris") ? (
+              <LockWrapper isLocked={true}>
+                <TetrisGame />
+              </LockWrapper>
+            ) : (
+              <TetrisGame />
+            )}
           </div>
         )
       case "custom":
@@ -226,6 +242,13 @@ export function StressReliefTabs() {
             >
               ← Back to Games
             </Button>
+            {lockedGames.includes("custom") ? (
+              <LockWrapper isLocked={true}>
+                <CustomGameManager />
+              </LockWrapper>
+            ) : (
+              <CustomGameManager />
+            )}
             {lockedGames.includes("custom") ? (
               <LockWrapper isLocked={true}>
                 <CustomGameManager />
