@@ -15,11 +15,16 @@ export function loadPhotobook(): PostcardEntry[] {
   if (typeof window === "undefined") return []
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
-    return raw ? (JSON.parse(raw) as PostcardEntry[]) : []
+    const parsed = raw ? (JSON.parse(raw) as PostcardEntry[]) : []
+    // 🔥 ensure most recent first
+    return parsed.sort(
+      (a, b) => new Date(b.dateISO).getTime() - new Date(a.dateISO).getTime()
+    )
   } catch {
     return []
   }
 }
+
 
 export function savePhotobook(entries: PostcardEntry[]) {
   if (typeof window === "undefined") return

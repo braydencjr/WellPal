@@ -12,13 +12,12 @@ export function PostCardList({ selectedDate }: { selectedDate: string }) {
 
   const allPostcards: PostcardEntry[] = useMemo(() => loadPhotobook(), [])
 
-  const selectedPostcards = useMemo(
-    () =>
-      allPostcards.filter(
-        (p) => p.dateISO.split("T")[0] === selectedDate
-      ),
-    [allPostcards, selectedDate]
-  )
+  const selectedPostcards = useMemo(() => {
+  return allPostcards
+    .filter((p) => p.dateISO.split("T")[0] === selectedDate)
+    .sort((a, b) => new Date(b.dateISO).getTime() - new Date(a.dateISO).getTime())
+}, [allPostcards, selectedDate])
+
 
   return (
     <div className="flex items-center justify-center w-full">

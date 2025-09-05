@@ -1,8 +1,6 @@
-// reminder-dashboard.ts
 export interface ReminderItem {
   title: string
   description?: string
-  date: string
+  dateISO: string   // always UTC YYYY-MM-DD
   checked?: boolean
 }
-
