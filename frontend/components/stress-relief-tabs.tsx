@@ -256,10 +256,9 @@ export function StressReliefTabs() {
                         <div className="flex items-center space-x-2 mb-1">
                           <h3 className="font-medium text-foreground">{game.title}</h3>
                           {isLocked && (
-                           <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full whitespace-nowrap">
-                             🔒 Locked
-                           </span>
-
+                            <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full whitespace-nowrap">
+                              🔒 Locked
+                            </span>
                           )}
                         </div>
                         <p className="text-sm text-muted-foreground mb-2">{game.description}</p>
@@ -277,30 +276,50 @@ export function StressReliefTabs() {
                   </div>
                   
                   {/* Overlay for locked games */}
-{isLocked && (
-  <div className="absolute inset-0 rounded-lg flex flex-col items-center justify-center space-y-3 z-10">
-    <p className="flex items-center justify-center text-sm text-yellow-700 font-medium text-center px-4 bg-white/90 rounded-lg py-2 space-x-2">
-      <Lock className="w-4 h-4" />
-      <span>
-        {game.id === "snake" && "Unlock after 3 days login streak"}
-        {game.id === "tetris" && "Unlock after 7 days login streak"}
-        {game.id === "custom" && "Unlock after you purchase Pro version"}
-      </span>
-    </p>
+                  {isLocked && (
+                    <div className="absolute inset-0 rounded-lg flex flex-col items-center justify-center space-y-3 z-10">
+  <p className="flex items-center justify-center text-sm text-yellow-700 font-medium text-center px-4 bg-white/90 rounded-lg py-2 space-x-2">
+    <Lock className="w-4 h-4" />
+    <span>
+      {game.id === "snake" && "Unlock after 3 days login streak"}
+      {game.id === "tetris" && "Unlock after 7 days login streak"}
+      {game.id === "custom" && "Unlock after you purchase Pro version"}
+    </span>
+  </p>
 
-    {game.id === "custom" && (
+  {game.id === "custom" ? (
+    <div className="flex flex-col space-y-2">
       <Button
         size="sm"
         variant="outline"
         className="bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0 hover:from-purple-600 hover:to-pink-600 shadow-lg font-semibold"
-        onClick={() => router.push("/premium")}
+        onClick={() => {
+          router.push("/premium")
+        }}
       >
         👑 Upgrade to Pro
       </Button>
-    )}
-  </div>
-)}
-
+      <Button
+        size="sm"
+        variant="outline"
+        className="bg-yellow-50 border-yellow-300 text-yellow-700 hover:bg-yellow-100 shadow-lg"
+        onClick={() => unlockGame(game.id)}
+      >
+        Unlock
+      </Button>
+    </div>
+  ) : (
+    <Button
+      size="sm"
+      variant="outline"
+      className="bg-yellow-50 border-yellow-300 text-yellow-700 hover:bg-yellow-100 shadow-lg"
+      onClick={() => unlockGame(game.id)}
+    >
+      Unlock
+    </Button>
+  )}
+</div>
+                  )}
                 </Card>
               )
             })}
