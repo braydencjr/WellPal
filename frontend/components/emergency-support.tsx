@@ -344,9 +344,9 @@ export function EmergencySupport() {
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Add New {section.title === "University Services" ? "University Service" : "Private/NGO Contact"}</DialogTitle>
+                <DialogTitle>Add New {addDialogType === "university" ? "University Service" : "Private/NGO Contact"}</DialogTitle>
                 <DialogDescription>
-                  Add a new contact for {section.title.toLowerCase()}. All fields are optional except title and description.
+                  Add a new contact for {addDialogType === "university" ? "university service" : "private / NGOs"}. All fields are optional except title and description.
                 </DialogDescription>
               </DialogHeader>
               <form action={handleAddContact} className="space-y-4">
