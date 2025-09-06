@@ -1,7 +1,9 @@
-import type React from "react"
-import type { Metadata, Viewport } from "next"
+// app/layout.tsx
+"use client" // ✅ make this file a client component
+
+import type { ReactNode } from "react"
 import { Poppins } from "next/font/google"
-import { ThemeProvider } from "@/components/theme-provider"
+import { ThemeProvider, useCalmingTheme } from "@/components/theme-provider"
 import { UserProvider } from "@/contexts/user-context"
 import "./globals.css"
 import "./animations.css"
@@ -12,33 +14,24 @@ const poppins = Poppins({
   weight: ["300", "400", "500", "600", "700"],
 })
 
-export const metadata: Metadata = {
-  title: "WellPal - Mental Wellness Companion",
-  description: "Your personal mental wellness companion for university students",
-  generator: "Next.js",
-  manifest: "/manifest.json",
-  keywords: ["mental health", "wellness", "university", "students", "wellbeing"],
-  authors: [{ name: "WellPal Team" }],
-  icons: {
-    icon: "/icon-192x192.png",
-    shortcut: "/icon-192x192.png",
-    apple: "/icon-192x192.png",
-  },
+function CalmingThemeWrapper({ children }: { children: ReactNode }) {
+  const { calmingTheme } = useCalmingTheme()
+
+  return (
+    <div
+      data-calming-theme={calmingTheme}
+      className="min-h-screen transition-colors duration-300"
+      style={{
+        backgroundColor: "var(--background)",
+        color: "var(--foreground)",
+      }}
+    >
+      {children}
+    </div>
+  )
 }
 
-export const viewport: Viewport = {
-  themeColor: "#65a3a8",
-  width: "device-width",
-  initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
-}
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body className={`${poppins.className} antialiased`}>
@@ -49,7 +42,7 @@ export default function RootLayout({
           disableTransitionOnChange={false}
         >
           <UserProvider>
-            {children}
+            <CalmingThemeWrapper>{children}</CalmingThemeWrapper>
           </UserProvider>
         </ThemeProvider>
       </body>

@@ -188,30 +188,6 @@ export function OnboardingSummary() {
             </CardContent>
           </Card>
 
-          {/* Accessibility */}
-          {enabledAccessibility.length > 0 && (
-            <Card className="border-0 shadow-sm">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <User className="w-5 h-5 text-primary" />
-                  Accessibility
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-2">
-                  {enabledAccessibility.map((feature) => (
-                    <Badge key={feature} variant="outline" className="text-xs">
-                      {feature === "largerText" && "Larger Text"}
-                      {feature === "highContrast" && "High Contrast"}
-                      {feature === "dyslexiaFriendlyFont" && "Dyslexia-Friendly Font"}
-                      {feature === "reduceMotion" && "Reduce Motion"}
-                      {feature === "screenReaderHints" && "Screen Reader Hints"}
-                    </Badge>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          )}
 
           {/* Personalization */}
           <Card className="border-0 shadow-sm">

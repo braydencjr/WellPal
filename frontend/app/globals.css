@@ -74,6 +74,142 @@
   --accent: oklch(0.7 0.12 60); /* Orange accent */
 }
 
+/* ---------------- Red Weak ---------------- */
+[data-calming-theme="red-weak-1"] {
+  --background: #fff9c4;  /* light yellow */
+  --primary: #fdd835;     /* bright yellow */
+  --secondary: #00bfa5;   /* teal/turquoise */
+  --accent: #f48fb1;      /* pink */
+}
+
+[data-calming-theme="red-weak-2"] {
+  --background: #fffde7;
+  --primary: #ffee58;
+  --secondary: #80cbc4;
+  --accent: #f06292;
+}
+
+[data-calming-theme="red-weak-3"] {
+  --background: #fff8e1;
+  --primary: #ffd54f;
+  --secondary: #4db6ac;
+  --accent: #ec407a;
+
+}
+
+/* ---------------- Red Blind ---------------- */
+[data-calming-theme="red-blind-1"] {
+ --background: #9381fa;  /* light purple-blue */
+--primary: #3949ab;     /* darker blue for main elements */
+--secondary: #ffeb3b;   /* bright yellow for contrast */
+--accent: #00bfa5;      /* teal/cyan for accent, avoids red */
+}
+
+[data-calming-theme="red-blind-2"] {
+  --background: #fff9c4;  /* light yellow */
+  --primary: #fdd835;
+  --secondary: #aed581;
+  --accent: #f48fb1;
+}
+
+[data-calming-theme="red-blind-3"] {
+  --background: #e3f2fd;  /* light blue */
+  --primary: #2196f3;     /* medium blue */
+  --secondary: #ffeb3b;   /* bright yellow for contrast */
+  --accent: #f48fb1;      /* pink for accent */
+}
+
+
+/* ---------------- Blue Weak ---------------- */
+[data-calming-theme="blue-weak-1"] {
+  --background: #fff3e0;  /* light orange */
+  --primary: #ffb74d;     /* orange */
+  --secondary: #aed581;   /* green */
+  --accent: #f48fb1;      /* pink */
+}
+
+[data-calming-theme="blue-weak-2"] {
+  --background: #fff8e1;
+  --primary: #ffd54f;
+  --secondary: #c5e1a5;
+  --accent: #f06292;
+}
+
+[data-calming-theme="blue-weak-3"] {
+  --background: #f1f8e9;
+  --primary: #aed581;
+  --secondary: #81c784;
+  --accent: #ec407a;
+}
+
+/* ---------------- Blue Blind ---------------- */
+[data-calming-theme="blue-blind-1"] {
+  --background: #f7d9e3;  /* light pink */
+  --primary: #f48fb1;     /* pink */
+  --secondary: #ffd54f;   /* yellow */
+  --accent: #8d6e63;      /* brown */
+}
+
+[data-calming-theme="blue-blind-2"] {
+  --background: #f1f8e9;
+  --primary: #aed581;
+  --secondary: #81c784;
+  --accent: #ec407a;
+}
+
+[data-calming-theme="blue-blind-3"] {
+  --background: #e0f2f1;  /* very light teal/green */
+  --primary: #26a69a;     /* teal */
+  --secondary: #ffeb3b;   /* yellow */
+  --accent: #bcaaa4;      /* soft brown */
+}
+
+
+/* ---------------- Green Weak ---------------- */
+[data-calming-theme="green-weak-1"] {
+  --background: #f3e5f5;  /* light purple */
+  --primary: #ba68c8;     /* purple */
+  --secondary: #ffd54f;   /* yellow */
+  --accent: #ff8a65;      /* orange */
+}
+
+[data-calming-theme="green-weak-2"] {
+  --background: #f9fbe7;
+  --primary: #dce775;
+  --secondary: #ffb74d;
+  --accent: #ba68c8;
+}
+
+[data-calming-theme="green-weak-3"] {
+  --background: #f5f0e1;  
+  --primary: #8B4513;     
+  --secondary: #D2B48C;   
+  --accent: #FF8C00;      
+}
+
+/* ---------------- Green Blind ---------------- */
+[data-calming-theme="green-blind-1"] {
+  --background: #fff3e0;  /* light orange */
+  --primary: #ffb74d;     /* orange */
+  --secondary: #4db6ac;   /* teal */
+  --accent: #ba68c8;      /* purple */
+}
+
+[data-calming-theme="green-blind-2"] {
+  --background: #fce4ec;
+  --primary: #f06292;
+  --secondary: #4dd0e1;
+  --accent: #ffd54f;
+}
+
+[data-calming-theme="green-blind-3"] {
+  --background: #f5f0e1;  /* very light beige/brown */
+  --primary: #8B4513;     /* saddle brown */
+  --secondary: #D2B48C;   /* tan / light brown for contrast */
+  --accent: #FF8C00;      /* dark orange accent */
+}
+
+
 .dark {
   /* Updated dark mode tokens for calming nighttime experience */
   --background: oklch(0.12 0.02 240); /* Very dark blue-gray */

@@ -1,10 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Image from "next/image"
 
 export function ProfileDogBanner() {
   const [imageError, setImageError] = useState(false)
+  const [randomMessage, setRandomMessage] = useState("")
+  const [randomDogImage, setRandomDogImage] = useState("")
 
   const dogImages = [
     "/assets/2d-profile-dog.png",
@@ -17,29 +19,27 @@ export function ProfileDogBanner() {
     "Psst... this is where the magic happens! Edit away, buddy! 🌟"
   ]
 
-  const randomDogImage = dogImages[Math.floor(Math.random() * dogImages.length)]
-  const randomMessage = speechBubbleMessages[Math.floor(Math.random() * speechBubbleMessages.length)]
+  useEffect(() => {
+    setRandomDogImage(dogImages[Math.floor(Math.random() * dogImages.length)])
+    setRandomMessage(speechBubbleMessages[Math.floor(Math.random() * speechBubbleMessages.length)])
+  }, [])
+
+  if (!randomMessage || !randomDogImage) return null // optional: prevent empty render
 
   return (
     <div className="relative mb-6 flex flex-col items-center">
-      {/* Speech Bubble on top with animations */}
       <div className="relative bg-card rounded-2xl p-4 shadow-lg border-2 border-primary/30 max-w-[280px] mb-4 animate-bob">
-        {/* Speech bubble tail pointing down */}
         <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 animate-wiggle-slow">
-          {/* Primary color outline triangle */}
           <div className="w-0 h-0 border-l-[16px] border-r-[16px] border-t-[16px] border-l-transparent border-r-transparent border-t-primary/30"></div>
         </div>
         <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 animate-wiggle-slow">
-          {/* Card background inside triangle */}
           <div className="w-0 h-0 border-l-[14px] border-r-[14px] border-t-[14px] border-l-transparent border-r-transparent border-t-card"></div>
         </div>
-        
         <p className="text-sm text-card-foreground leading-relaxed animate-fade-in text-center">
           {randomMessage}
         </p>
       </div>
 
-      {/* Larger Dog Image at the bottom with animations */}
       <div className="relative flex-shrink-0 animate-float">
         {!imageError ? (
           <div className="relative">
