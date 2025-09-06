@@ -200,23 +200,24 @@ export function DeepBreathingExercise() {
 
         {/* Breathing Visualization */}
         <div className="relative flex items-center justify-center" style={{ height: '300px' }}>
-          <div 
-            className={`
-              relative rounded-full border-4 border-primary/20 transition-all duration-1000 ease-in-out
-              ${phaseColors[breathingState.phase]} opacity-20
-            `}
-            style={{
-              width: '200px',
-              height: '200px',
-              transform: `scale(${getBubbleScale()})`
-            }}
-          >
+           <div 
+  className={`
+    relative rounded-full border-4 border-primary/20 transition-all duration-1000 ease-in-out
+    ${phaseColors[breathingState.phase]} // make sure these are like bg-blue-500/20
+  `}
+  style={{
+    width: '200px',
+    height: '200px',
+    transform: `scale(${getBubbleScale()})`
+  }}
+>
+
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-center">
-                <div className="text-3xl font-bold text-foreground mb-2">
+                <div className="text-3xl font-bold mb-2 text-black">
                   {breathingState.secondsLeft}
                 </div>
-                <div className="text-sm font-medium text-foreground capitalize">
+                <div className="text-sm font-medium capitalize text-black">
                   {breathingState.phase}
                 </div>
               </div>
