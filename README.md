@@ -139,6 +139,8 @@ JWT_SECRET=your_jwt_secret
 GOOGLE_API_KEY=your_google_api_key
 ```
 
+---
+
 ## 💪 Team Cache Me If U Can
 - Brayden Chong Jie Rui
 - Chin Yiu Ern
