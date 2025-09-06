@@ -104,13 +104,6 @@ cp .env.example .env
 # Edit .env with your database and API credentials
 ```
 
-### Database Setup
-```bash
-# Run migrations
-cd backend
-alembic upgrade head
-```
-
 ### Running the Application
 ```bash
 # Start backend (from backend directory)
