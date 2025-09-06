@@ -9,6 +9,8 @@
   <br />
 </div>
 
+---
+
 ## ✨ Features
 
 WellPal: click! offers a comprehensive suite of mental wellness tools designed specifically for university students:
@@ -34,6 +36,8 @@ Quick access to saved emergency contacts and mental health hotlines. One-tap con
 
 ### 🎭 Personalized Experience
 Customize theme colors and font sizes to match your preferences and support accessibility needs.
+
+---
 
 ## 🛠️ Tech Stack
 
@@ -61,6 +65,8 @@ Customize theme colors and font sizes to match your preferences and support acce
 - **Testing**: React Testing Library, Pytest
 - **Code Quality**: TypeScript, ESLint, Prettier, Black
 - **Deployment**: Docker containerization
+
+---
 
 ## 🚀 Setup Instructions
 
