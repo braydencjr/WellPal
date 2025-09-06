@@ -1,17 +1,17 @@
-# 🌿 WellPal
+# 🌿 WellPal: click!
 
 > **A mental wellness companion app for university students**  
 > Transforming mental health support through innovative digital solutions
 
 <div align="center">
-  <img src="public/wellpal-logo.png" alt="WellPal Logo" width="200" />
+  <img src="frontend/public/assets/logo.JPG" alt="WellPal: click! Logo" width="200" />
   <br />
   <br />
 </div>
 
 ## ✨ Features
 
-WellPal offers a comprehensive suite of mental wellness tools designed specifically for university students:
+WellPal: click! offers a comprehensive suite of mental wellness tools designed specifically for university students:
 
 ### 🎨 Digital Mood Postcards
 Transform your daily mood tracking into meaningful digital postcards. Express yourself through colorful designs that capture your emotional journey and create a visual diary of your wellbeing.
@@ -152,5 +152,5 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 <div align="center">
   <p>Made with care for student mental wellness</p>
-  <p>© 2025 WellPal Team</p>
+  <p>© Team Cache Me If U Can</p>
 </div>
