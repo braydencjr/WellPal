@@ -107,7 +107,8 @@ cp .env.example .env
 ### Running the Application
 ```bash
 # Start backend (from backend directory)
-uvicorn app.main:app --reload
+.venv\Scripts\activate
+python run.py
 
 # In another terminal, start frontend (from frontend directory)
 npm run dev
