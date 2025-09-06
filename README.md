@@ -140,7 +140,7 @@ GOOGLE_API_KEY=your_google_api_key
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/braydencjr/WellPal/tree/main?tab=MIT-1-ov-file#readme) file for details.
 
 ---
 
