@@ -139,14 +139,17 @@ export default function MemoriesPage() {
       <BottomNavigation activeTab="memories" />
       
       {/* Memories Dog Animation fixed in bottom-right corner of app container */}
-      <div 
-        className="fixed bottom-16 z-50"
-        style={{
-          right: `max(1rem, calc(50vw - 192px + 1rem))`
-        }}
-      >
-        <MemoriesDogAnimation />
-      </div>
+      {/* Hide dog animation when camera, postcard creation, or postcard viewer modals are open */}
+      {!showCamera && !showPostcardCreation && !selectedPostcard && (
+        <div 
+          className="fixed bottom-16 z-50"
+          style={{
+            right: `max(1rem, calc(50vw - 192px + 1rem))`
+          }}
+        >
+          <MemoriesDogAnimation />
+        </div>
+      )}
     </div>
   )
 }
