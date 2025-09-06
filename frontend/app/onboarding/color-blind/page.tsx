@@ -32,7 +32,12 @@ export default function ColorBlindTypePage() {
   return (
     <QuestionLayout
       question="Which type of color blindness do you have?"
-      onYes={handleNext}
+      onYes={() => {
+    const conditions = loadConditions()
+    conditions.colorBlind = true
+    saveConditions(conditions)
+    handleNext()
+  }}
       onNo={() => router.push("/onboarding/dyslexia")}
     >
       <div className="mt-4 space-y-2">
