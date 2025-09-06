@@ -2,6 +2,7 @@
 "use client" // ✅ make this file a client component
 
 import type { ReactNode } from "react"
+import { useEffect } from "react"
 import { Poppins } from "next/font/google"
 import { ThemeProvider, useCalmingTheme } from "@/components/theme-provider"
 import { UserProvider } from "@/contexts/user-context"
@@ -17,9 +18,15 @@ const poppins = Poppins({
 function CalmingThemeWrapper({ children }: { children: ReactNode }) {
   const { calmingTheme } = useCalmingTheme()
 
+  // Apply the calming theme to the document element so it works with CSS selectors
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.setAttribute('data-calming-theme', calmingTheme)
+    }
+  }, [calmingTheme])
+
   return (
     <div
-      data-calming-theme={calmingTheme}
       className="min-h-screen transition-colors duration-300"
       style={{
         backgroundColor: "var(--background)",
