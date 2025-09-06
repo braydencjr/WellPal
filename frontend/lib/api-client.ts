@@ -12,20 +12,25 @@ class ApiClient {
     options: RequestInit = {}
   ): Promise<T> {
     const url = `${this.baseUrl}/api/v1${endpoint}`;
-    
-    const response = await fetch(url, {
-      headers: {
-        'Content-Type': 'application/json',
-        ...options.headers,
-      },
-      ...options,
-    });
 
-    if (!response.ok) {
-      throw new Error(`API Error: ${response.status} ${response.statusText}`);
+    try {
+      const response = await fetch(url, {
+        headers: {
+          'Content-Type': 'application/json',
+          ...options.headers,
+        },
+        ...options,
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+      }
+
+      return await response.json();
+    } catch (err) {
+      console.error('Fetch failed for URL:', url, err);
+      throw new Error(`Failed to fetch ${url}: ${(err as Error).message}`);
     }
-
-    return response.json();
   }
 
   // AI Chat API
@@ -41,9 +46,7 @@ class ApiClient {
   }
 
   async clearChatHistory() {
-    return this.request('/chat/history', {
-      method: 'DELETE',
-    });
+    return this.request('/chat/history', { method: 'DELETE' });
   }
 
   async getCompanionAvatar() {
@@ -112,15 +115,13 @@ class ApiClient {
         email, 
         password, 
         name, 
-        confirm_password: confirmPassword 
+        confirm_password: confirmPassword,
       }),
     });
   }
 
   async logout() {
-    return this.request('/auth/logout', {
-      method: 'POST',
-    });
+    return this.request('/auth/logout', { method: 'POST' });
   }
 }
 
