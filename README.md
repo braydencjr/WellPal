@@ -133,10 +133,11 @@ JWT_SECRET=your_jwt_secret
 GOOGLE_API_KEY=your_google_api_key
 ```
 
-## 💪 Contributors
-
-- Built with ❤️ by university students for university students
-- Special thanks to all contributors and mental health professionals who provided guidance
+## 💪 Team Cache Me If U Can
+- Brayden Chong Jie Rui
+- Chin Yiu Ern
+- Ong Yi Hao
+- Chua Yu Jien
 
 ## 📄 License
 
