@@ -11,11 +11,11 @@
 
 ---
 
-## ✨ Track
-Mental Health Support For Students
+## 🏃🏻‍♀️Track
+Track 1 - Student Lifestyle
 
 ## 🚨 Problem Statement
-
+## 🍀 Mental Health Support For Students
 Many students avoid seeking help due to limited counseling resources or the fear of stigma. There is a pressing need for tools that encourage self-care, provide mental health support, and help students cope with the challenges of university life.
 
 
