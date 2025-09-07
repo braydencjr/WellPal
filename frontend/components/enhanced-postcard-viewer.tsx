@@ -63,7 +63,7 @@ export function EnhancedPostcardViewer({
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 bg-gray-200/70 dark:bg-gray-900/70 backdrop-blur-sm flex items-center justify-center p-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -90,9 +90,7 @@ export function EnhancedPostcardViewer({
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
                     >
-                      <div className="flex items-center gap-2 bg-black/70 text-white px-3 py-2 text-sm shadow-lg">
-                        
-                      </div>
+                      
                     </motion.div>
                   )}
                 </AnimatePresence>

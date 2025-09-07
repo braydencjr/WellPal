@@ -5,7 +5,7 @@ import { RelaxDogAnimation } from "@/components/relax-dog-animation"
 export default function RelaxPage() {
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-sm mx-auto bg-card relative">
+      <div className="max-w-sm mx-auto bg-card relative min-h-screen">
         {/* Header */}
         <div className="px-6 pt-12 pb-6">
           <h1 className="text-2xl font-semibold text-foreground mb-2">Stress Relief</h1>

@@ -33,22 +33,20 @@ export function RotatablePostcard({
   const [isDragging, setIsDragging] = useState(false)
   const [currentRotation, setCurrentRotation] = useState(0)
   const [targetRotation, setTargetRotation] = useState(0)
+  const [showHint, setShowHint] = useState(true) // 👈 track if hint should be shown
 
   const containerRef = useRef<HTMLDivElement>(null)
   const rotationY = useMotionValue(0)
 
-  // Calculate which side is visible
   const getVisibleSide = (rotation: number) => {
     const normalizedRotation = ((rotation % 360) + 360) % 360
     return normalizedRotation >= 90 && normalizedRotation <= 270 ? "back" : "front"
   }
 
-  // Snap to nearest 180° (front/back)
   const findClosestStablePosition = (rotation: number) => {
     return Math.round(rotation / 180) * 180
   }
 
-  // Handle drag move
   const handleDrag = useCallback(
     (_: any, info: PanInfo) => {
       if (!isDragging) return
@@ -57,16 +55,17 @@ export function RotatablePostcard({
       const newRotation = currentRotation + deltaX * sensitivity
       rotationY.set(newRotation)
       setCurrentRotation(newRotation)
+
+      // hide hint once user starts dragging
+      if (showHint) setShowHint(false)
     },
-    [isDragging, currentRotation, rotationY]
+    [isDragging, currentRotation, rotationY, showHint]
   )
 
-  // Handle drag start
   const handleDragStart = useCallback(() => {
     setIsDragging(true)
   }, [])
 
-  // Handle drag end (snap to nearest side)
   const handleDragEnd = useCallback(() => {
     setIsDragging(false)
     const closestPosition = findClosestStablePosition(currentRotation)
@@ -96,16 +95,15 @@ export function RotatablePostcard({
     requestAnimationFrame(animate)
   }, [currentRotation, rotationY])
 
-  // Reset when image changes
   useEffect(() => {
     setCurrentRotation(0)
     setTargetRotation(0)
     rotationY.set(0)
+    setShowHint(true) // 👈 reset hint when new image loads
   }, [imageUrl, rotationY])
 
   const isBackVisible = getVisibleSide(currentRotation) === "back"
 
-  // Notify parent when side changes
   useEffect(() => {
     if (onSideChange) {
       onSideChange(isBackVisible ? "back" : "front")
@@ -138,7 +136,7 @@ export function RotatablePostcard({
         <div className="absolute inset-0 [backface-visibility:hidden]">
           <PostcardFront imageUrl={imageUrl} mood={mood} location={location} />
         </div>
-  
+
         {/* Back Side */}
         <div className="absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)]">
           <PostcardBack
@@ -152,24 +150,15 @@ export function RotatablePostcard({
           />
         </div>
       </motion.div>
-  
-      {/* Rotation hint */}
-      {!isDragging && (
+
+      {/* Rotation hint → only shows until first rotation */}
+      {showHint && (
         <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-center">
           <div className="text-xs text-muted-foreground bg-background/80 px-3 py-1 rounded-full backdrop-blur-sm border border-border/50">
             <div className="flex items-center gap-2">
-              <span className="text-xs">↔</span>
-              <span>Swipe left or right to rotate</span>
+            <span className="text-xs">↔</span> 
+            <span>Swipe left or right to rotate</span>
             </div>
-          </div>
-        </div>
-      )}
-  
-      {/* Rotation indicator */}
-      {isDragging && (
-        <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-center">
-          <div className="text-xs text-primary bg-primary/10 px-3 py-1 rounded-full backdrop-blur-sm border border-primary/20">
-            <span>Rotating... {Math.round(currentRotation)}°</span>
           </div>
         </div>
       )}

@@ -42,7 +42,7 @@ export default function DashboardPage() {
   return (
     <>
       <div className="min-h-screen bg-background">
-        <div className="max-w-sm mx-auto bg-card relative"> 
+        <div className="max-w-sm mx-auto bg-card relative min-h-screen">
           <div className="max-w-sm mx-auto px-6 pt-8 pb-24">
             <WelcomeHeader />
             <div className="flex flex-row items-center gap-2 mb-4">
