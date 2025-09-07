@@ -11,6 +11,14 @@
 
 ---
 
+## ✨ Track
+Mental Health Support For Students
+
+## 🚨 Problem Statement
+
+Many students avoid seeking help due to limited counseling resources or the fear of stigma. There is a pressing need for tools that encourage self-care, provide mental health support, and help students cope with the challenges of university life.
+
+
 ## ✨ Features
 
 WellPal: click! offers a comprehensive suite of mental wellness tools designed specifically for university students:
